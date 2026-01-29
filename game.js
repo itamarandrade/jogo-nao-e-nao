@@ -623,7 +623,30 @@ document.addEventListener('touchend', (e) => {
     lastTouchEnd = now;
 }, false);
 
+// ===== TECLADO VIRTUAL =====
+function initVirtualKeyboard() {
+    const input = document.getElementById('player-name');
+    const keys = document.querySelectorAll('.key');
+
+    keys.forEach(key => {
+        const handleKey = (e) => {
+            e.preventDefault();
+            const keyValue = key.dataset.key;
+
+            if (keyValue === 'BACKSPACE') {
+                input.value = input.value.slice(0, -1);
+            } else if (input.value.length < 20) {
+                input.value += keyValue;
+            }
+        };
+
+        key.addEventListener('click', handleKey);
+        key.addEventListener('touchstart', handleKey, { passive: false });
+    });
+}
+
 // ===== INICIALIZAÇÃO =====
 document.addEventListener('DOMContentLoaded', () => {
     showScreen('screen-start');
+    initVirtualKeyboard();
 });
