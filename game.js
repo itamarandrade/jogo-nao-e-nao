@@ -661,8 +661,36 @@ function goToGameSelection() {
     showScreen('screen-start');
 }
 
+// ===== SPLASH SCREEN =====
+function initSplashScreen() {
+    createSplashParticles();
+
+    // Após 3 segundos, ir para tela de nome
+    setTimeout(() => {
+        showScreen('screen-name');
+    }, 3000);
+}
+
+function createSplashParticles() {
+    const container = document.getElementById('splash-particles');
+    const colors = ['#ffb800', '#868fc6', '#851595', '#ff6b9d', '#4ade80'];
+
+    for (let i = 0; i < 20; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'splash-particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.width = (Math.random() * 10 + 5) + 'px';
+        particle.style.height = particle.style.width;
+        particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        particle.style.animationDelay = Math.random() * 2 + 's';
+        particle.style.animationDuration = (Math.random() * 2 + 2) + 's';
+        container.appendChild(particle);
+    }
+}
+
 // ===== INICIALIZAÇÃO =====
 document.addEventListener('DOMContentLoaded', () => {
-    showScreen('screen-name');
+    showScreen('screen-splash');
+    initSplashScreen();
     initVirtualKeyboard();
 });
