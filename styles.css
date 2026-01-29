@@ -99,7 +99,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 15px;
+    gap: 25px;
     flex-wrap: wrap;
 }
 
@@ -107,13 +107,13 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
+    filter: drop-shadow(0 2px 10px rgba(0,0,0,0.4));
 }
 
 .partner-logo img {
-    height: 45px;
+    height: clamp(60px, 15vw, 90px);
     width: auto;
-    max-width: 100px;
+    max-width: clamp(100px, 25vw, 160px);
     object-fit: contain;
 }
 
