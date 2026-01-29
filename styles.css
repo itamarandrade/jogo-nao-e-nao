@@ -90,8 +90,49 @@ body {
     z-index: -1;
 }
 
+.splash-partners {
+    margin-top: 30px;
+    animation: fadeInUp 1s ease-out 0.5s both;
+}
+
+.partners-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.partner-logo {
+    background: #fff;
+    border-radius: 12px;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.partner-logo img {
+    height: 40px;
+    width: auto;
+    max-width: 80px;
+    object-fit: contain;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .splash-loading {
-    margin-top: 40px;
+    margin-top: 30px;
 }
 
 .loading-dots {
