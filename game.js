@@ -1,8 +1,8 @@
 // ===== CONFIGURAÇÃO DOS ÍCONES (FontAwesome) =====
 const ICONS = [
     { icon: 'fa-heart', name: 'Coração' },
-    { icon: 'fa-hand-paper', name: 'Pare' },
-    { icon: 'fa-shield-heart', name: 'Proteção' },
+    { icon: 'fa-hand', name: 'Pare' },
+    { icon: 'fa-shield-halved', name: 'Proteção' },
     { icon: 'fa-star', name: 'Estrela' },
     { icon: 'fa-hands-holding-heart', name: 'Cuidado' },
     { icon: 'fa-user-shield', name: 'Segurança' },
