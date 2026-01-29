@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
+    <!-- DECORAÇÕES DO TEMA -->
+    <div id="theme-decorations" class="theme-decorations"></div>
+
     <!-- SPLASH SCREEN -->
     <div id="screen-splash" class="screen active">
         <div class="splash-content">
@@ -122,17 +125,20 @@
                         <span class="game-desc">Deslize as peças</span>
                     </div>
                 </button>
-                <button class="btn-game-select" onclick="startWordSearchGame()">
-                    <span class="game-icon"><i class="fas fa-search"></i></span>
+                <button class="btn-game-select" onclick="startQuizGame()">
+                    <span class="game-icon"><i class="fas fa-question-circle"></i></span>
                     <div class="game-info">
-                        <span class="game-name">CAÇA-PALAVRAS</span>
-                        <span class="game-desc">Encontre as palavras</span>
+                        <span class="game-name">QUIZ</span>
+                        <span class="game-desc">Verdadeiro ou Falso</span>
                     </div>
                 </button>
             </div>
             <button class="btn-change-name" onclick="showScreen('screen-name')">
                 <i class="fas fa-user-edit"></i> Trocar nome
             </button>
+            <a href="dashboard.html" class="btn-dashboard" title="Configurações">
+                <i class="fas fa-cog"></i>
+            </a>
         </div>
         <div class="decorations">
             <span class="deco deco-1"><i class="fas fa-heart"></i></span>
@@ -185,41 +191,58 @@
         </div>
 
         <div class="puzzle-container">
-            <div id="puzzle-board" class="puzzle-board">
-                <!-- Peças geradas via JavaScript -->
+            <div class="puzzle-area">
+                <div id="puzzle-board" class="puzzle-board">
+                    <!-- Slots vazios gerados via JavaScript -->
+                </div>
+                <div id="puzzle-pieces" class="puzzle-pieces">
+                    <!-- Peças embaralhadas geradas via JavaScript -->
+                </div>
             </div>
         </div>
 
-        <p class="puzzle-hint">Toque em uma peça ao lado do espaço vazio para mover</p>
+        <p class="puzzle-hint">Arraste as peças para encaixar no quadro</p>
 
         <button class="btn-quit" onclick="quitGame()"><i class="fas fa-times"></i> SAIR</button>
     </div>
 
-    <!-- TELA DO CAÇA-PALAVRAS -->
-    <div id="screen-wordsearch" class="screen">
+    <!-- TELA DO QUIZ -->
+    <div id="screen-quiz" class="screen">
         <div class="game-header">
             <div class="stat">
                 <span class="stat-icon"><i class="fas fa-clock"></i></span>
                 <span class="stat-label">TEMPO</span>
-                <span id="wordsearch-timer" class="stat-value">00:00</span>
+                <span id="quiz-timer" class="stat-value">00:00</span>
             </div>
             <div class="stat">
                 <span class="stat-icon"><i class="fas fa-check-circle"></i></span>
-                <span class="stat-label">ENCONTRADAS</span>
-                <span id="wordsearch-found" class="stat-value">0/6</span>
+                <span class="stat-label">ACERTOS</span>
+                <span id="quiz-score" class="stat-value">0/0</span>
             </div>
         </div>
 
-        <div class="wordsearch-container">
-            <div id="wordsearch-grid" class="wordsearch-grid">
-                <!-- Grade gerada via JavaScript -->
+        <div class="quiz-container">
+            <div class="quiz-progress">
+                <div id="quiz-progress-bar" class="quiz-progress-bar"></div>
             </div>
-        </div>
 
-        <div class="words-list">
-            <span class="words-title">PALAVRAS:</span>
-            <div id="words-to-find" class="words-to-find">
-                <!-- Lista de palavras -->
+            <div class="quiz-question-box">
+                <span class="quiz-number">Pergunta <span id="quiz-current">1</span> de <span id="quiz-total">10</span></span>
+                <p id="quiz-question" class="quiz-question-text">Carregando pergunta...</p>
+            </div>
+
+            <div class="quiz-answers">
+                <button id="btn-true" class="btn-quiz-answer btn-true" onclick="answerQuiz(true)">
+                    <i class="fas fa-check"></i> SIM
+                </button>
+                <button id="btn-false" class="btn-quiz-answer btn-false" onclick="answerQuiz(false)">
+                    <i class="fas fa-times"></i> NÃO
+                </button>
+            </div>
+
+            <div id="quiz-feedback" class="quiz-feedback">
+                <span class="feedback-icon"></span>
+                <span class="feedback-text"></span>
             </div>
         </div>
 

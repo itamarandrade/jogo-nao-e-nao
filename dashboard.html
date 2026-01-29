@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Dashboard - Não é Não</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* Dashboard ocupa 100% da tela */
+        body {
+            display: block;
+        }
+        #screen-dashboard {
+            position: relative;
+            display: flex !important;
+            opacity: 1;
+            height: 100vh;
+        }
+        .dashboard-content {
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <!-- TELA DO DASHBOARD -->
+    <div id="screen-dashboard" class="screen active">
+        <div class="dashboard-content">
+            <div class="dashboard-header">
+                <h2><i class="fas fa-cog"></i> Painel de Configurações</h2>
+                <a href="index.html" class="btn-close-dash" title="Voltar ao Jogo"><i class="fas fa-gamepad"></i></a>
+            </div>
+
+            <div class="dashboard-main">
+                <div class="dashboard-tabs">
+                    <button class="tab-btn active" data-tab="tab-visual" onclick="switchDashTab('tab-visual')">
+                        <i class="fas fa-palette"></i> Visual
+                    </button>
+                    <button class="tab-btn" data-tab="tab-quiz" onclick="switchDashTab('tab-quiz')">
+                        <i class="fas fa-question-circle"></i> Quiz
+                    </button>
+                    <button class="tab-btn" data-tab="tab-memory" onclick="switchDashTab('tab-memory')">
+                        <i class="fas fa-brain"></i> Memória
+                    </button>
+                    <button class="tab-btn" data-tab="tab-puzzle" onclick="switchDashTab('tab-puzzle')">
+                        <i class="fas fa-puzzle-piece"></i> Puzzle
+                    </button>
+                </div>
+
+                <div class="dashboard-body">
+                    <!-- ABA VISUAL -->
+                    <div id="tab-visual" class="tab-content active">
+                        <div class="config-section">
+                            <label class="config-label">
+                                <i class="fas fa-swatchbook"></i> Tema do Jogo
+                            </label>
+                            <div class="themes-grid" id="themes-grid">
+                                <!-- Temas serão adicionados via JS -->
+                            </div>
+                        </div>
+
+                        <div class="config-section">
+                            <label class="config-label">
+                                <i class="fas fa-gamepad"></i> Jogos Ativos
+                            </label>
+                            <div class="games-toggles">
+                                <div class="game-toggle">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="toggle-memory" checked onchange="toggleGame('memory', this.checked)">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <span class="toggle-label"><i class="fas fa-brain"></i> Memória</span>
+                                </div>
+                                <div class="game-toggle">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="toggle-puzzle" checked onchange="toggleGame('puzzle', this.checked)">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <span class="toggle-label"><i class="fas fa-puzzle-piece"></i> Quebra-Cabeça</span>
+                                </div>
+                                <div class="game-toggle">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="toggle-quiz" checked onchange="toggleGame('quiz', this.checked)">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <span class="toggle-label"><i class="fas fa-question-circle"></i> Quiz</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="config-section">
+                            <label class="config-label">
+                                <i class="fas fa-fill-drip"></i> Cor Principal (Amarelo)
+                            </label>
+                            <div class="color-picker-wrapper">
+                                <input type="color" id="config-color" value="#ffb800">
+                                <span id="color-preview">#ffb800</span>
+                            </div>
+                        </div>
+
+                        <div class="config-section">
+                            <label class="config-label">
+                                <i class="fas fa-fill-drip"></i> Cor Secundária (Roxo)
+                            </label>
+                            <div class="color-picker-wrapper">
+                                <input type="color" id="config-color-secondary" value="#868fc6">
+                                <span id="color-secondary-preview">#868fc6</span>
+                            </div>
+                        </div>
+
+                        <div class="config-section">
+                            <label class="config-label">
+                                <i class="fas fa-image"></i> Logo Principal
+                            </label>
+                            <div class="upload-wrapper">
+                                <img id="logo-preview" src="assets/logo-png.png" alt="Logo Preview">
+                                <input type="file" id="config-logo" accept="image/*" onchange="previewLogo(this)">
+                                <button class="btn-upload" onclick="document.getElementById('config-logo').click()">
+                                    <i class="fas fa-upload"></i> Escolher Imagem
+                                </button>
+                                <button class="btn-reset-img" onclick="resetLogo()">
+                                    <i class="fas fa-undo"></i> Usar Padrão
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ABA QUIZ -->
+                    <div id="tab-quiz" class="tab-content">
+                        <div class="config-section">
+                            <label class="config-label">
+                                <i class="fas fa-list"></i> Perguntas do Quiz (V/F)
+                            </label>
+                            <div id="quiz-questions-list" class="questions-list">
+                                <!-- Perguntas serão adicionadas via JS -->
+                            </div>
+                            <div class="add-question-form">
+                                <textarea id="new-question" placeholder="Digite a pergunta..."></textarea>
+                                <div class="answer-toggle">
+                                    <span>Resposta correta:</span>
+                                    <button id="answer-true" class="answer-btn active" onclick="setNewAnswer(true)">Sim</button>
+                                    <button id="answer-false" class="answer-btn" onclick="setNewAnswer(false)">Não</button>
+                                </div>
+                                <button class="btn-add-question" onclick="addQuizQuestion()">
+                                    <i class="fas fa-plus"></i> Adicionar Pergunta
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ABA MEMÓRIA -->
+                    <div id="tab-memory" class="tab-content">
+                        <div class="config-section">
+                            <label class="config-label">
+                                <i class="fas fa-icons"></i> Ícones do Jogo da Memória (selecione 8+)
+                            </label>
+                            <div id="icons-grid" class="icons-grid">
+                                <!-- Ícones serão adicionados via JS -->
+                            </div>
+                            <p class="icons-count">Selecionados: <span id="selected-count">0</span>/8 mínimo</p>
+                        </div>
+                    </div>
+
+                    <!-- ABA PUZZLE -->
+                    <div id="tab-puzzle" class="tab-content">
+                        <div class="config-section">
+                            <label class="config-label">
+                                <i class="fas fa-image"></i> Imagem do Quebra-Cabeça
+                            </label>
+                            <div class="upload-wrapper">
+                                <img id="puzzle-preview" src="assets/logo-png.png" alt="Puzzle Preview">
+                                <input type="file" id="config-puzzle" accept="image/*" onchange="previewPuzzle(this)">
+                                <button class="btn-upload" onclick="document.getElementById('config-puzzle').click()">
+                                    <i class="fas fa-upload"></i> Escolher Imagem
+                                </button>
+                                <button class="btn-reset-img" onclick="resetPuzzleImage()">
+                                    <i class="fas fa-undo"></i> Usar Padrão
+                                </button>
+                            </div>
+                            <p class="puzzle-hint-dash">Dica: Use uma imagem quadrada para melhor resultado.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-footer">
+                <button class="btn-reset-all" onclick="resetAllConfig()">
+                    <i class="fas fa-trash-restore"></i> Restaurar Padrão
+                </button>
+                <button class="btn-save-config" onclick="saveAllConfigAndRedirect()">
+                    <i class="fas fa-save"></i> Salvar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+    <script>
+        // Inicializar dashboard ao carregar
+        document.addEventListener('DOMContentLoaded', () => {
+            applyConfig(gameConfig);
+            initDashboard();
+            initGameToggles();
+            renderThemes();
+        });
+
+        // Renderizar temas
+        function renderThemes() {
+            const grid = document.getElementById('themes-grid');
+            grid.innerHTML = '';
+
+            Object.keys(THEMES).forEach(themeKey => {
+                const theme = THEMES[themeKey];
+                const card = document.createElement('div');
+                card.className = 'theme-card' + (tempConfig.theme === themeKey ? ' selected' : '');
+                card.style.background = theme.bgGradient;
+                card.onclick = () => selectTheme(themeKey);
+
+                card.innerHTML = `
+                    <span class="theme-icon"><i class="fas ${theme.icon}"></i></span>
+                    <span class="theme-name">${theme.name}</span>
+                    <div class="theme-colors">
+                        <span class="theme-color" style="background: ${theme.primaryColor}"></span>
+                        <span class="theme-color" style="background: ${theme.secondaryColor}"></span>
+                    </div>
+                `;
+
+                grid.appendChild(card);
+            });
+        }
+
+        // Selecionar tema
+        function selectTheme(themeKey) {
+            const theme = THEMES[themeKey];
+            tempConfig.theme = themeKey;
+            tempConfig.primaryColor = theme.primaryColor;
+            tempConfig.secondaryColor = theme.secondaryColor;
+
+            // Atualizar color pickers
+            document.getElementById('config-color').value = theme.primaryColor;
+            document.getElementById('color-preview').textContent = theme.primaryColor;
+            document.getElementById('config-color-secondary').value = theme.secondaryColor;
+            document.getElementById('color-secondary-preview').textContent = theme.secondaryColor;
+
+            // Aplicar tema visualmente
+            document.documentElement.style.setProperty('--cor-amarelo', theme.primaryColor);
+            document.documentElement.style.setProperty('--cor-roxo', theme.secondaryColor);
+            document.body.style.background = theme.bgGradient;
+            document.getElementById('screen-dashboard').style.background = theme.bgGradient;
+
+            // Atualizar seleção visual
+            renderThemes();
+        }
+
+        // Inicializar toggles dos jogos
+        function initGameToggles() {
+            const gamesEnabled = tempConfig.gamesEnabled || { memory: true, puzzle: true, quiz: true };
+
+            document.getElementById('toggle-memory').checked = gamesEnabled.memory;
+            document.getElementById('toggle-puzzle').checked = gamesEnabled.puzzle;
+            document.getElementById('toggle-quiz').checked = gamesEnabled.quiz;
+        }
+
+        // Toggle de jogo
+        function toggleGame(game, enabled) {
+            if (!tempConfig.gamesEnabled) {
+                tempConfig.gamesEnabled = { memory: true, puzzle: true, quiz: true };
+            }
+            tempConfig.gamesEnabled[game] = enabled;
+
+            // Verificar se pelo menos um jogo está ativo
+            const anyEnabled = tempConfig.gamesEnabled.memory || tempConfig.gamesEnabled.puzzle || tempConfig.gamesEnabled.quiz;
+            if (!anyEnabled) {
+                alert('Pelo menos um jogo deve estar ativo!');
+                tempConfig.gamesEnabled[game] = true;
+                document.getElementById('toggle-' + game).checked = true;
+            }
+        }
+
+        // Salvar e redirecionar para o jogo
+        function saveAllConfigAndRedirect() {
+            if (tempConfig.memoryIcons.length < 8) {
+                alert('Selecione pelo menos 8 ícones para o jogo da memória!');
+                return;
+            }
+
+            if (tempConfig.quizQuestions.length < 3) {
+                alert('Adicione pelo menos 3 perguntas para o quiz!');
+                return;
+            }
+
+            gameConfig = { ...tempConfig };
+            saveConfig(gameConfig);
+
+            alert('Configurações salvas com sucesso!');
+        }
+    </script>
+</body>
+</html>
