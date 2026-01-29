@@ -4,7 +4,7 @@ const ICONS = [
     { icon: 'fa-hand', name: 'Pare' },
     { icon: 'fa-shield-halved', name: 'Proteção' },
     { icon: 'fa-star', name: 'Estrela' },
-    { icon: 'fa-hands-holding-heart', name: 'Cuidado' },
+    { icon: 'fa-handshake', name: 'Cuidado' },
     { icon: 'fa-user-shield', name: 'Segurança' },
     { icon: 'fa-dove', name: 'Paz' },
     { icon: 'fa-hand-holding-heart', name: 'Apoio' },
