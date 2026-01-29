@@ -9,54 +9,72 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
-    <!-- TELA INICIAL -->
-    <div id="screen-start" class="screen active">
-        <div class="start-content">
+    <!-- TELA INICIAL - NOME -->
+    <div id="screen-name" class="screen active">
+        <div class="name-screen-content">
             <div class="logo-container">
                 <img src="assets/logo-png.png" alt="Não é Não" class="logo-image">
-                <p class="subtitle">JOGO INTERATIVO</p>
             </div>
-            <div class="name-input-container">
-                <label for="player-name">Qual seu nome?</label>
-                <input type="text" id="player-name" placeholder="Toque aqui" maxlength="20" readonly>
-                <div id="virtual-keyboard" class="virtual-keyboard">
+
+            <div class="name-section">
+                <h2 class="name-title">Qual é o seu nome?</h2>
+                <div class="name-display">
+                    <span id="player-name-display">_</span>
+                </div>
+                <input type="hidden" id="player-name" maxlength="15">
+            </div>
+
+            <div class="keyboard-container">
+                <div class="keyboard">
                     <div class="keyboard-row">
-                        <button class="key" data-key="Q">Q</button>
-                        <button class="key" data-key="W">W</button>
-                        <button class="key" data-key="E">E</button>
-                        <button class="key" data-key="R">R</button>
-                        <button class="key" data-key="T">T</button>
-                        <button class="key" data-key="Y">Y</button>
-                        <button class="key" data-key="U">U</button>
-                        <button class="key" data-key="I">I</button>
-                        <button class="key" data-key="O">O</button>
-                        <button class="key" data-key="P">P</button>
+                        <button class="kbd-key" data-key="Q">Q</button>
+                        <button class="kbd-key" data-key="W">W</button>
+                        <button class="kbd-key" data-key="E">E</button>
+                        <button class="kbd-key" data-key="R">R</button>
+                        <button class="kbd-key" data-key="T">T</button>
+                        <button class="kbd-key" data-key="Y">Y</button>
+                        <button class="kbd-key" data-key="U">U</button>
+                        <button class="kbd-key" data-key="I">I</button>
+                        <button class="kbd-key" data-key="O">O</button>
+                        <button class="kbd-key" data-key="P">P</button>
                     </div>
                     <div class="keyboard-row">
-                        <button class="key" data-key="A">A</button>
-                        <button class="key" data-key="S">S</button>
-                        <button class="key" data-key="D">D</button>
-                        <button class="key" data-key="F">F</button>
-                        <button class="key" data-key="G">G</button>
-                        <button class="key" data-key="H">H</button>
-                        <button class="key" data-key="J">J</button>
-                        <button class="key" data-key="K">K</button>
-                        <button class="key" data-key="L">L</button>
+                        <button class="kbd-key" data-key="A">A</button>
+                        <button class="kbd-key" data-key="S">S</button>
+                        <button class="kbd-key" data-key="D">D</button>
+                        <button class="kbd-key" data-key="F">F</button>
+                        <button class="kbd-key" data-key="G">G</button>
+                        <button class="kbd-key" data-key="H">H</button>
+                        <button class="kbd-key" data-key="J">J</button>
+                        <button class="kbd-key" data-key="K">K</button>
+                        <button class="kbd-key" data-key="L">L</button>
                     </div>
                     <div class="keyboard-row">
-                        <button class="key" data-key="Z">Z</button>
-                        <button class="key" data-key="X">X</button>
-                        <button class="key" data-key="C">C</button>
-                        <button class="key" data-key="V">V</button>
-                        <button class="key" data-key="B">B</button>
-                        <button class="key" data-key="N">N</button>
-                        <button class="key" data-key="M">M</button>
-                        <button class="key key-backspace" data-key="BACKSPACE"><i class="fas fa-backspace"></i></button>
-                    </div>
-                    <div class="keyboard-row">
-                        <button class="key key-space" data-key=" ">ESPAÇO</button>
+                        <button class="kbd-key kbd-backspace" data-key="BACKSPACE"><i class="fas fa-delete-left"></i></button>
+                        <button class="kbd-key" data-key="Z">Z</button>
+                        <button class="kbd-key" data-key="X">X</button>
+                        <button class="kbd-key" data-key="C">C</button>
+                        <button class="kbd-key" data-key="V">V</button>
+                        <button class="kbd-key" data-key="B">B</button>
+                        <button class="kbd-key" data-key="N">N</button>
+                        <button class="kbd-key" data-key="M">M</button>
+                        <button class="kbd-key kbd-backspace" data-key="CLEAR"><i class="fas fa-trash"></i></button>
                     </div>
                 </div>
+            </div>
+
+            <button class="btn-continue" onclick="goToGameSelection()">
+                CONTINUAR <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- TELA DE SELEÇÃO DE JOGOS -->
+    <div id="screen-start" class="screen">
+        <div class="start-content">
+            <div class="welcome-header">
+                <span class="welcome-text">Olá, <span id="welcome-name">Jogador</span>!</span>
+                <p class="choose-text">Escolha um jogo:</p>
             </div>
             <div class="game-selection">
                 <button class="btn-game-select" onclick="startMemoryGame()">
@@ -81,6 +99,9 @@
                     </div>
                 </button>
             </div>
+            <button class="btn-change-name" onclick="showScreen('screen-name')">
+                <i class="fas fa-user-edit"></i> Trocar nome
+            </button>
         </div>
         <div class="decorations">
             <span class="deco deco-1"><i class="fas fa-heart"></i></span>

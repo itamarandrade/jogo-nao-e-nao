@@ -144,7 +144,6 @@ function shuffleArray(array) {
 // JOGO DA MEMÓRIA
 // =====================================================
 function startMemoryGame() {
-    getPlayerName();
     currentGame = 'memory';
     matchedPairs = 0;
     moves = 0;
@@ -261,7 +260,6 @@ function checkMemoryMatch() {
 // QUEBRA-CABEÇA DESLIZANTE
 // =====================================================
 function startPuzzleGame() {
-    getPlayerName();
     currentGame = 'puzzle';
     moves = 0;
 
@@ -384,7 +382,6 @@ function movePuzzlePiece(index) {
 // CAÇA-PALAVRAS
 // =====================================================
 function startWordSearchGame() {
-    getPlayerName();
     currentGame = 'wordsearch';
     moves = 0;
     foundWords = [];
@@ -626,27 +623,46 @@ document.addEventListener('touchend', (e) => {
 // ===== TECLADO VIRTUAL =====
 function initVirtualKeyboard() {
     const input = document.getElementById('player-name');
-    const keys = document.querySelectorAll('.key');
+    const display = document.getElementById('player-name-display');
+    const keys = document.querySelectorAll('.kbd-key');
+
+    const updateDisplay = () => {
+        display.textContent = input.value || '_';
+    };
 
     keys.forEach(key => {
         const handleKey = (e) => {
             e.preventDefault();
+            e.stopPropagation();
             const keyValue = key.dataset.key;
 
             if (keyValue === 'BACKSPACE') {
                 input.value = input.value.slice(0, -1);
-            } else if (input.value.length < 20) {
+            } else if (keyValue === 'CLEAR') {
+                input.value = '';
+            } else if (input.value.length < 15) {
                 input.value += keyValue;
             }
+            updateDisplay();
         };
 
         key.addEventListener('click', handleKey);
-        key.addEventListener('touchstart', handleKey, { passive: false });
+        key.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            handleKey(e);
+        }, { passive: false });
     });
+}
+
+// ===== IR PARA SELEÇÃO DE JOGOS =====
+function goToGameSelection() {
+    getPlayerName();
+    document.getElementById('welcome-name').textContent = playerName;
+    showScreen('screen-start');
 }
 
 // ===== INICIALIZAÇÃO =====
 document.addEventListener('DOMContentLoaded', () => {
-    showScreen('screen-start');
+    showScreen('screen-name');
     initVirtualKeyboard();
 });
