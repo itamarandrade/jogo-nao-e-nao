@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Não é Não - Jogo Interativo</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <!-- TELA INICIAL -->
+    <div id="screen-start" class="screen active">
+        <div class="start-content">
+            <div class="logo-container">
+                <img src="assets/logo-png.png" alt="Não é Não" class="logo-image">
+                <p class="subtitle">JOGO INTERATIVO</p>
+            </div>
+            <div class="game-selection">
+                <button class="btn-game-select" onclick="startMemoryGame()">
+                    <span class="game-icon"><i class="fas fa-brain"></i></span>
+                    <div class="game-info">
+                        <span class="game-name">MEMÓRIA</span>
+                        <span class="game-desc">Encontre os pares</span>
+                    </div>
+                </button>
+                <button class="btn-game-select" onclick="startPuzzleGame()">
+                    <span class="game-icon"><i class="fas fa-puzzle-piece"></i></span>
+                    <div class="game-info">
+                        <span class="game-name">QUEBRA-CABEÇA</span>
+                        <span class="game-desc">Deslize as peças</span>
+                    </div>
+                </button>
+                <button class="btn-game-select" onclick="startWordSearchGame()">
+                    <span class="game-icon"><i class="fas fa-search"></i></span>
+                    <div class="game-info">
+                        <span class="game-name">CAÇA-PALAVRAS</span>
+                        <span class="game-desc">Encontre as palavras</span>
+                    </div>
+                </button>
+            </div>
+        </div>
+        <div class="decorations">
+            <span class="deco deco-1"><i class="fas fa-heart"></i></span>
+            <span class="deco deco-2"><i class="fas fa-hand-paper"></i></span>
+            <span class="deco deco-3"><i class="fas fa-star"></i></span>
+            <span class="deco deco-4"><i class="fas fa-shield-heart"></i></span>
+        </div>
+    </div>
+
+    <!-- TELA DO JOGO DA MEMÓRIA -->
+    <div id="screen-memory" class="screen">
+        <div class="game-header">
+            <div class="stat">
+                <span class="stat-icon"><i class="fas fa-clock"></i></span>
+                <span class="stat-label">TEMPO</span>
+                <span id="memory-timer" class="stat-value">00:00</span>
+            </div>
+            <div class="stat">
+                <span class="stat-icon"><i class="fas fa-hand-pointer"></i></span>
+                <span class="stat-label">JOGADAS</span>
+                <span id="memory-moves" class="stat-value">0</span>
+            </div>
+            <div class="stat">
+                <span class="stat-icon"><i class="fas fa-check-circle"></i></span>
+                <span class="stat-label">PARES</span>
+                <span id="memory-pairs" class="stat-value">0/8</span>
+            </div>
+        </div>
+
+        <div id="memory-board" class="game-board grid-4x4">
+            <!-- Cards gerados via JavaScript -->
+        </div>
+
+        <button class="btn-quit" onclick="quitGame()"><i class="fas fa-times"></i> SAIR</button>
+    </div>
+
+    <!-- TELA DO QUEBRA-CABEÇA DESLIZANTE -->
+    <div id="screen-puzzle" class="screen">
+        <div class="game-header">
+            <div class="stat">
+                <span class="stat-icon"><i class="fas fa-clock"></i></span>
+                <span class="stat-label">TEMPO</span>
+                <span id="puzzle-timer" class="stat-value">00:00</span>
+            </div>
+            <div class="stat">
+                <span class="stat-icon"><i class="fas fa-hand-pointer"></i></span>
+                <span class="stat-label">MOVIMENTOS</span>
+                <span id="puzzle-moves" class="stat-value">0</span>
+            </div>
+        </div>
+
+        <div class="puzzle-container">
+            <div id="puzzle-board" class="puzzle-board">
+                <!-- Peças geradas via JavaScript -->
+            </div>
+        </div>
+
+        <p class="puzzle-hint">Toque em uma peça ao lado do espaço vazio para mover</p>
+
+        <button class="btn-quit" onclick="quitGame()"><i class="fas fa-times"></i> SAIR</button>
+    </div>
+
+    <!-- TELA DO CAÇA-PALAVRAS -->
+    <div id="screen-wordsearch" class="screen">
+        <div class="game-header">
+            <div class="stat">
+                <span class="stat-icon"><i class="fas fa-clock"></i></span>
+                <span class="stat-label">TEMPO</span>
+                <span id="wordsearch-timer" class="stat-value">00:00</span>
+            </div>
+            <div class="stat">
+                <span class="stat-icon"><i class="fas fa-check-circle"></i></span>
+                <span class="stat-label">ENCONTRADAS</span>
+                <span id="wordsearch-found" class="stat-value">0/6</span>
+            </div>
+        </div>
+
+        <div class="wordsearch-container">
+            <div id="wordsearch-grid" class="wordsearch-grid">
+                <!-- Grade gerada via JavaScript -->
+            </div>
+        </div>
+
+        <div class="words-list">
+            <span class="words-title">PALAVRAS:</span>
+            <div id="words-to-find" class="words-to-find">
+                <!-- Lista de palavras -->
+            </div>
+        </div>
+
+        <button class="btn-quit" onclick="quitGame()"><i class="fas fa-times"></i> SAIR</button>
+    </div>
+
+    <!-- TELA DE VITÓRIA -->
+    <div id="screen-victory" class="screen">
+        <div class="victory-content">
+            <div class="victory-icon"><i class="fas fa-trophy"></i></div>
+            <h2>PARABÉNS!</h2>
+            <p class="victory-text">Você completou o jogo!</p>
+
+            <div class="victory-stats">
+                <div class="victory-stat">
+                    <span class="vs-icon"><i class="fas fa-clock"></i></span>
+                    <span class="vs-label">Tempo</span>
+                    <span id="final-time" class="vs-value">00:00</span>
+                </div>
+                <div class="victory-stat">
+                    <span class="vs-icon"><i class="fas fa-hand-pointer"></i></span>
+                    <span class="vs-label">Movimentos</span>
+                    <span id="final-moves" class="vs-value">0</span>
+                </div>
+            </div>
+
+            <div class="victory-buttons">
+                <button class="btn-play-again" onclick="playAgain()">
+                    <i class="fas fa-redo"></i> JOGAR NOVAMENTE
+                </button>
+                <button class="btn-home" onclick="goToStart()">
+                    <i class="fas fa-home"></i> INÍCIO
+                </button>
+            </div>
+        </div>
+        <div class="confetti" id="confetti"></div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
