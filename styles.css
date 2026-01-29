@@ -319,31 +319,31 @@ body {
 .keyboard {
     background: rgba(0,0,0,0.4);
     border-radius: 20px;
-    padding: 12px;
+    padding: 15px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
 }
 
 .keyboard-row {
     display: flex;
     justify-content: center;
-    gap: 6px;
+    gap: 8px;
 }
 
 .kbd-key {
-    width: clamp(28px, 8vw, 36px);
-    height: clamp(38px, 10vw, 48px);
-    font-size: clamp(14px, 4vw, 18px);
+    width: clamp(32px, 9vw, 44px);
+    height: clamp(46px, 12vw, 58px);
+    font-size: clamp(16px, 5vw, 22px);
     font-weight: 700;
     border: none;
-    border-radius: 10px;
+    border-radius: 12px;
     background: linear-gradient(180deg, #4a4a6a 0%, #3a3a5a 100%);
     color: #fff;
     cursor: pointer;
     transition: all 0.1s ease;
     font-family: 'Poppins', sans-serif;
-    box-shadow: 0 4px 0 #2a2a4a, 0 6px 10px rgba(0,0,0,0.3);
+    box-shadow: 0 5px 0 #2a2a4a, 0 7px 12px rgba(0,0,0,0.3);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -359,9 +359,9 @@ body {
 }
 
 .kbd-backspace {
-    width: clamp(45px, 12vw, 55px);
+    width: clamp(50px, 13vw, 65px);
     background: linear-gradient(180deg, var(--cor-roxo) 0%, #6b75a8 100%);
-    box-shadow: 0 4px 0 #4a5080, 0 6px 10px rgba(0,0,0,0.3);
+    box-shadow: 0 5px 0 #4a5080, 0 7px 12px rgba(0,0,0,0.3);
 }
 
 .kbd-backspace:hover {
