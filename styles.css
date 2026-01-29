@@ -87,6 +87,44 @@ body {
     font-weight: 600;
 }
 
+/* Campo de nome */
+.name-input-container {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.name-input-container label {
+    display: block;
+    font-size: 14px;
+    color: var(--cor-amarelo);
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.name-input-container input {
+    padding: 12px 20px;
+    font-size: 16px;
+    border: 2px solid var(--cor-roxo);
+    border-radius: 25px;
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    text-align: center;
+    width: 200px;
+    max-width: 80vw;
+    font-family: 'Poppins', sans-serif;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.name-input-container input::placeholder {
+    color: rgba(255,255,255,0.5);
+}
+
+.name-input-container input:focus {
+    border-color: var(--cor-amarelo);
+    background: rgba(255,255,255,0.15);
+}
+
 /* Seleção de jogos */
 .game-selection {
     display: flex;

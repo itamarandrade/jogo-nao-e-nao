@@ -23,6 +23,7 @@ let currentGame = null;
 let timer = null;
 let seconds = 0;
 let moves = 0;
+let playerName = '';
 
 // ===== JOGO DA MEMÓRIA - VARIÁVEIS =====
 const TOTAL_PAIRS = 8;
@@ -87,11 +88,19 @@ function formatTime(totalSeconds) {
     return `${mins}:${secs}`;
 }
 
+// ===== NOME DO JOGADOR =====
+function getPlayerName() {
+    const input = document.getElementById('player-name');
+    playerName = input.value.trim() || 'Jogador';
+    return playerName;
+}
+
 // ===== VITÓRIA =====
 function showVictory() {
     stopTimer();
     document.getElementById('final-time').textContent = formatTime(seconds);
     document.getElementById('final-moves').textContent = moves;
+    document.getElementById('winner-name').textContent = playerName || 'Jogador';
     showScreen('screen-victory');
     createConfetti();
 }
@@ -135,6 +144,7 @@ function shuffleArray(array) {
 // JOGO DA MEMÓRIA
 // =====================================================
 function startMemoryGame() {
+    getPlayerName();
     currentGame = 'memory';
     matchedPairs = 0;
     moves = 0;
@@ -251,6 +261,7 @@ function checkMemoryMatch() {
 // QUEBRA-CABEÇA DESLIZANTE
 // =====================================================
 function startPuzzleGame() {
+    getPlayerName();
     currentGame = 'puzzle';
     moves = 0;
 
@@ -373,6 +384,7 @@ function movePuzzlePiece(index) {
 // CAÇA-PALAVRAS
 // =====================================================
 function startWordSearchGame() {
+    getPlayerName();
     currentGame = 'wordsearch';
     moves = 0;
     foundWords = [];

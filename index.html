@@ -16,6 +16,10 @@
                 <img src="assets/logo-png.png" alt="Não é Não" class="logo-image">
                 <p class="subtitle">JOGO INTERATIVO</p>
             </div>
+            <div class="name-input-container">
+                <label for="player-name">Qual seu nome?</label>
+                <input type="text" id="player-name" placeholder="Digite seu nome" maxlength="20">
+            </div>
             <div class="game-selection">
                 <button class="btn-game-select" onclick="startMemoryGame()">
                     <span class="game-icon"><i class="fas fa-brain"></i></span>
@@ -136,7 +140,7 @@
     <div id="screen-victory" class="screen">
         <div class="victory-content">
             <div class="victory-icon"><i class="fas fa-trophy"></i></div>
-            <h2>PARABÉNS!</h2>
+            <h2>PARABÉNS, <span id="winner-name">Jogador</span>!</h2>
             <p class="victory-text">Você completou o jogo!</p>
 
             <div class="victory-stats">
