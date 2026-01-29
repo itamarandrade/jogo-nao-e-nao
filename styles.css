@@ -104,19 +104,16 @@ body {
 }
 
 .partner-logo {
-    background: #fff;
-    border-radius: 12px;
-    padding: 8px 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
 }
 
 .partner-logo img {
-    height: 40px;
+    height: 45px;
     width: auto;
-    max-width: 80px;
+    max-width: 100px;
     object-fit: contain;
 }
 
