@@ -512,6 +512,13 @@ body {
     max-height: 80px !important;
 }
 
+/* Logo maior na tela de cadastro */
+.register-screen-content .logo-container .logo-image {
+    max-width: clamp(150px, 40vw, 220px) !important;
+    max-height: none !important;
+    width: auto;
+}
+
 .register-section {
     width: 100%;
     max-width: 450px;
@@ -2520,7 +2527,7 @@ body {
     }
 
     .register-screen-content .logo-container .logo-image {
-        max-width: 100px;
+        max-width: clamp(120px, 25vw, 180px) !important;
     }
 
     .register-section {
