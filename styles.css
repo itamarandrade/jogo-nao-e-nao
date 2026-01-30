@@ -198,6 +198,26 @@ body {
     align-items: center;
     justify-content: center;
     z-index: 2;
+    gap: 20px;
+}
+
+/* Logo do Governo (acima do logo principal) */
+.splash-gov-logo {
+    margin-bottom: 10px;
+}
+
+.splash-gov-logo .gov-logo {
+    background: #fff;
+    border-radius: 12px;
+    padding: 10px 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.splash-gov-logo .gov-logo img {
+    height: clamp(50px, 10vw, 70px);
+    width: auto;
+    max-width: clamp(150px, 35vw, 220px);
+    object-fit: contain;
 }
 
 .splash-logo-container {
@@ -225,16 +245,17 @@ body {
 }
 
 .splash-partners {
-    margin-top: 30px;
+    margin-top: 15px;
     animation: fadeInUp 1s ease-out 0.5s both;
 }
 
 .partners-row {
     display: flex;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
-    gap: 25px;
-    flex-wrap: wrap;
+    gap: 15px;
+    flex-wrap: nowrap;
 }
 
 .partner-logo {
@@ -2213,30 +2234,44 @@ body {
 /* ===== ORIENTAÇÃO RETRATO (PORTRAIT) ===== */
 @media (orientation: portrait) {
     /* Splash Screen - Retrato */
-    .splash-logo {
-        width: clamp(180px, 50vw, 300px);
-    }
-
-    .splash-partners {
-        margin-top: 40px;
-    }
-
-    .partners-row {
-        flex-direction: column;
+    .splash-content {
         gap: 15px;
     }
 
+    .splash-gov-logo .gov-logo {
+        padding: 8px 18px;
+    }
+
+    .splash-gov-logo .gov-logo img {
+        height: clamp(45px, 9vw, 65px);
+        max-width: clamp(130px, 30vw, 200px);
+    }
+
+    .splash-logo {
+        width: clamp(160px, 45vw, 280px);
+    }
+
+    .splash-partners {
+        margin-top: 20px;
+    }
+
+    /* Parceiros sempre lado a lado */
+    .partners-row {
+        flex-direction: row;
+        gap: 12px;
+    }
+
     .partner-logo {
-        padding: 10px 25px;
+        padding: 8px 15px;
     }
 
     .partner-logo img {
-        height: clamp(40px, 8vw, 60px);
-        max-width: clamp(100px, 35vw, 150px);
+        height: clamp(35px, 7vw, 50px);
+        max-width: clamp(80px, 22vw, 130px);
     }
 
     .splash-tap-hint {
-        bottom: 60px;
+        bottom: 50px;
     }
 
     /* Tela de Nome/Registro - Retrato */
@@ -2386,14 +2421,25 @@ body {
 
 /* ===== ORIENTAÇÃO PAISAGEM (LANDSCAPE) ===== */
 @media (orientation: landscape) {
-    /* Splash Screen - Paisagem */
+    /* Splash Screen - Paisagem (mantém estrutura vertical) */
     .splash-content {
-        flex-direction: row;
+        flex-direction: column;
         align-items: center;
-        gap: 40px;
-        width: 100%;
-        max-width: 900px;
+        gap: 12px;
         justify-content: center;
+    }
+
+    .splash-gov-logo {
+        margin-bottom: 5px;
+    }
+
+    .splash-gov-logo .gov-logo {
+        padding: 6px 15px;
+    }
+
+    .splash-gov-logo .gov-logo img {
+        height: clamp(35px, 8vh, 55px);
+        max-width: clamp(120px, 20vw, 180px);
     }
 
     .splash-logo-container {
@@ -2401,29 +2447,30 @@ body {
     }
 
     .splash-logo {
-        width: clamp(150px, 25vw, 250px);
+        width: clamp(120px, 22vw, 220px);
     }
 
     .splash-partners {
-        margin-top: 0;
+        margin-top: 10px;
     }
 
+    /* Parceiros sempre lado a lado */
     .partners-row {
-        flex-direction: column;
-        gap: 12px;
+        flex-direction: row;
+        gap: 15px;
     }
 
     .partner-logo {
-        padding: 8px 20px;
+        padding: 6px 15px;
     }
 
     .partner-logo img {
-        height: clamp(35px, 8vh, 55px);
-        max-width: clamp(80px, 15vw, 140px);
+        height: clamp(30px, 7vh, 45px);
+        max-width: clamp(70px, 12vw, 120px);
     }
 
     .splash-tap-hint {
-        bottom: 30px;
+        bottom: 25px;
     }
 
     /* Tela de Nome - Paisagem */
@@ -2724,12 +2771,47 @@ body {
 
 /* ===== PAISAGEM EM TELAS PEQUENAS ===== */
 @media (orientation: landscape) and (max-height: 500px) {
+    .splash-content {
+        gap: 8px;
+    }
+
+    .splash-gov-logo {
+        margin-bottom: 3px;
+    }
+
+    .splash-gov-logo .gov-logo {
+        padding: 5px 12px;
+    }
+
+    .splash-gov-logo .gov-logo img {
+        height: clamp(28px, 6vh, 40px);
+        max-width: clamp(90px, 15vw, 140px);
+    }
+
     .splash-logo {
-        width: clamp(100px, 20vw, 180px);
+        width: clamp(90px, 18vw, 160px);
+    }
+
+    .splash-partners {
+        margin-top: 5px;
+    }
+
+    .partners-row {
+        gap: 10px;
+    }
+
+    .partner-logo {
+        padding: 5px 10px;
     }
 
     .partner-logo img {
-        height: clamp(25px, 6vh, 40px);
+        height: clamp(22px, 5vh, 35px);
+        max-width: clamp(60px, 10vw, 100px);
+    }
+
+    .splash-tap-hint {
+        bottom: 15px;
+        font-size: 12px;
     }
 
     .game-board {
