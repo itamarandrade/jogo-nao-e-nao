@@ -21,6 +21,235 @@
         .dashboard-content {
             height: 100%;
         }
+
+        /* Dashboard - Orientação Retrato */
+        @media (orientation: portrait) {
+            .dashboard-main {
+                flex-direction: column;
+            }
+
+            .dashboard-tabs {
+                width: 100%;
+                flex-direction: row;
+                overflow-x: auto;
+                padding: 8px;
+                border-right: none;
+                border-bottom: 2px solid rgba(255,255,255,0.1);
+                gap: 5px;
+            }
+
+            .tab-btn {
+                flex: 0 0 auto;
+                padding: 8px 12px;
+                flex-direction: row;
+                gap: 6px;
+                font-size: 9px;
+            }
+
+            .tab-btn i {
+                font-size: 14px;
+            }
+
+            .dashboard-body {
+                padding: 15px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .stat-card {
+                padding: 12px;
+            }
+
+            .stat-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+            }
+
+            .stat-number {
+                font-size: 22px;
+            }
+
+            .stat-label {
+                font-size: 10px;
+            }
+
+            .players-table-container {
+                max-height: 200px;
+            }
+
+            .players-table {
+                font-size: 12px;
+            }
+
+            .players-table th,
+            .players-table td {
+                padding: 8px 10px;
+            }
+
+            .players-actions {
+                flex-wrap: wrap;
+            }
+
+            .btn-export, .btn-clear-data {
+                padding: 8px 15px;
+                font-size: 12px;
+            }
+
+            .config-section {
+                padding: 12px;
+                margin-bottom: 12px;
+            }
+
+            .themes-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+
+            .theme-card {
+                padding: 12px;
+            }
+
+            .icons-grid {
+                height: calc(100vh - 380px);
+                min-height: 150px;
+            }
+
+            .icon-item {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+
+            .dashboard-footer {
+                padding: 12px 15px;
+            }
+
+            .btn-reset-all,
+            .btn-save-config {
+                padding: 10px;
+                font-size: 12px;
+            }
+        }
+
+        /* Dashboard - Orientação Paisagem */
+        @media (orientation: landscape) {
+            .dashboard-tabs {
+                width: 80px;
+            }
+
+            .tab-btn {
+                padding: 10px 6px;
+                font-size: 9px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .stat-card {
+                flex-direction: column;
+                text-align: center;
+                padding: 12px 8px;
+                gap: 8px;
+            }
+
+            .stat-icon {
+                width: 45px;
+                height: 45px;
+            }
+
+            .players-table-container {
+                max-height: 300px;
+            }
+
+            .themes-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .icons-grid {
+                height: calc(100vh - 230px);
+            }
+
+            .icon-item {
+                width: 55px;
+                height: 55px;
+            }
+        }
+
+        /* Paisagem em telas pequenas */
+        @media (orientation: landscape) and (max-height: 500px) {
+            .dashboard-header {
+                padding: 10px 15px;
+            }
+
+            .dashboard-header h2 {
+                font-size: 16px;
+            }
+
+            .dashboard-tabs {
+                width: 65px;
+                padding: 5px;
+            }
+
+            .tab-btn {
+                padding: 8px 5px;
+                font-size: 8px;
+            }
+
+            .tab-btn i {
+                font-size: 16px;
+            }
+
+            .dashboard-body {
+                padding: 10px 15px;
+            }
+
+            .stats-grid {
+                gap: 8px;
+            }
+
+            .stat-card {
+                padding: 10px 5px;
+            }
+
+            .stat-icon {
+                width: 35px;
+                height: 35px;
+                font-size: 16px;
+            }
+
+            .stat-number {
+                font-size: 20px;
+            }
+
+            .config-section {
+                padding: 10px;
+                margin-bottom: 10px;
+            }
+
+            .config-label {
+                font-size: 12px;
+                margin-bottom: 8px;
+            }
+
+            .icons-grid {
+                height: calc(100vh - 200px);
+            }
+
+            .icon-item {
+                width: 45px;
+                height: 45px;
+                font-size: 18px;
+            }
+
+            .dashboard-footer {
+                padding: 8px 15px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -34,7 +263,13 @@
 
             <div class="dashboard-main">
                 <div class="dashboard-tabs">
-                    <button class="tab-btn active" data-tab="tab-visual" onclick="switchDashTab('tab-visual')">
+                    <button class="tab-btn active" data-tab="tab-stats" onclick="switchDashTab('tab-stats')">
+                        <i class="fas fa-chart-bar"></i> Estatísticas
+                    </button>
+                    <button class="tab-btn" data-tab="tab-players" onclick="switchDashTab('tab-players')">
+                        <i class="fas fa-users"></i> Cadastros
+                    </button>
+                    <button class="tab-btn" data-tab="tab-visual" onclick="switchDashTab('tab-visual')">
                         <i class="fas fa-palette"></i> Visual
                     </button>
                     <button class="tab-btn" data-tab="tab-quiz" onclick="switchDashTab('tab-quiz')">
@@ -49,8 +284,96 @@
                 </div>
 
                 <div class="dashboard-body">
+                    <!-- ABA ESTATÍSTICAS -->
+                    <div id="tab-stats" class="tab-content active">
+                        <div class="stats-grid">
+                            <div class="stat-card stat-total">
+                                <div class="stat-icon"><i class="fas fa-gamepad"></i></div>
+                                <div class="stat-info">
+                                    <span class="stat-number" id="stat-total">0</span>
+                                    <span class="stat-label">Total de Jogadores</span>
+                                </div>
+                            </div>
+                            <div class="stat-card stat-today">
+                                <div class="stat-icon"><i class="fas fa-calendar-day"></i></div>
+                                <div class="stat-info">
+                                    <span class="stat-number" id="stat-today">0</span>
+                                    <span class="stat-label">Jogaram Hoje</span>
+                                </div>
+                            </div>
+                            <div class="stat-card stat-registered">
+                                <div class="stat-icon"><i class="fas fa-user-check"></i></div>
+                                <div class="stat-info">
+                                    <span class="stat-number" id="stat-registered">0</span>
+                                    <span class="stat-label">Com Cadastro Completo</span>
+                                </div>
+                            </div>
+                            <div class="stat-card stat-simple">
+                                <div class="stat-icon"><i class="fas fa-user"></i></div>
+                                <div class="stat-info">
+                                    <span class="stat-number" id="stat-simple">0</span>
+                                    <span class="stat-label">Apenas Nome</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="config-section">
+                            <label class="config-label">
+                                <i class="fas fa-clipboard-list"></i> Formulário de Cadastro
+                            </label>
+                            <div class="game-toggle registration-toggle">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="toggle-registration" onchange="toggleRegistration(this.checked)">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span class="toggle-label">
+                                    <span id="registration-status">Desativado</span>
+                                    <small id="registration-desc">Apenas nome do jogador</small>
+                                </span>
+                            </div>
+                            <p class="config-hint">
+                                <i class="fas fa-info-circle"></i>
+                                Quando ativado, solicita nome, e-mail, telefone e consentimento antes do jogo.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- ABA CADASTROS -->
+                    <div id="tab-players" class="tab-content">
+                        <div class="players-header">
+                            <div class="players-actions">
+                                <button class="btn-export" onclick="exportPlayersCSV()">
+                                    <i class="fas fa-download"></i> Exportar CSV
+                                </button>
+                                <button class="btn-clear-data" onclick="clearPlayersData()">
+                                    <i class="fas fa-trash"></i> Limpar Dados
+                                </button>
+                            </div>
+                        </div>
+                        <div class="players-table-container">
+                            <table class="players-table" id="players-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>E-mail</th>
+                                        <th>Telefone</th>
+                                        <th>Data</th>
+                                        <th>Hora</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="players-tbody">
+                                    <!-- Dados serão inseridos via JS -->
+                                </tbody>
+                            </table>
+                            <div class="no-data-message" id="no-players-message" style="display: none;">
+                                <i class="fas fa-users-slash"></i>
+                                <p>Nenhum jogador registrado ainda.</p>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- ABA VISUAL -->
-                    <div id="tab-visual" class="tab-content active">
+                    <div id="tab-visual" class="tab-content">
                         <div class="config-section">
                             <label class="config-label">
                                 <i class="fas fa-swatchbook"></i> Tema do Jogo
@@ -202,8 +525,78 @@
             applyConfig(gameConfig);
             initDashboard();
             initGameToggles();
+            initRegistrationToggle();
             renderThemes();
+            updateStats();
+            renderPlayersTable();
         });
+
+        // Atualizar estatísticas
+        function updateStats() {
+            const stats = getPlayersStats();
+            document.getElementById('stat-total').textContent = stats.total;
+            document.getElementById('stat-today').textContent = stats.today;
+            document.getElementById('stat-registered').textContent = stats.withRegistration;
+            document.getElementById('stat-simple').textContent = stats.onlyName;
+        }
+
+        // Renderizar tabela de jogadores
+        function renderPlayersTable() {
+            const players = getPlayersData();
+            const tbody = document.getElementById('players-tbody');
+            const noDataMsg = document.getElementById('no-players-message');
+
+            tbody.innerHTML = '';
+
+            if (players.length === 0) {
+                noDataMsg.style.display = 'flex';
+                return;
+            }
+
+            noDataMsg.style.display = 'none';
+
+            // Ordenar por data/hora mais recente
+            const sortedPlayers = [...players].reverse();
+
+            sortedPlayers.forEach(player => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${player.name || '-'}</td>
+                    <td>${player.email || '-'}</td>
+                    <td>${player.phone || '-'}</td>
+                    <td>${player.date || '-'}</td>
+                    <td>${player.time || '-'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Inicializar toggle de registro
+        function initRegistrationToggle() {
+            const toggle = document.getElementById('toggle-registration');
+            const isEnabled = gameConfig.registrationEnabled === true;
+            toggle.checked = isEnabled;
+            updateRegistrationStatus(isEnabled);
+        }
+
+        // Toggle de formulário de registro
+        function toggleRegistration(enabled) {
+            tempConfig.registrationEnabled = enabled;
+            updateRegistrationStatus(enabled);
+        }
+
+        function updateRegistrationStatus(enabled) {
+            const statusEl = document.getElementById('registration-status');
+            const descEl = document.getElementById('registration-desc');
+
+            if (enabled) {
+                statusEl.textContent = 'Ativado';
+                descEl.textContent = 'Nome, e-mail, telefone e consentimento';
+            } else {
+                statusEl.textContent = 'Desativado';
+                descEl.textContent = 'Apenas nome do jogador';
+            }
+        }
 
         // Renderizar temas
         function renderThemes() {

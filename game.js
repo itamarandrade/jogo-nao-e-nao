@@ -171,6 +171,7 @@ const DEFAULT_CONFIG = {
     secondaryColor: '#868fc6',
     logo: null, // null = usar assets/logo-png.png
     puzzleImage: null, // null = usar assets/logo-png.png
+    registrationEnabled: false, // true = formulário completo, false = só nome
     gamesEnabled: {
         memory: true,
         puzzle: true,
@@ -1095,43 +1096,155 @@ document.addEventListener('touchend', (e) => {
     lastTouchEnd = now;
 }, false);
 
-// ===== TECLADO VIRTUAL =====
-function initVirtualKeyboard() {
-    const input = document.getElementById('player-name');
-    const display = document.getElementById('player-name-display');
-    const keys = document.querySelectorAll('.kbd-key');
+// ===== DADOS DOS JOGADORES (CSV) =====
+const PLAYERS_STORAGE_KEY = 'game_players_data';
 
-    const updateDisplay = () => {
-        display.textContent = input.value || '_';
-    };
+function getPlayersData() {
+    const data = localStorage.getItem(PLAYERS_STORAGE_KEY);
+    return data ? JSON.parse(data) : [];
+}
 
-    keys.forEach(key => {
-        const handleKey = (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            const keyValue = key.dataset.key;
-
-            if (keyValue === 'BACKSPACE') {
-                input.value = input.value.slice(0, -1);
-            } else if (keyValue === 'CLEAR') {
-                input.value = '';
-            } else if (input.value.length < 15) {
-                input.value += keyValue;
-            }
-            updateDisplay();
-        };
-
-        key.addEventListener('click', handleKey);
-        key.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            handleKey(e);
-        }, { passive: false });
+function savePlayerData(playerData) {
+    const players = getPlayersData();
+    players.push({
+        ...playerData,
+        id: Date.now(),
+        timestamp: new Date().toISOString(),
+        date: new Date().toLocaleDateString('pt-BR'),
+        time: new Date().toLocaleTimeString('pt-BR')
     });
+    localStorage.setItem(PLAYERS_STORAGE_KEY, JSON.stringify(players));
+}
+
+function exportPlayersCSV() {
+    const players = getPlayersData();
+    if (players.length === 0) {
+        alert('Nenhum dado para exportar!');
+        return;
+    }
+
+    const headers = ['ID', 'Nome', 'Email', 'Telefone', 'Consentimento', 'Data', 'Hora'];
+    const rows = players.map(p => [
+        p.id,
+        p.name || '',
+        p.email || '',
+        p.phone || '',
+        p.consent ? 'Sim' : 'Não',
+        p.date || '',
+        p.time || ''
+    ]);
+
+    const csvContent = [headers.join(';'), ...rows.map(r => r.join(';'))].join('\n');
+    const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `jogadores_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+}
+
+function clearPlayersData() {
+    if (confirm('Tem certeza que deseja limpar TODOS os dados dos jogadores? Esta ação não pode ser desfeita!')) {
+        localStorage.removeItem(PLAYERS_STORAGE_KEY);
+        alert('Dados limpos com sucesso!');
+        if (typeof renderPlayersTable === 'function') {
+            renderPlayersTable();
+        }
+        if (typeof updateStats === 'function') {
+            updateStats();
+        }
+    }
+}
+
+function getPlayersStats() {
+    const players = getPlayersData();
+    const today = new Date().toLocaleDateString('pt-BR');
+    const todayPlayers = players.filter(p => p.date === today);
+    const withEmail = players.filter(p => p.email && p.email.trim() !== '');
+
+    return {
+        total: players.length,
+        today: todayPlayers.length,
+        withRegistration: withEmail.length,
+        onlyName: players.length - withEmail.length
+    };
+}
+
+// ===== FORMULÁRIO DE CADASTRO =====
+function isRegistrationEnabled() {
+    return gameConfig.registrationEnabled === true;
+}
+
+function formatPhone(input) {
+    let value = input.value.replace(/\D/g, '');
+    if (value.length > 11) value = value.slice(0, 11);
+
+    if (value.length > 6) {
+        value = `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7)}`;
+    } else if (value.length > 2) {
+        value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+    } else if (value.length > 0) {
+        value = `(${value}`;
+    }
+
+    input.value = value;
+}
+
+function submitRegistration() {
+    const name = document.getElementById('reg-name').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const phone = document.getElementById('reg-phone').value.trim();
+    const consent = document.getElementById('reg-consent').checked;
+
+    if (!name) {
+        alert('Por favor, informe seu nome!');
+        return;
+    }
+
+    if (!email) {
+        alert('Por favor, informe seu e-mail!');
+        return;
+    }
+
+    if (!consent) {
+        alert('Você precisa autorizar o uso dos seus dados para continuar!');
+        return;
+    }
+
+    // Salvar dados
+    savePlayerData({
+        name: name,
+        email: email,
+        phone: phone,
+        consent: consent,
+        registered: true
+    });
+
+    // Definir nome do jogador
+    playerName = name.split(' ')[0]; // Primeiro nome
+    document.getElementById('welcome-name').textContent = playerName;
+
+    // Limpar formulário
+    document.getElementById('register-form').reset();
+
+    // Ir para seleção de jogos
+    showScreen('screen-start');
 }
 
 // ===== IR PARA SELEÇÃO DE JOGOS =====
 function goToGameSelection() {
     getPlayerName();
+
+    // Salvar dados mesmo no modo simples (só nome)
+    if (!isRegistrationEnabled()) {
+        savePlayerData({
+            name: playerName,
+            email: '',
+            phone: '',
+            consent: false,
+            registered: false
+        });
+    }
+
     document.getElementById('welcome-name').textContent = playerName;
     showScreen('screen-start');
 }
@@ -1140,10 +1253,34 @@ function goToGameSelection() {
 function initSplashScreen() {
     createSplashParticles();
 
-    // Após 3 segundos, ir para tela de nome
-    setTimeout(() => {
+    // Adiciona evento de clique na splash screen
+    const splashScreen = document.getElementById('screen-splash');
+    splashScreen.addEventListener('click', handleSplashClick);
+    splashScreen.addEventListener('touchend', handleSplashClick);
+}
+
+function handleSplashClick(e) {
+    e.preventDefault();
+    const splashScreen = document.getElementById('screen-splash');
+
+    // Remove os listeners para evitar múltiplos cliques
+    splashScreen.removeEventListener('click', handleSplashClick);
+    splashScreen.removeEventListener('touchend', handleSplashClick);
+
+    // Vai para a tela apropriada
+    if (isRegistrationEnabled()) {
+        showScreen('screen-register');
+    } else {
         showScreen('screen-name');
-    }, 3000);
+    }
+}
+
+// Inicializar máscara de telefone
+function initPhoneMask() {
+    const phoneInput = document.getElementById('reg-phone');
+    if (phoneInput) {
+        phoneInput.addEventListener('input', () => formatPhone(phoneInput));
+    }
 }
 
 function createSplashParticles() {
@@ -1383,5 +1520,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
     showScreen('screen-splash');
     initSplashScreen();
-    initVirtualKeyboard();
+    initPhoneMask();
 });
