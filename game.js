@@ -1,3 +1,393 @@
+// ===== SISTEMA DE MÚSICA E EFEITOS SONOROS =====
+let bgMusic = null;
+let isMusicPlaying = false;
+let musicInitialized = false;
+let currentVolume = 0.4;
+let audioContext = null;
+
+function initMusic() {
+    bgMusic = document.getElementById('bg-music');
+    const musicToggle = document.getElementById('music-toggle');
+    const volumeSlider = document.getElementById('volume-slider');
+    const volumeControl = document.getElementById('volume-control');
+
+    if (!bgMusic || !musicToggle) return;
+
+    // Load volume from localStorage
+    const savedVolume = localStorage.getItem('gameVolume');
+    if (savedVolume !== null) {
+        currentVolume = parseFloat(savedVolume);
+    }
+
+    bgMusic.volume = currentVolume;
+
+    if (volumeSlider) {
+        volumeSlider.value = currentVolume * 100;
+        updateVolumeSliderBackground(volumeSlider, currentVolume * 100);
+
+        // Volume slider event
+        volumeSlider.addEventListener('input', (e) => {
+            const value = parseInt(e.target.value);
+            currentVolume = value / 100;
+            bgMusic.volume = currentVolume;
+            localStorage.setItem('gameVolume', currentVolume.toString());
+            updateVolumeSliderBackground(e.target, value);
+            updateVolumeIcon();
+
+            // If slider moved and music not playing, start it
+            if (value > 0 && !isMusicPlaying && musicInitialized) {
+                playMusic();
+            }
+            // If slider at 0, mute
+            if (value === 0 && isMusicPlaying) {
+                pauseMusic();
+            }
+        });
+    }
+
+    // Load music preference from localStorage
+    const musicPreference = localStorage.getItem('musicEnabled');
+    const shouldPlay = musicPreference !== 'false';
+
+    // Click handler for toggle button
+    musicToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleMusic();
+    });
+
+    // Mobile: expand on touch, collapse when touching outside
+    if (volumeControl) {
+        volumeControl.addEventListener('touchstart', (e) => {
+            volumeControl.classList.add('expanded');
+        });
+
+        document.addEventListener('touchstart', (e) => {
+            if (!volumeControl.contains(e.target)) {
+                volumeControl.classList.remove('expanded');
+            }
+        });
+    }
+
+    // Start music on first user interaction
+    const startMusicOnInteraction = () => {
+        if (!musicInitialized) {
+            musicInitialized = true;
+            if (shouldPlay && currentVolume > 0) {
+                playMusic();
+            }
+        }
+        document.removeEventListener('click', startMusicOnInteraction);
+        document.removeEventListener('touchstart', startMusicOnInteraction);
+    };
+
+    document.addEventListener('click', startMusicOnInteraction);
+    document.addEventListener('touchstart', startMusicOnInteraction);
+
+    // Initialize Web Audio API for sound effects
+    initAudioContext();
+}
+
+function initAudioContext() {
+    try {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    } catch (e) {
+        console.log('Web Audio API not supported');
+    }
+}
+
+function updateVolumeSliderBackground(slider, value) {
+    slider.style.setProperty('--volume-percent', value + '%');
+    slider.style.background = `linear-gradient(to right, var(--cor-amarelo) 0%, var(--cor-amarelo) ${value}%, rgba(255,255,255,0.3) ${value}%, rgba(255,255,255,0.3) 100%)`;
+
+    const volumeControl = document.getElementById('volume-control');
+    if (volumeControl && isMusicPlaying) {
+        slider.style.background = `linear-gradient(to right, #4ade80 0%, #4ade80 ${value}%, rgba(255,255,255,0.3) ${value}%, rgba(255,255,255,0.3) 100%)`;
+    }
+}
+
+function playMusic() {
+    if (!bgMusic) return;
+
+    bgMusic.play().then(() => {
+        isMusicPlaying = true;
+        updateMusicButton();
+        localStorage.setItem('musicEnabled', 'true');
+    }).catch(err => {
+        console.log('Autoplay blocked, waiting for user interaction');
+    });
+}
+
+function pauseMusic() {
+    if (!bgMusic) return;
+
+    bgMusic.pause();
+    isMusicPlaying = false;
+    updateMusicButton();
+    localStorage.setItem('musicEnabled', 'false');
+}
+
+function toggleMusic() {
+    if (isMusicPlaying) {
+        pauseMusic();
+    } else {
+        // Restore volume if it was at 0
+        if (currentVolume === 0) {
+            currentVolume = 0.4;
+            bgMusic.volume = currentVolume;
+            const volumeSlider = document.getElementById('volume-slider');
+            if (volumeSlider) {
+                volumeSlider.value = 40;
+                updateVolumeSliderBackground(volumeSlider, 40);
+            }
+            localStorage.setItem('gameVolume', currentVolume.toString());
+        }
+        playMusic();
+    }
+}
+
+function updateVolumeIcon() {
+    const musicToggle = document.getElementById('music-toggle');
+    if (!musicToggle) return;
+
+    const volumeSlider = document.getElementById('volume-slider');
+    const value = volumeSlider ? parseInt(volumeSlider.value) : currentVolume * 100;
+
+    let icon;
+    if (value === 0 || !isMusicPlaying) {
+        icon = 'fa-volume-xmark';
+    } else if (value < 33) {
+        icon = 'fa-volume-off';
+    } else if (value < 66) {
+        icon = 'fa-volume-low';
+    } else {
+        icon = 'fa-volume-high';
+    }
+
+    musicToggle.innerHTML = `<i class="fas ${icon}"></i>`;
+}
+
+function updateMusicButton() {
+    const musicToggle = document.getElementById('music-toggle');
+    const volumeControl = document.getElementById('volume-control');
+    const volumeSlider = document.getElementById('volume-slider');
+
+    if (!musicToggle) return;
+
+    if (isMusicPlaying) {
+        musicToggle.title = 'Desligar música';
+        if (volumeControl) volumeControl.classList.add('playing');
+        if (volumeSlider) {
+            const value = parseInt(volumeSlider.value);
+            updateVolumeSliderBackground(volumeSlider, value);
+        }
+    } else {
+        musicToggle.title = 'Ligar música';
+        if (volumeControl) volumeControl.classList.remove('playing');
+        if (volumeSlider) {
+            const value = parseInt(volumeSlider.value);
+            volumeSlider.style.background = `linear-gradient(to right, var(--cor-amarelo) 0%, var(--cor-amarelo) ${value}%, rgba(255,255,255,0.3) ${value}%, rgba(255,255,255,0.3) 100%)`;
+        }
+    }
+    updateVolumeIcon();
+}
+
+// ===== CONTROLE DE VOLUME DURANTE JOGOS =====
+let isInGame = false;
+let originalVolume = 0.4;
+
+function enterGameMode() {
+    if (!bgMusic) return;
+    isInGame = true;
+    originalVolume = currentVolume;
+    // Diminui música de fundo para 15% do volume original durante o jogo
+    bgMusic.volume = currentVolume * 0.15;
+}
+
+function exitGameMode() {
+    if (!bgMusic) return;
+    isInGame = false;
+    // Restaura volume original
+    bgMusic.volume = currentVolume;
+}
+
+// ===== SISTEMA DE EFEITOS SONOROS =====
+function playSoundEffect(type) {
+    if (!audioContext) {
+        initAudioContext();
+    }
+    if (!audioContext) return;
+
+    // Resume context if suspended (required for user interaction policy)
+    if (audioContext.state === 'suspended') {
+        audioContext.resume();
+    }
+
+    // Efeitos sonoros usam volume cheio (baseado no volume original, não no diminuído)
+    const baseVolume = isInGame ? originalVolume : currentVolume;
+    const effectVolume = baseVolume * 1.2; // Efeitos 20% mais altos que a música normal
+
+    switch(type) {
+        case 'click':
+            playClickSound(effectVolume);
+            break;
+        case 'flip':
+            playFlipSound(effectVolume);
+            break;
+        case 'match':
+            playMatchSound(effectVolume);
+            break;
+        case 'wrong':
+            playWrongSound(effectVolume);
+            break;
+        case 'victory':
+            playVictorySound(effectVolume);
+            break;
+        case 'correct':
+            playCorrectSound(effectVolume);
+            break;
+        case 'place':
+            playPlaceSound(effectVolume);
+            break;
+    }
+}
+
+function playClickSound(volume) {
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(600, audioContext.currentTime + 0.1);
+
+    gainNode.gain.setValueAtTime(volume * 0.3, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.1);
+
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.1);
+}
+
+function playFlipSound(volume) {
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(800, audioContext.currentTime + 0.08);
+
+    gainNode.gain.setValueAtTime(volume * 0.25, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.08);
+
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.1);
+}
+
+function playMatchSound(volume) {
+    // Play a pleasant chord
+    const frequencies = [523.25, 659.25, 783.99]; // C5, E5, G5 (C major)
+
+    frequencies.forEach((freq, i) => {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
+
+        const startTime = audioContext.currentTime + i * 0.05;
+        gainNode.gain.setValueAtTime(0, startTime);
+        gainNode.gain.linearRampToValueAtTime(volume * 0.2, startTime + 0.05);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + 0.4);
+
+        oscillator.start(startTime);
+        oscillator.stop(startTime + 0.5);
+    });
+}
+
+function playWrongSound(volume) {
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    oscillator.type = 'sawtooth';
+    oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.2);
+
+    gainNode.gain.setValueAtTime(volume * 0.15, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.2);
+
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.25);
+}
+
+function playVictorySound(volume) {
+    const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+
+    notes.forEach((freq, i) => {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
+
+        const startTime = audioContext.currentTime + i * 0.15;
+        gainNode.gain.setValueAtTime(0, startTime);
+        gainNode.gain.linearRampToValueAtTime(volume * 0.25, startTime + 0.05);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + 0.5);
+
+        oscillator.start(startTime);
+        oscillator.stop(startTime + 0.6);
+    });
+}
+
+function playCorrectSound(volume) {
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(900, audioContext.currentTime + 0.15);
+
+    gainNode.gain.setValueAtTime(volume * 0.25, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.2);
+
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.25);
+}
+
+function playPlaceSound(volume) {
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    oscillator.type = 'triangle';
+    oscillator.frequency.setValueAtTime(300, audioContext.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(500, audioContext.currentTime + 0.1);
+
+    gainNode.gain.setValueAtTime(volume * 0.2, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.15);
+
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.2);
+}
+
 // ===== TEMAS DISPONÍVEIS =====
 const THEMES = {
     carnaval: {
@@ -415,12 +805,14 @@ function showScreen(screenId) {
 
 function goToStart() {
     stopTimer();
+    exitGameMode();
     currentGame = null;
     showScreen('screen-start');
 }
 
 function quitGame() {
     stopTimer();
+    exitGameMode();
     goToStart();
 }
 
@@ -458,6 +850,7 @@ function getPlayerName() {
 // ===== VITÓRIA =====
 function showVictory() {
     stopTimer();
+    exitGameMode();
     document.getElementById('final-time').textContent = formatTime(seconds);
     document.getElementById('final-moves').textContent = moves;
     document.getElementById('winner-name').textContent = playerName || 'Jogador';
@@ -504,6 +897,8 @@ function shuffleArray(array) {
 // JOGO DA MEMÓRIA
 // =====================================================
 function startMemoryGame() {
+    playSoundEffect('click');
+    enterGameMode();
     currentGame = 'memory';
     matchedPairs = 0;
     moves = 0;
@@ -575,6 +970,7 @@ function flipCard(cardElement) {
     if (cardElement.classList.contains('matched')) return;
     if (flippedCards.length >= 2) return;
 
+    playSoundEffect('flip');
     cardElement.classList.add('flipped');
     flippedCards.push(cardElement);
 
@@ -592,6 +988,7 @@ function checkMemoryMatch() {
     const id2 = card2.dataset.id;
 
     if (id1 === id2) {
+        playSoundEffect('match');
         setTimeout(() => {
             card1.classList.add('matched');
             card2.classList.add('matched');
@@ -601,10 +998,12 @@ function checkMemoryMatch() {
             isLocked = false;
 
             if (matchedPairs === TOTAL_PAIRS) {
+                playSoundEffect('victory');
                 setTimeout(showVictory, 500);
             }
         }, 300);
     } else {
+        playSoundEffect('wrong');
         card1.classList.add('wrong');
         card2.classList.add('wrong');
         setTimeout(() => {
@@ -622,6 +1021,8 @@ function checkMemoryMatch() {
 let dragSourceSlot = null; // Slot de onde a peça está sendo arrastada
 
 function startPuzzleGame() {
+    playSoundEffect('click');
+    enterGameMode();
     currentGame = 'puzzle';
     moves = 0;
     placedPieces = [null, null, null, null, null, null, null, null, null];
@@ -944,11 +1345,13 @@ function handlePieceDrop(targetSlot, targetSlotIndex) {
         }
     }
 
+    playSoundEffect('place');
     moves++;
     document.getElementById('puzzle-moves').textContent = moves;
 
     // Verificar vitória
     if (isPuzzleSolved()) {
+        playSoundEffect('victory');
         setTimeout(showVictory, 500);
     }
 }
@@ -977,6 +1380,8 @@ function returnPieceToPool() {
 // QUIZ (Verdadeiro ou Falso)
 // =====================================================
 function startQuizGame() {
+    playSoundEffect('click');
+    enterGameMode();
     currentGame = 'quiz';
     moves = 0;
     currentQuestionIndex = 0;
@@ -999,6 +1404,7 @@ function startQuizGame() {
 function showQuestion() {
     if (currentQuestionIndex >= quizQuestions.length) {
         moves = correctAnswers;
+        playSoundEffect('victory');
         setTimeout(showVictory, 500);
         return;
     }
@@ -1043,6 +1449,7 @@ function answerQuiz(answer) {
 
     // Mostrar resultado visual nos botões
     if (isCorrect) {
+        playSoundEffect('correct');
         if (answer) {
             btnTrue.classList.add('correct');
         } else {
@@ -1050,6 +1457,7 @@ function answerQuiz(answer) {
         }
         correctAnswers++;
     } else {
+        playSoundEffect('wrong');
         if (answer) {
             btnTrue.classList.add('wrong');
             btnFalse.classList.add('correct');
@@ -1232,6 +1640,7 @@ function submitRegistration() {
 
 // ===== IR PARA SELEÇÃO DE JOGOS =====
 function goToGameSelection() {
+    playSoundEffect('click');
     getPlayerName();
 
     // Salvar dados mesmo no modo simples (só nome)
@@ -1517,6 +1926,9 @@ function resetAllConfig() {
 document.addEventListener('DOMContentLoaded', () => {
     // Aplicar configurações salvas
     applyConfig(gameConfig);
+
+    // Inicializar sistema de música
+    initMusic();
 
     showScreen('screen-splash');
     initSplashScreen();

@@ -18,6 +18,177 @@
     user-select: none;
 }
 
+/* ===== CONTROLE DE VOLUME ===== */
+.volume-control {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    z-index: 9999;
+    background: linear-gradient(135deg, rgba(133, 21, 149, 0.95) 0%, rgba(22, 33, 62, 0.98) 100%);
+    padding: 6px;
+    border-radius: 30px;
+    border: 2px solid var(--cor-amarelo);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 184, 0, 0.2);
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.volume-control:hover {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), 0 0 30px rgba(255, 184, 0, 0.4);
+    gap: 8px;
+    padding: 6px 12px 6px 6px;
+}
+
+.volume-control.playing {
+    border-color: #4ade80;
+    animation: volumePulse 2s ease-in-out infinite;
+}
+
+@keyframes volumePulse {
+    0%, 100% {
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), 0 0 15px rgba(74, 222, 128, 0.3);
+    }
+    50% {
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), 0 0 25px rgba(74, 222, 128, 0.5);
+    }
+}
+
+.volume-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: transparent;
+    border: none;
+    color: var(--cor-amarelo);
+    font-size: 1.3rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.volume-btn:hover {
+    transform: scale(1.1);
+    color: #fff;
+}
+
+.volume-btn:active {
+    transform: scale(0.95);
+}
+
+.volume-control.playing .volume-btn {
+    color: #4ade80;
+}
+
+/* Slider escondido por padrão, aparece no hover */
+.volume-slider-container {
+    width: 0;
+    overflow: hidden;
+    transition: width 0.3s ease;
+    display: flex;
+    align-items: center;
+}
+
+.volume-control:hover .volume-slider-container {
+    width: 90px;
+}
+
+.volume-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: linear-gradient(to right, var(--cor-amarelo) 0%, var(--cor-amarelo) 40%, rgba(255,255,255,0.3) 40%, rgba(255,255,255,0.3) 100%);
+    outline: none;
+    cursor: pointer;
+    transition: background 0.1s ease;
+}
+
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--cor-amarelo);
+    cursor: grab;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    transition: all 0.2s ease;
+}
+
+.volume-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 10px rgba(255, 184, 0, 0.6);
+}
+
+.volume-slider::-webkit-slider-thumb:active {
+    cursor: grabbing;
+}
+
+.volume-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--cor-amarelo);
+    cursor: grab;
+    border: none;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    transition: all 0.2s ease;
+}
+
+.volume-slider::-moz-range-track {
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.3);
+}
+
+.volume-control.playing .volume-slider {
+    background: linear-gradient(to right, #4ade80 0%, #4ade80 var(--volume-percent, 40%), rgba(255,255,255,0.3) var(--volume-percent, 40%), rgba(255,255,255,0.3) 100%);
+}
+
+.volume-control.playing .volume-slider::-webkit-slider-thumb {
+    background: #4ade80;
+}
+
+.volume-control.playing .volume-slider::-moz-range-thumb {
+    background: #4ade80;
+}
+
+/* Mobile: toque para expandir */
+@media (max-width: 480px) {
+    .volume-control {
+        bottom: 15px;
+        right: 15px;
+    }
+
+    .volume-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 1.1rem;
+    }
+
+    .volume-control:hover .volume-slider-container,
+    .volume-control.expanded .volume-slider-container {
+        width: 70px;
+    }
+
+    .volume-slider::-webkit-slider-thumb {
+        width: 14px;
+        height: 14px;
+    }
+
+    .volume-slider::-moz-range-thumb {
+        width: 14px;
+        height: 14px;
+    }
+}
+
 /* ===== DECORAÇÕES DO TEMA ===== */
 .theme-decorations {
     position: fixed;
@@ -226,7 +397,7 @@ body {
 }
 
 .splash-logo {
-    width: clamp(200px, 60vw, 350px);
+    width: clamp(280px, 75vw, 500px);
     height: auto;
     filter: drop-shadow(0 0 30px rgba(255, 184, 0, 0.5));
     animation: splashLogoPulse 2s ease-in-out infinite;
@@ -404,8 +575,8 @@ body {
 }
 
 .logo-image {
-    max-width: 100px;
-    width: 25vw;
+    max-width: 200px;
+    width: 45vw;
     height: auto;
 }
 
@@ -431,10 +602,11 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     height: 100%;
     padding: 20px;
     box-sizing: border-box;
+    gap: 25px;
 }
 
 .name-section {
@@ -514,7 +686,7 @@ body {
 
 /* Logo maior na tela de cadastro */
 .register-screen-content .logo-container .logo-image {
-    max-width: clamp(150px, 40vw, 220px) !important;
+    max-width: clamp(200px, 50vw, 300px) !important;
     max-height: none !important;
     width: auto;
 }
@@ -2216,7 +2388,7 @@ body {
 
 /* Mobile pequeno */
 @media (max-width: 400px) {
-    .logo-image { max-width: 80px; }
+    .logo-image { max-width: 150px; }
     .subtitle { font-size: 12px; letter-spacing: 4px; }
     .btn-game-select { padding: 14px 20px; }
     .game-icon { font-size: 26px; width: 44px; height: 44px; }
@@ -2235,7 +2407,7 @@ body {
         gap: 10px;
     }
     .card-face { border-radius: 12px; }
-    .logo-image { max-width: 120px; }
+    .logo-image { max-width: 220px; }
 }
 
 /* ===== ORIENTAÇÃO RETRATO (PORTRAIT) ===== */
@@ -2255,7 +2427,7 @@ body {
     }
 
     .splash-logo {
-        width: clamp(160px, 45vw, 280px);
+        width: clamp(220px, 60vw, 400px);
     }
 
     .splash-partners {
@@ -2289,7 +2461,7 @@ body {
     }
 
     .logo-container .logo-image {
-        max-width: 100px;
+        max-width: 180px;
     }
 
     .input-name {
@@ -2454,7 +2626,7 @@ body {
     }
 
     .splash-logo {
-        width: clamp(120px, 22vw, 220px);
+        width: clamp(180px, 35vw, 320px);
     }
 
     .splash-partners {
@@ -2482,10 +2654,10 @@ body {
 
     /* Tela de Nome - Paisagem */
     .name-screen-content {
-        flex-direction: row;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
-        gap: 40px;
+        gap: 20px;
         padding: 20px 40px;
     }
 
@@ -2494,11 +2666,10 @@ body {
     }
 
     .name-screen-content .logo-container .logo-image {
-        max-width: 120px;
+        max-width: 160px;
     }
 
     .name-section {
-        flex: 1;
         max-width: 400px;
     }
 
@@ -2507,19 +2678,16 @@ body {
     }
 
     .name-screen-content .btn-continue {
-        position: absolute;
-        bottom: 30px;
-        right: 40px;
+        /* Centralizado */
     }
 
     /* Tela de Registro - Paisagem */
     .register-screen-content {
-        flex-direction: row;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
-        gap: 30px;
-        padding: 20px 30px;
-        flex-wrap: wrap;
+        gap: 15px;
+        padding: 15px 30px;
     }
 
     .register-screen-content .logo-container {
@@ -2527,16 +2695,15 @@ body {
     }
 
     .register-screen-content .logo-container .logo-image {
-        max-width: clamp(120px, 25vw, 180px) !important;
+        max-width: clamp(140px, 25vw, 200px) !important;
     }
 
     .register-section {
-        flex: 1;
         max-width: 450px;
     }
 
     .register-form {
-        gap: 10px;
+        gap: 8px;
     }
 
     .form-group {
@@ -2544,7 +2711,7 @@ body {
     }
 
     .form-input {
-        padding: 10px 15px;
+        padding: 8px 15px;
         font-size: 14px;
     }
 
@@ -2557,9 +2724,7 @@ body {
     }
 
     .register-screen-content .btn-continue {
-        position: absolute;
-        bottom: 20px;
-        right: 30px;
+        /* Centralizado */
     }
 
     /* Seleção de Jogos - Paisagem */
@@ -2796,7 +2961,7 @@ body {
     }
 
     .splash-logo {
-        width: clamp(90px, 18vw, 160px);
+        width: clamp(140px, 28vw, 240px);
     }
 
     .splash-partners {
