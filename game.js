@@ -568,16 +568,41 @@ const DEFAULT_CONFIG = {
         quiz: true
     },
     quizQuestions: [
-        { question: "Beijo ou toque sem consentimento pode ser crime, mesmo em festas? (Lei nº 13.718/2018)", answer: true },
-        { question: "Uma pessoa precisa dizer 'não' em voz alta para a lei reconhecer o assédio?", answer: false },
-        { question: "O 180 serve apenas para denúncia?", answer: false, hint: "Também orienta e acolhe" },
-        { question: "A Lei Maria da Penha nasceu da história real de uma mulher que lutou por justiça e mudou a lei no Brasil?", answer: true },
-        { question: "Toda pessoa tem o direito de dizer NÃO a qualquer momento.", answer: true },
-        { question: "Se alguém não responde, significa que está concordando.", answer: false },
-        { question: "Respeitar o NÃO é uma forma de demonstrar amor e cuidado.", answer: true },
-        { question: "Insistir após ouvir um NÃO é uma forma aceitável de convencimento.", answer: false },
-        { question: "O consentimento deve ser dado de forma livre e consciente.", answer: true },
-        { question: "Respeitar limites é fundamental em qualquer tipo de relacionamento.", answer: true }
+        // 🟢 NÍVEL FÁCIL (10 perguntas)
+        { question: "\"Não\" significa \"não\", mesmo que a pessoa esteja sorrindo?", answer: true, level: "easy", awareness: "Sorriso não é consentimento." },
+        { question: "Insistir depois de ouvir \"não\" é errado?", answer: true, level: "easy", awareness: "Insistência é desrespeito." },
+        { question: "Silêncio significa consentimento?", answer: false, level: "easy", awareness: "Consentimento precisa ser claro." },
+        { question: "Uma pessoa pode mudar de ideia depois de dizer \"sim\"?", answer: true, level: "easy", awareness: "Consentimento pode ser retirado." },
+        { question: "Beijo sem permissão é violência?", answer: true, level: "easy", awareness: "Qualquer contato sem consentimento é violência." },
+        { question: "Segurar alguém pelo braço sem autorização é errado?", answer: true, level: "easy", awareness: "Tocar sem permissão é violência." },
+        { question: "Se alguém disser \"para\", a outra pessoa deve parar imediatamente?", answer: true, level: "easy", awareness: "Parar é obrigatório." },
+        { question: "Roupas curtas significam que a pessoa quer contato?", answer: false, level: "easy", awareness: "Roupa não é convite." },
+        { question: "Em situação de perigo imediato, ligar 190 é correto?", answer: true, level: "easy", awareness: "190 aciona a Polícia Militar." },
+        { question: "Pedir ajuda à equipe do evento é um direito da vítima?", answer: true, level: "easy", awareness: "A vítima não está sozinha." },
+
+        // 🟡 NÍVEL MÉDIO (10 perguntas)
+        { question: "Flertar dá direito a tocar sem permissão?", answer: false, level: "medium", awareness: "Flertar não é autorização." },
+        { question: "Se a pessoa estiver bêbada, o consentimento é válido?", answer: false, level: "medium", awareness: "Sem consciência, não há consentimento." },
+        { question: "A Lei Maria da Penha protege apenas mulheres casadas?", answer: false, level: "medium", awareness: "Vale para namoro, ex e outras relações." },
+        { question: "A Lei Maria da Penha só se aplica em agressão física?", answer: false, level: "medium", awareness: "Vale também para violência psicológica, moral e sexual." },
+        { question: "Divulgar foto íntima sem autorização é crime? (Lei Carolina Dieckmann)", answer: true, level: "medium", awareness: "Expor intimidade sem consentimento é crime." },
+        { question: "Comentários de cunho sexual podem ser assédio?", answer: true, level: "medium", awareness: "Palavras também ferem." },
+        { question: "Seguir alguém de forma insistente pode ser assédio?", answer: true, level: "medium", awareness: "Intimidação também é violência." },
+        { question: "A vítima pode procurar ajuda mesmo sem denunciar?", answer: true, level: "medium", awareness: "Apoio independe de denúncia." },
+        { question: "O telefone 180 orienta e encaminha mulheres para a rede de apoio?", answer: true, level: "medium", awareness: "180 é gratuito e funciona 24h." },
+        { question: "Culpar a vítima pela violência é correto?", answer: false, level: "medium", awareness: "A culpa nunca é da vítima." },
+
+        // 🔴 NÍVEL DIFÍCIL (10 perguntas)
+        { question: "Importunação sexual é crime no Brasil?", answer: true, level: "hard", awareness: "Lei nº 13.718/2018." },
+        { question: "Beijo forçado pode ser enquadrado como crime?", answer: true, level: "hard", awareness: "Pode configurar importunação sexual." },
+        { question: "Estar alcoolizado isenta alguém de responsabilidade criminal?", answer: false, level: "hard", awareness: "Álcool não justifica crime." },
+        { question: "A palavra da vítima tem valor legal?", answer: true, level: "hard", awareness: "A Justiça reconhece seu valor." },
+        { question: "O Protocolo \"Não é Não\" é previsto em lei?", answer: true, level: "hard", awareness: "Lei nº 14.786/2023." },
+        { question: "O protocolo determina acolhimento humanizado e sem julgamento?", answer: true, level: "hard", awareness: "A vítima deve ser respeitada." },
+        { question: "A vítima deve ser afastada do agressor e colocada em local seguro?", answer: true, level: "hard", awareness: "Segurança vem primeiro." },
+        { question: "Em caso de violência sexual ou risco imediato, ligar 190 é correto?", answer: true, level: "hard", awareness: "Polícia Militar garante proteção imediata." },
+        { question: "Em necessidade de atendimento médico urgente, o número correto é 192?", answer: true, level: "hard", awareness: "192 aciona o SAMU." },
+        { question: "A vítima pode denunciar mesmo sem testemunhas?", answer: true, level: "hard", awareness: "A denúncia é um direito." }
     ],
     memoryIcons: [
         { icon: 'fa-heart', name: 'Coração' },
@@ -1388,8 +1413,29 @@ function startQuizGame() {
     correctAnswers = 0;
     quizAnswered = false;
 
-    // Carregar perguntas das configurações
-    quizQuestions = shuffleArray([...gameConfig.quizQuestions]);
+    // Selecionar perguntas por nível: 2 fáceis, 3 médias, 5 difíceis
+    const allQuestions = gameConfig.quizQuestions;
+
+    const easyQuestions = shuffleArray(allQuestions.filter(q => q.level === 'easy'));
+    const mediumQuestions = shuffleArray(allQuestions.filter(q => q.level === 'medium'));
+    const hardQuestions = shuffleArray(allQuestions.filter(q => q.level === 'hard'));
+    const otherQuestions = shuffleArray(allQuestions.filter(q => !q.level)); // Perguntas sem nível definido
+
+    // Selecionar a quantidade desejada de cada nível
+    let selectedQuestions = [
+        ...easyQuestions.slice(0, 2),
+        ...mediumQuestions.slice(0, 3),
+        ...hardQuestions.slice(0, 5)
+    ];
+
+    // Se não tiver perguntas suficientes com níveis, completar com perguntas sem nível ou repetir
+    if (selectedQuestions.length < 10 && otherQuestions.length > 0) {
+        const remaining = 10 - selectedQuestions.length;
+        selectedQuestions = [...selectedQuestions, ...otherQuestions.slice(0, remaining)];
+    }
+
+    // Embaralhar as perguntas selecionadas
+    quizQuestions = shuffleArray(selectedQuestions);
 
     document.getElementById('quiz-timer').textContent = '00:00';
     document.getElementById('quiz-total').textContent = quizQuestions.length;
@@ -1470,24 +1516,25 @@ function answerQuiz(answer) {
     // Atualizar placar
     document.getElementById('quiz-score').textContent = `${correctAnswers}/${quizQuestions.length}`;
 
-    // Mostrar feedback
+    // Mostrar feedback com mensagem de conscientização (sempre aparece)
     feedback.classList.remove('correct', 'wrong');
     feedback.classList.add('show', isCorrect ? 'correct' : 'wrong');
     feedback.querySelector('.feedback-icon').innerHTML = isCorrect
         ? '<i class="fas fa-check-circle"></i>'
         : '<i class="fas fa-times-circle"></i>';
 
-    let feedbackText = isCorrect ? 'Correto!' : 'Incorreto!';
-    if (question.hint && !isCorrect) {
-        feedbackText += ' ' + question.hint;
+    // Sempre mostrar a mensagem de conscientização
+    let feedbackText = isCorrect ? 'Correto! ' : 'Incorreto! ';
+    if (question.awareness) {
+        feedbackText += question.awareness;
     }
     feedback.querySelector('.feedback-text').textContent = feedbackText;
 
-    // Próxima pergunta após delay
+    // Próxima pergunta após delay (aumentado para dar tempo de ler a conscientização)
     setTimeout(() => {
         currentQuestionIndex++;
         showQuestion();
-    }, 2000);
+    }, 3000);
 }
 
 // ===== PREVENIR ZOOM EM TOUCH =====
@@ -1714,6 +1761,7 @@ function createSplashParticles() {
 // =====================================================
 let tempConfig = {};
 let newQuestionAnswer = true;
+let newQuestionLevel = 'medium';
 
 function initDashboard() {
     tempConfig = { ...gameConfig };
@@ -1812,16 +1860,32 @@ function renderQuizQuestions() {
     const list = document.getElementById('quiz-questions-list');
     list.innerHTML = '';
 
+    const levelLabels = { easy: '🟢', medium: '🟡', hard: '🔴' };
+    const levelNames = { easy: 'Fácil', medium: 'Médio', hard: 'Difícil' };
+
     tempConfig.quizQuestions.forEach((q, index) => {
         const item = document.createElement('div');
         item.className = 'question-item';
+        const levelEmoji = levelLabels[q.level] || '⚪';
+        const levelName = levelNames[q.level] || 'Sem nível';
         item.innerHTML = `
+            <span class="q-level" title="${levelName}">${levelEmoji}</span>
             <span class="q-text">${q.question}</span>
             <span class="q-answer ${q.answer ? 'true' : 'false'}">${q.answer ? 'V' : 'F'}</span>
             <button class="btn-delete-q" onclick="deleteQuestion(${index})"><i class="fas fa-trash"></i></button>
         `;
         list.appendChild(item);
     });
+
+    // Mostrar contagem por nível
+    const easyCount = tempConfig.quizQuestions.filter(q => q.level === 'easy').length;
+    const mediumCount = tempConfig.quizQuestions.filter(q => q.level === 'medium').length;
+    const hardCount = tempConfig.quizQuestions.filter(q => q.level === 'hard').length;
+
+    const countInfo = document.getElementById('quiz-level-count');
+    if (countInfo) {
+        countInfo.innerHTML = `🟢 Fácil: ${easyCount} | 🟡 Médio: ${mediumCount} | 🔴 Difícil: ${hardCount}`;
+    }
 }
 
 function setNewAnswer(value) {
@@ -1830,21 +1894,38 @@ function setNewAnswer(value) {
     document.getElementById('answer-false').classList.toggle('active', !value);
 }
 
+function setNewLevel(level) {
+    newQuestionLevel = level;
+    document.querySelectorAll('.level-btn').forEach(btn => btn.classList.remove('active'));
+    const activeBtn = document.querySelector(`.level-btn[data-level="${level}"]`);
+    if (activeBtn) activeBtn.classList.add('active');
+}
+
 function addQuizQuestion() {
     const textarea = document.getElementById('new-question');
+    const awarenessInput = document.getElementById('new-awareness');
     const question = textarea.value.trim();
+    const awareness = awarenessInput ? awarenessInput.value.trim() : '';
 
     if (!question) {
         alert('Digite uma pergunta!');
         return;
     }
 
+    if (!awareness) {
+        alert('Digite a mensagem de conscientização!');
+        return;
+    }
+
     tempConfig.quizQuestions.push({
         question: question,
-        answer: newQuestionAnswer
+        answer: newQuestionAnswer,
+        level: newQuestionLevel,
+        awareness: awareness
     });
 
     textarea.value = '';
+    if (awarenessInput) awarenessInput.value = '';
     renderQuizQuestions();
 }
 
