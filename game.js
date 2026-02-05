@@ -667,7 +667,17 @@ function loadConfig() {
         if (saved) {
             const config = JSON.parse(saved);
             // Mesclar com padrão para garantir que todas as propriedades existam
-            return { ...DEFAULT_CONFIG, ...config };
+            const merged = { ...DEFAULT_CONFIG, ...config };
+
+            // Se as perguntas salvas não têm level/awareness, usar as padrão
+            if (config.quizQuestions && config.quizQuestions.length > 0) {
+                const hasLevels = config.quizQuestions.some(q => q.level);
+                if (!hasLevels) {
+                    merged.quizQuestions = DEFAULT_CONFIG.quizQuestions;
+                }
+            }
+
+            return merged;
         }
     } catch (e) {
         console.error('Erro ao carregar configurações:', e);
