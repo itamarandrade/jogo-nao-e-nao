@@ -18,6 +18,11 @@
     user-select: none;
 }
 
+input, textarea, select {
+    user-select: text;
+    -webkit-user-select: text;
+}
+
 /* ===== CONTROLE DE VOLUME ===== */
 .volume-control {
     position: fixed;
@@ -3028,5 +3033,262 @@ body {
 
     .victory-stat {
         padding: 10px 20px;
+    }
+}
+
+/* ===== TELAS GRANDES - TOTEM/TV (1080x1920 portrait ou similar) ===== */
+@media (min-width: 768px) and (min-height: 1024px) {
+
+    /* Splash */
+    .splash-gov-logo .gov-logo img {
+        height: 80px;
+        max-width: 280px;
+    }
+
+    .splash-logo {
+        width: min(70vw, 600px);
+    }
+
+    .partner-logo img {
+        height: 60px;
+        max-width: 200px;
+    }
+
+    .splash-tap-hint {
+        font-size: 22px;
+        bottom: 60px;
+    }
+
+    /* Nome e Registro */
+    .name-title,
+    .register-title {
+        font-size: 36px;
+    }
+
+    .register-subtitle {
+        font-size: 20px;
+    }
+
+    .logo-container .logo-image {
+        max-width: 300px;
+    }
+
+    .input-name {
+        max-width: 600px;
+        padding: 24px 30px;
+        font-size: 28px;
+        border-radius: 20px;
+    }
+
+    .form-input {
+        padding: 20px 24px;
+        font-size: 22px;
+        border-radius: 16px;
+    }
+
+    .form-group label {
+        font-size: 18px;
+    }
+
+    .register-section {
+        max-width: 650px;
+    }
+
+    .name-section {
+        max-width: 600px;
+    }
+
+    /* Teclado virtual */
+    .kbd-key {
+        width: 65px;
+        height: 65px;
+        font-size: 28px;
+        border-radius: 14px;
+    }
+
+    .keyboard-row {
+        gap: 10px;
+    }
+
+    .btn-continue {
+        padding: 20px 50px;
+        font-size: 22px;
+        border-radius: 18px;
+    }
+
+    /* Seleção de Jogos */
+    .game-selection {
+        max-width: 650px;
+        gap: 20px;
+    }
+
+    .welcome-text {
+        font-size: 36px;
+    }
+
+    .choose-text {
+        font-size: 20px;
+    }
+
+    .btn-game-select {
+        padding: 28px 35px;
+        border-radius: 20px;
+        gap: 20px;
+    }
+
+    .game-icon {
+        font-size: 42px;
+        width: 70px;
+        height: 70px;
+        border-radius: 16px;
+    }
+
+    .game-name {
+        font-size: 24px;
+    }
+
+    .game-description {
+        font-size: 16px;
+    }
+
+    /* Tela do Jogo - Header */
+    .game-header {
+        max-width: 700px;
+        padding: 18px 30px;
+        border-radius: 16px;
+    }
+
+    .stat-label {
+        font-size: 13px;
+    }
+
+    .stat-value {
+        font-size: 26px;
+    }
+
+    .stat-icon {
+        font-size: 26px;
+    }
+
+    /* Tabuleiro do Jogo da Memória */
+    .game-board {
+        width: min(85vw, 50vh, 750px);
+        height: min(85vw, 50vh, 750px);
+        gap: 12px;
+        padding: 10px;
+    }
+
+    .card-face {
+        font-size: 48px;
+        border-radius: 14px;
+    }
+
+    .card-front::after {
+        font-size: 52px;
+    }
+
+    /* Puzzle */
+    .puzzle-container {
+        max-width: 650px;
+    }
+
+    .puzzle-board {
+        width: min(75vw, 40vh, 500px);
+        height: min(75vw, 40vh, 500px);
+        border-radius: 16px;
+        gap: 5px;
+        padding: 5px;
+    }
+
+    .puzzle-piece {
+        width: min(22vw, 13vh, 120px);
+        height: min(22vw, 13vh, 120px);
+        border-radius: 10px;
+    }
+
+    .puzzle-pieces {
+        max-width: 550px;
+        border-radius: 16px;
+        gap: 10px;
+        padding: 15px;
+        min-height: 120px;
+    }
+
+    .puzzle-hint {
+        font-size: 18px;
+    }
+
+    /* Quiz */
+    .quiz-container {
+        max-width: 700px;
+    }
+
+    .quiz-question-box {
+        padding: 35px 30px;
+        border-radius: 24px;
+    }
+
+    .quiz-number {
+        font-size: 16px;
+        letter-spacing: 3px;
+    }
+
+    .quiz-question-text {
+        font-size: 26px;
+        margin-top: 20px;
+    }
+
+    .btn-quiz-answer {
+        padding: 24px 35px;
+        border-radius: 18px;
+        font-size: 22px;
+    }
+
+    .quiz-answers {
+        gap: 16px;
+    }
+
+    .quiz-feedback {
+        font-size: 20px;
+        border-radius: 16px;
+    }
+
+    .quiz-score-display {
+        font-size: 18px;
+    }
+
+    /* Botão Sair */
+    .btn-quit {
+        padding: 16px 40px;
+        font-size: 18px;
+        border-radius: 14px;
+    }
+
+    /* Vitória */
+    .victory-icon {
+        font-size: 90px;
+    }
+
+    .victory-content h2 {
+        font-size: 42px;
+    }
+
+    .victory-stat {
+        padding: 20px 40px;
+    }
+
+    .victory-stat .stat-value {
+        font-size: 32px;
+    }
+
+    .victory-stat .stat-label {
+        font-size: 16px;
+    }
+
+    .btn-play-again,
+    .btn-back-menu {
+        padding: 18px 40px;
+        font-size: 20px;
+        border-radius: 16px;
     }
 }

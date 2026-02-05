@@ -1544,6 +1544,8 @@ document.addEventListener('gestureend', (e) => e.preventDefault());
 
 let lastTouchEnd = 0;
 document.addEventListener('touchend', (e) => {
+    const tag = e.target.tagName.toLowerCase();
+    if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
     const now = Date.now();
     if (now - lastTouchEnd <= 300) {
         e.preventDefault();
