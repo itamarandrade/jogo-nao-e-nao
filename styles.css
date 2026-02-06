@@ -21,6 +21,8 @@
 input, textarea, select {
     user-select: text;
     -webkit-user-select: text;
+    touch-action: manipulation;
+    -webkit-appearance: none;
 }
 
 /* ===== CONTROLE DE VOLUME ===== */

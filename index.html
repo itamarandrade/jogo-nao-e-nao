@@ -68,7 +68,7 @@
 
             <div class="name-section">
                 <h2 class="name-title">Qual é o seu nome?</h2>
-                <input type="text" id="player-name" class="input-name" placeholder="Digite seu nome..." maxlength="30" autocomplete="off">
+                <input type="text" id="player-name" class="input-name" placeholder="Digite seu nome..." maxlength="30" autocomplete="off" inputmode="text" enterkeyhint="go">
             </div>
 
             <button class="btn-continue" onclick="goToGameSelection()">
@@ -91,17 +91,17 @@
                 <form id="register-form" class="register-form">
                     <div class="form-group">
                         <label for="reg-name"><i class="fas fa-user"></i> Nome</label>
-                        <input type="text" id="reg-name" class="form-input" placeholder="Seu nome completo" maxlength="50" required autocomplete="off">
+                        <input type="text" id="reg-name" class="form-input" placeholder="Seu nome completo" maxlength="50" required autocomplete="off" inputmode="text" enterkeyhint="next">
                     </div>
 
                     <div class="form-group">
                         <label for="reg-email"><i class="fas fa-envelope"></i> E-mail</label>
-                        <input type="email" id="reg-email" class="form-input" placeholder="seu@email.com" required autocomplete="off">
+                        <input type="email" id="reg-email" class="form-input" placeholder="seu@email.com" required autocomplete="off" inputmode="email" enterkeyhint="next">
                     </div>
 
                     <div class="form-group">
                         <label for="reg-phone"><i class="fas fa-phone"></i> Telefone</label>
-                        <input type="tel" id="reg-phone" class="form-input" placeholder="(00) 00000-0000" maxlength="15" autocomplete="off">
+                        <input type="tel" id="reg-phone" class="form-input" placeholder="(00) 00000-0000" maxlength="15" autocomplete="off" inputmode="tel" enterkeyhint="done">
                     </div>
 
                     <div class="form-group form-checkbox">
