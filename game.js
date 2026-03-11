@@ -559,8 +559,8 @@ const DEFAULT_CONFIG = {
     theme: 'carnaval',
     primaryColor: '#ffb800',
     secondaryColor: '#868fc6',
-    logo: null, // null = usar assets/logo-png.png
-    puzzleImage: null, // null = usar assets/logo-png.png
+    logo: null, // null = usar assets/casa-do-patrao.jpg
+    puzzleImage: null, // null = usar assets/casa-do-patrao.jpg
     registrationEnabled: false, // true = formulário completo, false = só nome
     gamesEnabled: {
         memory: true,
@@ -605,27 +605,35 @@ const DEFAULT_CONFIG = {
         { question: "A vítima pode denunciar mesmo sem testemunhas?", answer: true, level: "hard", awareness: "A denúncia é um direito." }
     ],
     memoryIcons: [
-        { image: 'assets/cards/nao-e-nao-verde.png', name: 'Não é Não Verde' },
-        { image: 'assets/cards/nao-e-nao-vermelho.png', name: 'Não é Não Vermelho' },
-        { image: 'assets/cards/logo-estado-presente.png', name: 'Estado Presente' },
-        { image: 'assets/cards/logo-sesm.png', name: 'SESM' },
-        { image: 'assets/cards/logo-viva-mais.png', name: 'Viva Mais' },
-        { image: 'assets/cards/disque-180.png', name: 'Disque 180' },
-        { image: 'assets/cards/ligue-190.png', name: 'Ligue 190' },
-        { image: 'assets/cards/mao-pare.png', name: 'Não é Não' }
+        { icon: 'fa-house', name: 'Casa' },
+        { icon: 'fa-crown', name: 'Coroa' },
+        { icon: 'fa-star', name: 'Estrela' },
+        { icon: 'fa-trophy', name: 'Troféu' },
+        { icon: 'fa-tv', name: 'TV' },
+        { icon: 'fa-camera', name: 'Câmera' },
+        { icon: 'fa-microphone', name: 'Microfone' },
+        { icon: 'fa-money-bill-wave', name: 'Dinheiro' }
     ]
 };
 
 // Lista completa de imagens disponíveis para seleção no Dashboard
 const AVAILABLE_ICONS = [
-    { image: 'assets/cards/nao-e-nao-verde.png', name: 'Não é Não Verde' },
-    { image: 'assets/cards/nao-e-nao-vermelho.png', name: 'Não é Não Vermelho' },
-    { image: 'assets/cards/logo-estado-presente.png', name: 'Estado Presente' },
-    { image: 'assets/cards/logo-sesm.png', name: 'SESM' },
-    { image: 'assets/cards/logo-viva-mais.png', name: 'Viva Mais' },
-    { image: 'assets/cards/disque-180.png', name: 'Disque 180' },
-    { image: 'assets/cards/ligue-190.png', name: 'Ligue 190' },
-    { image: 'assets/cards/mao-pare.png', name: 'Não é Não' }
+    { icon: 'fa-house', name: 'Casa' },
+    { icon: 'fa-crown', name: 'Coroa' },
+    { icon: 'fa-star', name: 'Estrela' },
+    { icon: 'fa-trophy', name: 'Troféu' },
+    { icon: 'fa-tv', name: 'TV' },
+    { icon: 'fa-camera', name: 'Câmera' },
+    { icon: 'fa-microphone', name: 'Microfone' },
+    { icon: 'fa-money-bill-wave', name: 'Dinheiro' },
+    { icon: 'fa-briefcase', name: 'Maleta' },
+    { icon: 'fa-user-tie', name: 'Executivo' },
+    { icon: 'fa-key', name: 'Chave' },
+    { icon: 'fa-handshake', name: 'Aperto de mão' },
+    { icon: 'fa-fire', name: 'Fogo' },
+    { icon: 'fa-heart', name: 'Coração' },
+    { icon: 'fa-bolt', name: 'Raio' },
+    { icon: 'fa-gem', name: 'Gema' }
 ];
 
 // ===== FUNÇÕES DE CONFIGURAÇÃO (localStorage) =====
@@ -696,7 +704,7 @@ function applyConfig(config) {
     createThemeDecorations(themeName);
 
     // Aplicar logo
-    const logoSrc = config.logo || 'assets/logo-png.png';
+    const logoSrc = config.logo || '/assets/casa-do-patrao.jpg';
     document.querySelectorAll('.splash-logo, .logo-image').forEach(img => {
         img.src = logoSrc;
     });
@@ -705,7 +713,7 @@ function applyConfig(config) {
     applyWatermark(logoSrc);
 
     // Aplicar imagem do puzzle (será usado quando o puzzle for gerado)
-    window.puzzleImageSrc = config.puzzleImage || 'assets/logo-png.png';
+    window.puzzleImageSrc = config.puzzleImage || '/assets/casa-do-patrao.jpg';
 
     // Aplicar jogos habilitados
     const gamesEnabled = config.gamesEnabled || { memory: true, puzzle: true, quiz: true };
@@ -1058,7 +1066,7 @@ function generatePuzzle() {
 
     // Criar peças embaralhadas
     puzzlePieces = shuffleArray([0, 1, 2, 3, 4, 5, 6, 7, 8]);
-    const puzzleImage = gameConfig.puzzleImage || 'assets/logo-png.png';
+    const puzzleImage = gameConfig.puzzleImage || '/assets/casa-do-patrao.jpg';
 
     puzzlePieces.forEach(tile => {
         const piece = createPuzzlePiece(tile, puzzleImage);
@@ -1278,7 +1286,7 @@ function handlePieceTouchEnd(e) {
 
 // ===== HANDLE DROP =====
 function handlePieceDrop(targetSlot, targetSlotIndex) {
-    const puzzleImage = gameConfig.puzzleImage || 'assets/logo-png.png';
+    const puzzleImage = gameConfig.puzzleImage || '/assets/casa-do-patrao.jpg';
     const isTargetFilled = targetSlot.classList.contains('filled');
 
     // Se soltar no mesmo slot de origem, cancelar
@@ -1366,7 +1374,7 @@ function handlePieceDrop(targetSlot, targetSlotIndex) {
 function returnPieceToPool() {
     if (dragSourceSlot === null) return;
 
-    const puzzleImage = gameConfig.puzzleImage || 'assets/logo-png.png';
+    const puzzleImage = gameConfig.puzzleImage || '/assets/casa-do-patrao.jpg';
     const sourceSlot = document.querySelector(`.puzzle-slot[data-slot="${dragSourceSlot}"]`);
 
     // Remover do slot
@@ -1772,14 +1780,14 @@ function initDashboard() {
     if (tempConfig.logo) {
         document.getElementById('logo-preview').src = tempConfig.logo;
     } else {
-        document.getElementById('logo-preview').src = 'assets/logo-png.png';
+        document.getElementById('logo-preview').src = '/assets/casa-do-patrao.jpg';
     }
 
     // Puzzle preview
     if (tempConfig.puzzleImage) {
         document.getElementById('puzzle-preview').src = tempConfig.puzzleImage;
     } else {
-        document.getElementById('puzzle-preview').src = 'assets/logo-png.png';
+        document.getElementById('puzzle-preview').src = '/assets/casa-do-patrao.jpg';
     }
 
     renderQuizQuestions();
@@ -1807,7 +1815,7 @@ function previewLogo(input) {
 
 function resetLogo() {
     tempConfig.logo = null;
-    document.getElementById('logo-preview').src = 'assets/logo-png.png';
+    document.getElementById('logo-preview').src = '/assets/casa-do-patrao.jpg';
     document.getElementById('config-logo').value = '';
 }
 
@@ -1824,7 +1832,7 @@ function previewPuzzle(input) {
 
 function resetPuzzleImage() {
     tempConfig.puzzleImage = null;
-    document.getElementById('puzzle-preview').src = 'assets/logo-png.png';
+    document.getElementById('puzzle-preview').src = '/assets/casa-do-patrao.jpg';
     document.getElementById('config-puzzle').value = '';
 }
 
@@ -1978,14 +1986,21 @@ function resetAllConfig() {
 }
 
 // ===== INICIALIZAÇÃO =====
-document.addEventListener('DOMContentLoaded', () => {
+function initGame() {
     // Aplicar configurações salvas
     applyConfig(gameConfig);
 
     // Inicializar sistema de música
-    initMusic();
+    // initMusic();
 
     showScreen('screen-splash');
     initSplashScreen();
     initPhoneMask();
-});
+}
+
+// Suporta tanto carregamento normal (DOMContentLoaded) quanto Next.js (DOM já pronto)
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initGame);
+} else {
+    initGame();
+}

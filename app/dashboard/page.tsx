@@ -380,7 +380,7 @@ export default function DashboardPage() {
                     <i className="fas fa-image"></i> Logo Principal
                   </label>
                   <div className="upload-wrapper">
-                    <img id="logo-preview" src="/assets/logo-png.png" alt="Logo Preview" />
+                    <img id="logo-preview" src="/assets/casa-do-patrao.jpg" alt="Logo Preview" />
                     <input
                       type="file"
                       id="config-logo"
@@ -493,7 +493,7 @@ export default function DashboardPage() {
                     <i className="fas fa-image"></i> Imagem do Quebra-Cabeça
                   </label>
                   <div className="upload-wrapper">
-                    <img id="puzzle-preview" src="/assets/logo-png.png" alt="Puzzle Preview" />
+                    <img id="puzzle-preview" src="/assets/casa-do-patrao.jpg" alt="Puzzle Preview" />
                     <input
                       type="file"
                       id="config-puzzle"

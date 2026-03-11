@@ -33,26 +33,9 @@ export default function GamePage() {
       {/* SPLASH SCREEN */}
       <div id="screen-splash" className="screen active">
         <div className="splash-content">
-          <div className="splash-gov-logo">
-            <div className="partner-logo gov-logo">
-              <img src="/assets/Logo - SESM Vetorizada (1).png" alt="SESM - Governo ES" />
-            </div>
-          </div>
-
           <div className="splash-logo-container">
-            <img src="/assets/logo-png.png" alt="Não é Não" className="splash-logo" />
+            <img src="/assets/casa-do-patrao.jpg" alt="A Casa do Patrão" className="splash-logo" />
             <div className="splash-glow"></div>
-          </div>
-
-          <div className="splash-partners">
-            <div className="partners-row">
-              <div className="partner-logo">
-                <img src="/assets/Logo - Viva Mais (1).png" alt="Viva Mais" />
-              </div>
-              <div className="partner-logo">
-                <img src="/assets/Logo - Estado Presente (1).png" alt="Estado Presente" />
-              </div>
-            </div>
           </div>
           <p className="splash-tap-hint">
             <i className="fas fa-hand-pointer"></i> Toque para iniciar
@@ -65,7 +48,7 @@ export default function GamePage() {
       <div id="screen-name" className="screen">
         <div className="name-screen-content">
           <div className="logo-container">
-            <img src="/assets/logo-png.png" alt="Não é Não" className="logo-image" />
+            <img src="/assets/casa-do-patrao.jpg" alt="A Casa do Patrão" className="logo-image" />
           </div>
 
           <div className="name-section">
@@ -95,7 +78,7 @@ export default function GamePage() {
       <div id="screen-register" className="screen">
         <div className="register-screen-content">
           <div className="logo-container">
-            <img src="/assets/logo-png.png" alt="Não é Não" className="logo-image" />
+            <img src="/assets/casa-do-patrao.jpg" alt="A Casa do Patrão" className="logo-image" />
           </div>
 
           <div className="register-section">

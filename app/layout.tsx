@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Não é Não - Jogo Interativo',
-  description: 'Jogo interativo educativo Não é Não',
+  title: 'A Casa do Patrão - Jogo Interativo',
+  description: 'Jogo interativo A Casa do Patrão - TV Record',
 }
 
 export default function RootLayout({
