@@ -835,6 +835,142 @@ function quitGame() {
     goToStart();
 }
 
+// ===== TELA DE RANKINGS =====
+function showRankingScreen() {
+    showScreen('screen-ranking');
+    renderAllRankings();
+}
+
+function toggleScoringInfo() {
+    const dropdown = document.getElementById('scoring-dropdown');
+    const toggle = document.querySelector('.scoring-toggle');
+    const icon = toggle.querySelector('.toggle-icon');
+    
+    if (dropdown.classList.contains('open')) {
+        dropdown.classList.remove('open');
+        icon.style.transform = 'rotate(0deg)';
+    } else {
+        dropdown.classList.add('open');
+        icon.style.transform = 'rotate(180deg)';
+    }
+}
+
+function switchRankingTab(tabName) {
+    // Remove active de todas as tabs
+    document.querySelectorAll('.ranking-tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // Remove active de todas as tabelas
+    document.querySelectorAll('.ranking-table-container').forEach(container => {
+        container.classList.remove('active');
+    });
+    
+    // Adiciona active na tab e tabela selecionadas
+    document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+    document.getElementById(`ranking-${tabName}`).classList.add('active');
+}
+
+function renderAllRankings() {
+    renderQuizRanking();
+    renderMemoryRanking();
+    renderPuzzleRanking();
+    renderGeneralRanking();
+}
+
+function renderQuizRanking() {
+    const ranking = getRankingByGame('quiz', 10);
+    const tbody = document.getElementById('quiz-ranking-body');
+    
+    if (ranking.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="no-data">Nenhum resultado ainda</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = ranking.map(r => `
+        <tr class="${r.playerName === playerName ? 'highlight-row' : ''}">
+            <td class="position">
+                ${r.position === 1 ? '🥇' : r.position === 2 ? '🥈' : r.position === 3 ? '🥉' : r.position}
+            </td>
+            <td class="player-name">${r.playerName}</td>
+            <td>${formatTime(r.timeSeconds)}</td>
+            <td>${r.correctAnswers}/10</td>
+            <td class="score">${r.score.toFixed(2)}</td>
+            <td class="date">${r.date}</td>
+        </tr>
+    `).join('');
+}
+
+function renderMemoryRanking() {
+    const ranking = getRankingByGame('memory', 10);
+    const tbody = document.getElementById('memory-ranking-body');
+    
+    if (ranking.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="no-data">Nenhum resultado ainda</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = ranking.map(r => `
+        <tr class="${r.playerName === playerName ? 'highlight-row' : ''}">
+            <td class="position">
+                ${r.position === 1 ? '🥇' : r.position === 2 ? '🥈' : r.position === 3 ? '🥉' : r.position}
+            </td>
+            <td class="player-name">${r.playerName}</td>
+            <td>${formatTime(r.timeSeconds)}</td>
+            <td>${r.moves}</td>
+            <td class="score">${r.score.toFixed(2)}</td>
+            <td class="date">${r.date}</td>
+        </tr>
+    `).join('');
+}
+
+function renderPuzzleRanking() {
+    const ranking = getRankingByGame('puzzle', 10);
+    const tbody = document.getElementById('puzzle-ranking-body');
+    
+    if (ranking.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="no-data">Nenhum resultado ainda</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = ranking.map(r => `
+        <tr class="${r.playerName === playerName ? 'highlight-row' : ''}">
+            <td class="position">
+                ${r.position === 1 ? '🥇' : r.position === 2 ? '🥈' : r.position === 3 ? '🥉' : r.position}
+            </td>
+            <td class="player-name">${r.playerName}</td>
+            <td>${formatTime(r.timeSeconds)}</td>
+            <td>${r.moves}</td>
+            <td class="score">${r.score.toFixed(2)}</td>
+            <td class="date">${r.date}</td>
+        </tr>
+    `).join('');
+}
+
+function renderGeneralRanking() {
+    const ranking = getGeneralRanking(10);
+    const tbody = document.getElementById('general-ranking-body');
+    
+    if (ranking.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="no-data">Complete todas as 3 modalidades para aparecer aqui!</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = ranking.map(r => `
+        <tr class="${r.playerName === playerName ? 'highlight-row' : ''}">
+            <td class="position">
+                ${r.position === 1 ? '🥇' : r.position === 2 ? '🥈' : r.position === 3 ? '🥉' : r.position}
+            </td>
+            <td class="player-name">${r.playerName}</td>
+            <td>${r.quizScore.toFixed(2)}</td>
+            <td>${r.memoryScore.toFixed(2)}</td>
+            <td>${r.puzzleScore.toFixed(2)}</td>
+            <td class="score">${r.averageScore.toFixed(2)}</td>
+            <td class="date">${r.date}</td>
+        </tr>
+    `).join('');
+}
+
 // ===== TIMER =====
 function startTimer(timerElementId) {
     stopTimer();
@@ -870,9 +1006,53 @@ function getPlayerName() {
 function showVictory() {
     stopTimer();
     exitGameMode();
+    
+    // Salva o resultado do jogo
+    const gameResult = saveGameResult(currentGame, seconds, moves, correctAnswers);
+    
+    // Atualiza informações básicas
     document.getElementById('final-time').textContent = formatTime(seconds);
     document.getElementById('final-moves').textContent = moves;
     document.getElementById('winner-name').textContent = playerName || 'Jogador';
+    
+    // Mostra pontuação e posição no ranking
+    const scoreElement = document.getElementById('final-score');
+    const rankingElement = document.getElementById('final-ranking-position');
+    
+    if (scoreElement) {
+        scoreElement.textContent = gameResult.score.toFixed(2);
+    }
+    
+    if (rankingElement) {
+        const stats = getPlayerStats(playerName);
+        let position = null;
+        let rankingMessage = '';
+        
+        if (currentGame === 'quiz' && stats.quizPosition) {
+            position = stats.quizPosition;
+        } else if (currentGame === 'memory' && stats.memoryPosition) {
+            position = stats.memoryPosition;
+        } else if (currentGame === 'puzzle' && stats.puzzlePosition) {
+            position = stats.puzzlePosition;
+        }
+        
+        if (position) {
+            if (position === 1) {
+                rankingMessage = '🏆 NOVO RECORDE! Você está em 1º lugar!';
+            } else if (position <= 3) {
+                rankingMessage = `🏅 TOP 3! Você está em ${position}º lugar!`;
+            } else if (position <= 10) {
+                rankingMessage = `🎯 TOP 10! Você está em ${position}º lugar!`;
+            } else {
+                rankingMessage = `📊 Você está em ${position}º lugar no ranking!`;
+            }
+        } else {
+            rankingMessage = '🎮 Resultado salvo! Continue jogando para melhorar!';
+        }
+        
+        rankingElement.textContent = rankingMessage;
+    }
+    
     showScreen('screen-victory');
     createConfetti();
 }
@@ -1598,6 +1778,289 @@ function clearPlayersData() {
     }
 }
 
+// =====================================================
+// ===== SISTEMA DE RANKING =====
+// =====================================================
+
+const RESULTS_STORAGE_KEY = 'game_results';
+
+/**
+ * Calcula a pontuação baseada no tipo de jogo
+ * Maior pontuação = melhor resultado
+ */
+function calculateScore(gameType, timeSeconds, moves, correctAnswers = 0) {
+    switch(gameType) {
+        case 'quiz':
+            // Base 1000 - tempo - penalidade por erro (50 pontos por erro)
+            const errors = 10 - correctAnswers;
+            return Math.max(0, 1000 - timeSeconds - (errors * 50));
+        
+        case 'memory':
+            // Base 500 - tempo - penalidade por movimento (2 pontos por movimento)
+            return Math.max(0, 500 - timeSeconds - (moves * 2));
+        
+        case 'puzzle':
+            // Base 500 - tempo - penalidade por movimento (2 pontos por movimento)
+            return Math.max(0, 500 - timeSeconds - (moves * 2));
+        
+        default:
+            return Math.max(0, 1000 - timeSeconds);
+    }
+}
+
+/**
+ * Salva o resultado de um jogo no localStorage
+ */
+function saveGameResult(gameType, timeSeconds, moves, correctAnswers = 0) {
+    const results = getGameResults();
+    const calculatedScore = calculateScore(gameType, timeSeconds, moves, correctAnswers);
+    
+    const result = {
+        id: Date.now(),
+        playerId: playerName, // Usando playerName como ID temporário
+        playerName: playerName,
+        gameType: gameType,
+        timeSeconds: timeSeconds,
+        moves: moves,
+        correctAnswers: gameType === 'quiz' ? correctAnswers : null,
+        score: calculatedScore,
+        timestamp: new Date().toISOString(),
+        date: new Date().toLocaleDateString('pt-BR'),
+        time: new Date().toLocaleTimeString('pt-BR')
+    };
+    
+    results.push(result);
+    localStorage.setItem(RESULTS_STORAGE_KEY, JSON.stringify(results));
+    
+    return result;
+}
+
+/**
+ * Recupera todos os resultados salvos
+ */
+function getGameResults() {
+    const data = localStorage.getItem(RESULTS_STORAGE_KEY);
+    return data ? JSON.parse(data) : [];
+}
+
+/**
+ * Limpa todos os resultados (função admin)
+ */
+function clearGameResults() {
+    if (confirm('Tem certeza que deseja limpar TODOS os resultados dos rankings? Esta ação não pode ser desfeita!')) {
+        localStorage.removeItem(RESULTS_STORAGE_KEY);
+        alert('Rankings limpos com sucesso!');
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Retorna o ranking de um jogo específico
+ * @param {string} gameType - 'quiz', 'memory' ou 'puzzle'
+ * @param {number} limit - Número máximo de resultados (padrão 10)
+ */
+function getRankingByGame(gameType, limit = 10) {
+    const results = getGameResults();
+    
+    // Filtra por tipo de jogo e ordena por pontuação (maior é melhor)
+    const filtered = results
+        .filter(r => r.gameType === gameType)
+        .sort((a, b) => {
+            // Primeiro critério: maior pontuação
+            if (a.score !== b.score) {
+                return b.score - a.score;
+            }
+            // Critério de desempate: mais antigo primeiro
+            return new Date(a.timestamp) - new Date(b.timestamp);
+        });
+    
+    // Agrupa por jogador e pega o melhor resultado de cada
+    const bestByPlayer = {};
+    filtered.forEach(result => {
+        if (!bestByPlayer[result.playerName] || result.score > bestByPlayer[result.playerName].score) {
+            bestByPlayer[result.playerName] = result;
+        }
+    });
+    
+    // Converte de volta para array e ordena novamente
+    const ranking = Object.values(bestByPlayer)
+        .sort((a, b) => {
+            if (a.score !== b.score) {
+                return b.score - a.score;
+            }
+            return new Date(a.timestamp) - new Date(b.timestamp);
+        })
+        .slice(0, limit);
+    
+    // Adiciona a posição no ranking
+    return ranking.map((result, index) => ({
+        ...result,
+        position: index + 1
+    }));
+}
+
+/**
+ * Retorna o ranking geral (média das 3 modalidades)
+ * Apenas jogadores que completaram todas as 3 modalidades aparecem
+ * @param {number} limit - Número máximo de resultados (padrão 10)
+ */
+function getGeneralRanking(limit = 10) {
+    const results = getGameResults();
+    
+    // Agrupa resultados por jogador
+    const playerResults = {};
+    results.forEach(result => {
+        if (!playerResults[result.playerName]) {
+            playerResults[result.playerName] = {
+                playerName: result.playerName,
+                quiz: null,
+                memory: null,
+                puzzle: null
+            };
+        }
+        
+        // Pega o melhor resultado de cada modalidade
+        const current = playerResults[result.playerName][result.gameType];
+        if (!current || result.score > current.score) {
+            playerResults[result.playerName][result.gameType] = result;
+        }
+    });
+    
+    // Filtra apenas jogadores que completaram todas as 3 modalidades
+    const completeResults = Object.values(playerResults)
+        .filter(player => player.quiz && player.memory && player.puzzle)
+        .map(player => {
+            const avgScore = (player.quiz.score + player.memory.score + player.puzzle.score) / 3;
+            // Usa o timestamp mais recente entre os 3 jogos
+            const latestTimestamp = Math.max(
+                new Date(player.quiz.timestamp),
+                new Date(player.memory.timestamp),
+                new Date(player.puzzle.timestamp)
+            );
+            
+            return {
+                playerName: player.playerName,
+                quizScore: player.quiz.score,
+                memoryScore: player.memory.score,
+                puzzleScore: player.puzzle.score,
+                averageScore: Math.round(avgScore * 100) / 100, // Arredonda para 2 casas decimais
+                timestamp: new Date(latestTimestamp).toISOString(),
+                date: new Date(latestTimestamp).toLocaleDateString('pt-BR')
+            };
+        })
+        .sort((a, b) => {
+            // Ordena por média (maior é melhor)
+            if (a.averageScore !== b.averageScore) {
+                return b.averageScore - a.averageScore;
+            }
+            // Desempate por timestamp (mais antigo primeiro)
+            return new Date(a.timestamp) - new Date(b.timestamp);
+        })
+        .slice(0, limit);
+    
+    // Adiciona a posição
+    return completeResults.map((result, index) => ({
+        ...result,
+        position: index + 1
+    }));
+}
+
+/**
+ * Retorna estatísticas de um jogador específico
+ */
+function getPlayerStats(playerName) {
+    const results = getGameResults();
+    const playerResults = results.filter(r => r.playerName === playerName);
+    
+    if (playerResults.length === 0) {
+        return null;
+    }
+    
+    // Melhor resultado de cada modalidade
+    const bestQuiz = playerResults
+        .filter(r => r.gameType === 'quiz')
+        .sort((a, b) => a.score - b.score)[0];
+    
+    const bestMemory = playerResults
+        .filter(r => r.gameType === 'memory')
+        .sort((a, b) => a.score - b.score)[0];
+    
+    const bestPuzzle = playerResults
+        .filter(r => r.gameType === 'puzzle')
+        .sort((a, b) => a.score - b.score)[0];
+    
+    // Posição nos rankings
+    const quizRanking = getRankingByGame('quiz', 1000);
+    const memoryRanking = getRankingByGame('memory', 1000);
+    const puzzleRanking = getRankingByGame('puzzle', 1000);
+    const generalRanking = getGeneralRanking(1000);
+    
+    return {
+        playerName: playerName,
+        bestQuiz: bestQuiz,
+        bestMemory: bestMemory,
+        bestPuzzle: bestPuzzle,
+        quizPosition: bestQuiz ? quizRanking.findIndex(r => r.playerName === playerName) + 1 : null,
+        memoryPosition: bestMemory ? memoryRanking.findIndex(r => r.playerName === playerName) + 1 : null,
+        puzzlePosition: bestPuzzle ? puzzleRanking.findIndex(r => r.playerName === playerName) + 1 : null,
+        generalPosition: (bestQuiz && bestMemory && bestPuzzle) 
+            ? generalRanking.findIndex(r => r.playerName === playerName) + 1 
+            : null
+    };
+}
+
+/**
+ * Exporta rankings para CSV
+ */
+function exportRankingsCSV() {
+    const quizRanking = getRankingByGame('quiz', 1000);
+    const memoryRanking = getRankingByGame('memory', 1000);
+    const puzzleRanking = getRankingByGame('puzzle', 1000);
+    const generalRanking = getGeneralRanking(1000);
+    
+    let csvContent = '\ufeff'; // BOM para UTF-8
+    
+    // Quiz
+    csvContent += 'RANKING QUIZ\n';
+    csvContent += 'Posição;Nome;Tempo (s);Acertos;Pontuação;Data\n';
+    quizRanking.forEach(r => {
+        csvContent += `${r.position};${r.playerName};${r.timeSeconds};${r.correctAnswers};${r.score};${r.date}\n`;
+    });
+    csvContent += '\n';
+    
+    // Memória
+    csvContent += 'RANKING MEMÓRIA\n';
+    csvContent += 'Posição;Nome;Tempo (s);Movimentos;Pontuação;Data\n';
+    memoryRanking.forEach(r => {
+        csvContent += `${r.position};${r.playerName};${r.timeSeconds};${r.moves};${r.score};${r.date}\n`;
+    });
+    csvContent += '\n';
+    
+    // Puzzle
+    csvContent += 'RANKING QUEBRA-CABEÇA\n';
+    csvContent += 'Posição;Nome;Tempo (s);Movimentos;Pontuação;Data\n';
+    puzzleRanking.forEach(r => {
+        csvContent += `${r.position};${r.playerName};${r.timeSeconds};${r.moves};${r.score};${r.date}\n`;
+    });
+    csvContent += '\n';
+    
+    // Geral
+    csvContent += 'RANKING GERAL\n';
+    csvContent += 'Posição;Nome;Quiz;Memória;Puzzle;Média;Data\n';
+    generalRanking.forEach(r => {
+        csvContent += `${r.position};${r.playerName};${r.quizScore};${r.memoryScore};${r.puzzleScore};${r.averageScore};${r.date}\n`;
+    });
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `rankings_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+}
+
+// =====================================================
+
 function getPlayersStats() {
     const players = getPlayersData();
     const today = new Date().toLocaleDateString('pt-BR');
@@ -1808,6 +2271,119 @@ function switchDashTab(tabId) {
 
     document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
     document.getElementById(tabId).classList.add('active');
+    
+    // Renderiza rankings quando a aba é aberta
+    if (tabId === 'tab-rankings') {
+        renderDashboardRankings();
+    }
+}
+
+function switchDashboardRankingTab(tabName) {
+    // Remove active de todas as tabs de ranking do dashboard
+    document.querySelectorAll('.dashboard-ranking-tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // Remove active de todos os conteúdos de ranking
+    document.querySelectorAll('.dashboard-ranking-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    
+    // Adiciona active na tab e conteúdo selecionados
+    document.querySelector(`[data-ranking-tab="${tabName}"]`).classList.add('active');
+    document.getElementById(`dashboard-ranking-${tabName}`).classList.add('active');
+}
+
+function renderDashboardRankings() {
+    renderDashboardQuizRanking();
+    renderDashboardMemoryRanking();
+    renderDashboardPuzzleRanking();
+    renderDashboardGeneralRanking();
+}
+
+function renderDashboardQuizRanking() {
+    const ranking = getRankingByGame('quiz', 50);
+    const tbody = document.getElementById('dashboard-quiz-ranking-body');
+    
+    if (ranking.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="no-data-rank">Nenhum resultado ainda</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = ranking.map(r => `
+        <tr>
+            <td>${r.position === 1 ? '🥇' : r.position === 2 ? '🥈' : r.position === 3 ? '🥉' : r.position}</td>
+            <td>${r.playerName}</td>
+            <td>${formatTime(r.timeSeconds)}</td>
+            <td>${r.correctAnswers}/10</td>
+            <td>${r.score.toFixed(2)}</td>
+            <td>${r.date}</td>
+        </tr>
+    `).join('');
+}
+
+function renderDashboardMemoryRanking() {
+    const ranking = getRankingByGame('memory', 50);
+    const tbody = document.getElementById('dashboard-memory-ranking-body');
+    
+    if (ranking.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="no-data-rank">Nenhum resultado ainda</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = ranking.map(r => `
+        <tr>
+            <td>${r.position === 1 ? '🥇' : r.position === 2 ? '🥈' : r.position === 3 ? '🥉' : r.position}</td>
+            <td>${r.playerName}</td>
+            <td>${formatTime(r.timeSeconds)}</td>
+            <td>${r.moves}</td>
+            <td>${r.score.toFixed(2)}</td>
+            <td>${r.date}</td>
+        </tr>
+    `).join('');
+}
+
+function renderDashboardPuzzleRanking() {
+    const ranking = getRankingByGame('puzzle', 50);
+    const tbody = document.getElementById('dashboard-puzzle-ranking-body');
+    
+    if (ranking.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="no-data-rank">Nenhum resultado ainda</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = ranking.map(r => `
+        <tr>
+            <td>${r.position === 1 ? '🥇' : r.position === 2 ? '🥈' : r.position === 3 ? '🥉' : r.position}</td>
+            <td>${r.playerName}</td>
+            <td>${formatTime(r.timeSeconds)}</td>
+            <td>${r.moves}</td>
+            <td>${r.score.toFixed(2)}</td>
+            <td>${r.date}</td>
+        </tr>
+    `).join('');
+}
+
+function renderDashboardGeneralRanking() {
+    const ranking = getGeneralRanking(50);
+    const tbody = document.getElementById('dashboard-general-ranking-body');
+    
+    if (ranking.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="no-data-rank">Complete todas as modalidades para aparecer aqui</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = ranking.map(r => `
+        <tr>
+            <td>${r.position === 1 ? '🥇' : r.position === 2 ? '🥈' : r.position === 3 ? '🥉' : r.position}</td>
+            <td>${r.playerName}</td>
+            <td>${r.quizScore.toFixed(2)}</td>
+            <td>${r.memoryScore.toFixed(2)}</td>
+            <td>${r.puzzleScore.toFixed(2)}</td>
+            <td>${r.averageScore.toFixed(2)}</td>
+            <td>${r.date}</td>
+        </tr>
+    `).join('');
 }
 
 function previewLogo(input) {

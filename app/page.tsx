@@ -204,6 +204,12 @@ export default function GamePage() {
             </button>
           </div>
           <button
+            className="btn-ranking"
+            onClick={() => (window as any).showRankingScreen()}
+          >
+            <i className="fas fa-trophy"></i> Ver Rankings
+          </button>
+          <button
             className="btn-change-name"
             onClick={() => (window as any).showScreen('screen-name')}
           >
@@ -365,7 +371,210 @@ export default function GamePage() {
           <i className="fas fa-times"></i> SAIR
         </button>
       </div>
+      {/* TELA DE RANKINGS */}
+      <div id="screen-ranking" className="screen">
+        <div className="ranking-content">
+          <div className="ranking-header">
+            <h2>
+              <i className="fas fa-trophy"></i> Rankings
+            </h2>
+            <p className="ranking-subtitle">Veja os melhores jogadores</p>
+          </div>
 
+          <div className="scoring-info">
+            <button 
+              className="scoring-toggle"
+              onClick={() => (window as any).toggleScoringInfo()}
+            >
+              <i className="fas fa-info-circle"></i> Como funciona a pontuação?
+              <i className="fas fa-chevron-down toggle-icon"></i>
+            </button>
+            <div className="scoring-dropdown" id="scoring-dropdown">
+              <div>
+                <div className="scoring-content">
+                  <h4>Como Funciona a Pontuação</h4>
+                  <p className="scoring-note">
+                    <strong>⭐ Maior pontuação = Melhor resultado!</strong>
+                  </p>
+                  <div className="scoring-item">
+                    <div className="scoring-game">
+                      <i className="fas fa-question-circle"></i>
+                      <strong>Quiz</strong>
+                    </div>
+                    <p>Quanto mais rápido e menos erros, maior a pontuação</p>
+                    <small>Base 1000 pontos - tempo - 50 pontos por cada erro</small>
+                  </div>
+                  <div className="scoring-item">
+                    <div className="scoring-game">
+                      <i className="fas fa-brain"></i>
+                      <strong>Memória</strong>
+                    </div>
+                    <p>Quanto mais rápido e menos movimentos, maior a pontuação</p>
+                    <small>Base 500 pontos - tempo - 2 pontos por movimento</small>
+                  </div>
+                  <div className="scoring-item">
+                    <div className="scoring-game">
+                      <i className="fas fa-puzzle-piece"></i>
+                      <strong>Quebra-Cabeça</strong>
+                    </div>
+                    <p>Quanto mais rápido e menos movimentos, maior a pontuação</p>
+                    <small>Base 500 pontos - tempo - 2 pontos por movimento</small>
+                  </div>
+                  <div className="scoring-item">
+                    <div className="scoring-game">
+                      <i className="fas fa-medal"></i>
+                      <strong>Ranking Geral</strong>
+                    </div>
+                    <p>Média das 3 melhores pontuações</p>
+                    <small>Precisa completar Quiz, Memória e Quebra-Cabeça</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="ranking-tabs">
+            <button
+              className="ranking-tab active"
+              data-tab="quiz"
+              onClick={() => (window as any).switchRankingTab('quiz')}
+            >
+              <i className="fas fa-question-circle"></i> Quiz
+            </button>
+            <button
+              className="ranking-tab"
+              data-tab="memory"
+              onClick={() => (window as any).switchRankingTab('memory')}
+            >
+              <i className="fas fa-brain"></i> Memória
+            </button>
+            <button
+              className="ranking-tab"
+              data-tab="puzzle"
+              onClick={() => (window as any).switchRankingTab('puzzle')}
+            >
+              <i className="fas fa-puzzle-piece"></i> Puzzle
+            </button>
+            <button
+              className="ranking-tab"
+              data-tab="general"
+              onClick={() => (window as any).switchRankingTab('general')}
+            >
+              <i className="fas fa-medal"></i> Geral
+            </button>
+          </div>
+
+          <div className="ranking-tables">
+            {/* Ranking Quiz */}
+            <div id="ranking-quiz" className="ranking-table-container active">
+              <div className="ranking-table-scroll">
+                <table className="ranking-table">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Nome</th>
+                      <th>Tempo</th>
+                      <th>Acertos</th>
+                      <th>Pontuação</th>
+                      <th>Data</th>
+                    </tr>
+                  </thead>
+                  <tbody id="quiz-ranking-body">
+                    <tr>
+                      <td colSpan={6} className="no-data">
+                        Nenhum resultado ainda
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Ranking Memória */}
+            <div id="ranking-memory" className="ranking-table-container">
+              <div className="ranking-table-scroll">
+                <table className="ranking-table">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Nome</th>
+                      <th>Tempo</th>
+                      <th>Movimentos</th>
+                      <th>Pontuação</th>
+                      <th>Data</th>
+                    </tr>
+                  </thead>
+                  <tbody id="memory-ranking-body">
+                    <tr>
+                      <td colSpan={6} className="no-data">
+                        Nenhum resultado ainda
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Ranking Puzzle */}
+            <div id="ranking-puzzle" className="ranking-table-container">
+              <div className="ranking-table-scroll">
+                <table className="ranking-table">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Nome</th>
+                      <th>Tempo</th>
+                      <th>Movimentos</th>
+                      <th>Pontuação</th>
+                      <th>Data</th>
+                    </tr>
+                  </thead>
+                  <tbody id="puzzle-ranking-body">
+                    <tr>
+                      <td colSpan={6} className="no-data">
+                        Nenhum resultado ainda
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Ranking Geral */}
+            <div id="ranking-general" className="ranking-table-container">
+              <div className="ranking-table-scroll">
+                <table className="ranking-table">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Nome</th>
+                      <th>Quiz</th>
+                      <th>Memória</th>
+                      <th>Puzzle</th>
+                      <th>Média</th>
+                      <th>Data</th>
+                    </tr>
+                  </thead>
+                  <tbody id="general-ranking-body">
+                    <tr>
+                      <td colSpan={7} className="no-data">
+                        Nenhum resultado ainda
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <button
+            className="btn-back-home"
+            onClick={() => (window as any).showScreen('screen-start')}
+          >
+            <i className="fas fa-arrow-left"></i> Voltar
+          </button>
+        </div>
+      </div>
       {/* TELA DE VITÓRIA */}
       <div id="screen-victory" className="screen">
         <div className="victory-content">
@@ -392,6 +601,17 @@ export default function GamePage() {
               <span className="vs-label">Movimentos</span>
               <span id="final-moves" className="vs-value">0</span>
             </div>
+            <div className="victory-stat">
+              <span className="vs-icon">
+                <i className="fas fa-star"></i>
+              </span>
+              <span className="vs-label">Pontuação</span>
+              <span id="final-score" className="vs-value">0</span>
+            </div>
+          </div>
+
+          <div className="ranking-message">
+            <p id="final-ranking-position">🎮 Resultado salvo!</p>
           </div>
 
           <div className="victory-buttons">

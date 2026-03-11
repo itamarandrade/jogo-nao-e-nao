@@ -127,6 +127,46 @@ export default function DashboardPage() {
         }
         #new-awareness::placeholder { color: rgba(255, 255, 255, 0.5); }
         #new-awareness:focus { outline: none; border-color: var(--cor-amarelo); }
+        
+        .dashboard-ranking-tabs {
+          display: flex;
+          gap: 10px;
+          margin-bottom: 20px;
+          padding-bottom: 10px;
+          border-bottom: 2px solid rgba(255,255,255,0.1);
+        }
+        .dashboard-ranking-tab {
+          flex: 1;
+          padding: 10px 15px;
+          background: rgba(255,255,255,0.05);
+          border: 2px solid transparent;
+          border-radius: 8px;
+          color: var(--cor-texto);
+          font-size: 13px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+        .dashboard-ranking-tab:hover {
+          background: rgba(255,255,255,0.1);
+        }
+        .dashboard-ranking-tab.active {
+          background: var(--cor-amarelo);
+          border-color: var(--cor-amarelo);
+          color: #ffffff;
+        }
+        .dashboard-ranking-content {
+          display: none;
+        }
+        .dashboard-ranking-content.active {
+          display: block;
+        }
+        .no-data-rank {
+          text-align: center;
+          padding: 30px;
+          color: rgba(255,255,255,0.5);
+          font-style: italic;
+        }
       `}</style>
 
       {/* TELA DO DASHBOARD */}
@@ -156,6 +196,13 @@ export default function DashboardPage() {
                 onClick={() => (window as any).switchDashTab('tab-players')}
               >
                 <i className="fas fa-users"></i> Cadastros
+              </button>
+              <button
+                className="tab-btn"
+                data-tab="tab-rankings"
+                onClick={() => (window as any).switchDashTab('tab-rankings')}
+              >
+                <i className="fas fa-trophy"></i> Rankings
               </button>
               <button
                 className="tab-btn"
@@ -292,6 +339,132 @@ export default function DashboardPage() {
                   >
                     <i className="fas fa-users-slash"></i>
                     <p>Nenhum jogador registrado ainda.</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* ABA RANKINGS */}
+              <div id="tab-rankings" className="tab-content">
+                <div className="players-header">
+                  <div className="players-actions">
+                    <button
+                      className="btn-export"
+                      onClick={() => (window as any).exportRankingsCSV()}
+                    >
+                      <i className="fas fa-download"></i> Exportar Rankings
+                    </button>
+                    <button
+                      className="btn-clear-data"
+                      onClick={() => (window as any).clearGameResults()}
+                    >
+                      <i className="fas fa-trash"></i> Limpar Rankings
+                    </button>
+                  </div>
+                </div>
+
+                <div className="dashboard-ranking-tabs">
+                  <button
+                    className="dashboard-ranking-tab active"
+                    data-ranking-tab="quiz"
+                    onClick={() => (window as any).switchDashboardRankingTab('quiz')}
+                  >
+                    Quiz
+                  </button>
+                  <button
+                    className="dashboard-ranking-tab"
+                    data-ranking-tab="memory"
+                    onClick={() => (window as any).switchDashboardRankingTab('memory')}
+                  >
+                    Memória
+                  </button>
+                  <button
+                    className="dashboard-ranking-tab"
+                    data-ranking-tab="puzzle"
+                    onClick={() => (window as any).switchDashboardRankingTab('puzzle')}
+                  >
+                    Puzzle
+                  </button>
+                  <button
+                    className="dashboard-ranking-tab"
+                    data-ranking-tab="general"
+                    onClick={() => (window as any).switchDashboardRankingTab('general')}
+                  >
+                    Geral
+                  </button>
+                </div>
+
+                <div className="players-table-container">
+                  <div id="dashboard-ranking-quiz" className="dashboard-ranking-content active">
+                    <table className="players-table">
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>Nome</th>
+                          <th>Tempo</th>
+                          <th>Acertos</th>
+                          <th>Pontuação</th>
+                          <th>Data</th>
+                        </tr>
+                      </thead>
+                      <tbody id="dashboard-quiz-ranking-body">
+                        <tr><td colSpan={6} className="no-data-rank">Nenhum resultado</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div id="dashboard-ranking-memory" className="dashboard-ranking-content">
+                    <table className="players-table">
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>Nome</th>
+                          <th>Tempo</th>
+                          <th>Movimentos</th>
+                          <th>Pontuação</th>
+                          <th>Data</th>
+                        </tr>
+                      </thead>
+                      <tbody id="dashboard-memory-ranking-body">
+                        <tr><td colSpan={6} className="no-data-rank">Nenhum resultado</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div id="dashboard-ranking-puzzle" className="dashboard-ranking-content">
+                    <table className="players-table">
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>Nome</th>
+                          <th>Tempo</th>
+                          <th>Movimentos</th>
+                          <th>Pontuação</th>
+                          <th>Data</th>
+                        </tr>
+                      </thead>
+                      <tbody id="dashboard-puzzle-ranking-body">
+                        <tr><td colSpan={6} className="no-data-rank">Nenhum resultado</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div id="dashboard-ranking-general" className="dashboard-ranking-content">
+                    <table className="players-table">
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>Nome</th>
+                          <th>Quiz</th>
+                          <th>Memória</th>
+                          <th>Puzzle</th>
+                          <th>Média</th>
+                          <th>Data</th>
+                        </tr>
+                      </thead>
+                      <tbody id="dashboard-general-ranking-body">
+                        <tr><td colSpan={7} className="no-data-rank">Complete todas as modalidades</td></tr>
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </div>
