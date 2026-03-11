@@ -1523,28 +1523,6 @@ document.addEventListener('gesturestart', (e) => e.preventDefault());
 document.addEventListener('gesturechange', (e) => e.preventDefault());
 document.addEventListener('gestureend', (e) => e.preventDefault());
 
-let lastTouchEnd = 0;
-document.addEventListener('touchend', (e) => {
-    const tag = e.target.tagName.toLowerCase();
-    if (tag === 'input' || tag === 'textarea' || tag === 'select' || tag === 'label') return;
-    const now = Date.now();
-    if (now - lastTouchEnd <= 300) {
-        e.preventDefault();
-    }
-    lastTouchEnd = now;
-}, false);
-
-// ===== FORÇAR FOCO EM INPUTS NO ANDROID =====
-document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], textarea').forEach(input => {
-    input.addEventListener('touchstart', (e) => {
-        e.stopPropagation();
-    }, { passive: true });
-    input.addEventListener('touchend', (e) => {
-        e.stopPropagation();
-        setTimeout(() => input.focus(), 50);
-    }, { passive: true });
-});
-
 // ===== DADOS DOS JOGADORES (CSV) =====
 const PLAYERS_STORAGE_KEY = 'game_players_data';
 
