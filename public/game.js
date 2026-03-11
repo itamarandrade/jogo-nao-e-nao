@@ -726,9 +726,9 @@ function applyConfig(config) {
     // Aplicar jogos habilitados
     const gamesEnabled = config.gamesEnabled || { memory: true, puzzle: true, quiz: true };
 
-    const memoryBtn = document.querySelector('[onclick="startMemoryGame()"]');
-    const puzzleBtn = document.querySelector('[onclick="startPuzzleGame()"]');
-    const quizBtn = document.querySelector('[onclick="startQuizGame()"]');
+    const memoryBtn = document.getElementById('btn-memory');
+    const puzzleBtn = document.getElementById('btn-puzzle');
+    const quizBtn = document.getElementById('btn-quiz');
 
     if (memoryBtn) memoryBtn.style.display = gamesEnabled.memory ? 'flex' : 'none';
     if (puzzleBtn) puzzleBtn.style.display = gamesEnabled.puzzle ? 'flex' : 'none';

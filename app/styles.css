@@ -352,15 +352,20 @@ body {
 /* ===== TELAS ===== */
 .screen {
     position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     display: none;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     padding: 20px;
     opacity: 0;
     transition: opacity 0.4s ease;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
 }
 
 .screen.active {
@@ -572,12 +577,15 @@ body {
 /* ===== TELA INICIAL ===== */
 #screen-start {
     position: relative;
-    overflow: hidden;
+    justify-content: center;
 }
 
 .start-content {
     text-align: center;
     z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .logo-container {
@@ -613,8 +621,9 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100%;
-    padding: 20px;
+    min-height: 100%;
+    width: 100%;
+    padding: 30px 20px;
     box-sizing: border-box;
     gap: 25px;
 }
@@ -684,8 +693,9 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100%;
-    padding: 20px;
+    min-height: 100%;
+    width: 100%;
+    padding: 30px 20px;
     box-sizing: border-box;
     gap: 15px;
 }
@@ -1005,6 +1015,8 @@ body {
 /* Splash Screen Clicável */
 #screen-splash {
     cursor: pointer;
+    overflow: hidden;
+    justify-content: center;
 }
 
 .splash-tap-hint {
@@ -1169,15 +1181,25 @@ body {
 
 /* ===== TELA DO JOGO ===== */
 #screen-memory, #screen-puzzle, #screen-quiz {
-    padding: 10px;
+    padding: 10px 10px 80px;
     justify-content: flex-start;
     gap: clamp(6px, 1.5dvh, 14px);
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
     position: relative;
 }
 
 #screen-puzzle {
-    padding: 8px 10px;
+    padding: 8px 10px 20px;
+}
+
+#screen-puzzle .btn-quit {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    transform: none;
+    margin-top: 10px;
 }
 
 /* Marca d'água é adicionada via JavaScript para usar o logo configurado */
@@ -1310,7 +1332,7 @@ body {
 }
 
 .btn-quit {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(6, 14, 30, 0.9);
     border: 2px solid rgba(255,255,255,0.3);
     color: var(--cor-texto);
     padding: 12px 25px;
@@ -1320,9 +1342,12 @@ body {
     cursor: pointer;
     transition: all 0.3s ease;
     flex-shrink: 0;
-    position: relative;
-    z-index: 1;
-    margin-top: auto;
+    position: fixed;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9998;
+    backdrop-filter: blur(10px);
 }
 
 .btn-quit:hover {
@@ -1335,11 +1360,9 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    flex: 1;
     width: 100%;
     position: relative;
     z-index: 1;
-    overflow: hidden;
 }
 
 .puzzle-area {
@@ -1353,7 +1376,7 @@ body {
 }
 
 .puzzle-board {
-    --board-size: min(78vw, 42dvh, 320px);
+    --board-size: min(72vw, 36dvh, 300px);
     width: var(--board-size);
     height: var(--board-size);
     display: grid;
@@ -1417,7 +1440,7 @@ body {
 }
 
 .puzzle-piece {
-    --piece-size: min(20vw, 11dvh, 72px);
+    --piece-size: min(18vw, 9dvh, 65px);
     width: var(--piece-size);
     height: var(--piece-size);
     background-size: 300% 300%;
@@ -2211,7 +2234,9 @@ body {
 #screen-victory {
     background: linear-gradient(135deg, var(--cor-magenta) 0%, #2d1f3d 50%, var(--cor-fundo) 100%);
     position: relative;
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-bottom: 40px;
 }
 
 .victory-content {
@@ -2463,7 +2488,7 @@ body {
     }
 
     .puzzle-board {
-        --board-size: min(82vw, 44dvh, 310px);
+        --board-size: min(72vw, 36dvh, 290px);
         width: var(--board-size);
         height: var(--board-size);
     }
@@ -2474,7 +2499,7 @@ body {
     }
 
     .puzzle-piece {
-        --piece-size: min(22vw, 10dvh, 68px);
+        --piece-size: min(18vw, 9dvh, 62px);
         width: var(--piece-size);
         height: var(--piece-size);
     }
@@ -2759,7 +2784,7 @@ body {
     }
 
     .btn-quit {
-        position: absolute;
+        position: fixed;
         bottom: 15px;
         left: 50%;
         transform: translateX(-50%);
