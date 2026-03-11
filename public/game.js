@@ -613,35 +613,35 @@ const DEFAULT_CONFIG = {
         { question: "A vítima pode denunciar mesmo sem testemunhas?", answer: true, level: "hard", awareness: "A denúncia é um direito." }
     ],
     memoryIcons: [
+        { icon: 'fa-crown', name: 'Patrão' },
         { icon: 'fa-house', name: 'Casa' },
-        { icon: 'fa-crown', name: 'Coroa' },
-        { icon: 'fa-star', name: 'Estrela' },
+        { icon: 'fa-key', name: 'Chave' },
         { icon: 'fa-trophy', name: 'Troféu' },
-        { icon: 'fa-tv', name: 'TV' },
-        { icon: 'fa-camera', name: 'Câmera' },
-        { icon: 'fa-microphone', name: 'Microfone' },
-        { icon: 'fa-money-bill-wave', name: 'Dinheiro' }
+        { icon: 'fa-eye', name: 'Vigilância' },
+        { icon: 'fa-suitcase', name: 'Mala' },
+        { icon: 'fa-users', name: 'Participantes' },
+        { icon: 'fa-champagne-glasses', name: 'Festa' }
     ]
 };
 
 // Lista completa de imagens disponíveis para seleção no Dashboard
 const AVAILABLE_ICONS = [
+    { icon: 'fa-crown', name: 'Patrão' },
     { icon: 'fa-house', name: 'Casa' },
-    { icon: 'fa-crown', name: 'Coroa' },
-    { icon: 'fa-star', name: 'Estrela' },
+    { icon: 'fa-key', name: 'Chave' },
     { icon: 'fa-trophy', name: 'Troféu' },
+    { icon: 'fa-eye', name: 'Vigilância' },
+    { icon: 'fa-suitcase', name: 'Mala' },
+    { icon: 'fa-users', name: 'Participantes' },
+    { icon: 'fa-champagne-glasses', name: 'Festa' },
+    { icon: 'fa-lock', name: 'Confinamento' },
     { icon: 'fa-tv', name: 'TV' },
     { icon: 'fa-camera', name: 'Câmera' },
-    { icon: 'fa-microphone', name: 'Microfone' },
-    { icon: 'fa-money-bill-wave', name: 'Dinheiro' },
-    { icon: 'fa-briefcase', name: 'Maleta' },
-    { icon: 'fa-user-tie', name: 'Executivo' },
-    { icon: 'fa-key', name: 'Chave' },
-    { icon: 'fa-handshake', name: 'Aperto de mão' },
-    { icon: 'fa-fire', name: 'Fogo' },
-    { icon: 'fa-heart', name: 'Coração' },
-    { icon: 'fa-bolt', name: 'Raio' },
-    { icon: 'fa-gem', name: 'Gema' }
+    { icon: 'fa-fire', name: 'Drama' },
+    { icon: 'fa-star', name: 'Destaque' },
+    { icon: 'fa-gavel', name: 'Julgamento' },
+    { icon: 'fa-shield-halved', name: 'Imunidade' },
+    { icon: 'fa-door-open', name: 'Eliminação' }
 ];
 
 // ===== FUNÇÕES DE CONFIGURAÇÃO (localStorage) =====
@@ -659,6 +659,11 @@ function loadConfig() {
                 if (!hasLevels) {
                     merged.quizQuestions = DEFAULT_CONFIG.quizQuestions;
                 }
+            }
+
+            // Se os ícones salvos são os antigos (pré-tema Casa do Patrão), usar os novos
+            if (config.memoryIcons && config.memoryIcons.some(i => i.name === 'Microfone' || i.name === 'Dinheiro')) {
+                merged.memoryIcons = DEFAULT_CONFIG.memoryIcons;
             }
 
             return merged;
@@ -726,9 +731,9 @@ function applyConfig(config) {
     // Aplicar jogos habilitados
     const gamesEnabled = config.gamesEnabled || { memory: true, puzzle: true, quiz: true };
 
-    const memoryBtn = document.querySelector('[onclick="startMemoryGame()"]');
-    const puzzleBtn = document.querySelector('[onclick="startPuzzleGame()"]');
-    const quizBtn = document.querySelector('[onclick="startQuizGame()"]');
+    const memoryBtn = document.getElementById('btn-memory');
+    const puzzleBtn = document.getElementById('btn-puzzle');
+    const quizBtn = document.getElementById('btn-quiz');
 
     if (memoryBtn) memoryBtn.style.display = gamesEnabled.memory ? 'flex' : 'none';
     if (puzzleBtn) puzzleBtn.style.display = gamesEnabled.puzzle ? 'flex' : 'none';

@@ -167,6 +167,7 @@ export default function GamePage() {
           </div>
           <div className="game-selection">
             <button
+              id="btn-memory"
               className="btn-game-select"
               onClick={() => (window as any).startMemoryGame()}
             >
@@ -179,6 +180,7 @@ export default function GamePage() {
               </div>
             </button>
             <button
+              id="btn-puzzle"
               className="btn-game-select"
               onClick={() => (window as any).startPuzzleGame()}
             >
@@ -191,6 +193,7 @@ export default function GamePage() {
               </div>
             </button>
             <button
+              id="btn-quiz"
               className="btn-game-select"
               onClick={() => (window as any).startQuizGame()}
             >
