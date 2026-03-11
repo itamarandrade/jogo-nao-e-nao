@@ -393,9 +393,9 @@ const THEMES = {
     patrao: {
         name: 'Casa do Patrão',
         icon: 'fa-crown',
-        primaryColor: '#d4a017',
-        secondaryColor: '#c0392b',
-        bgGradient: 'linear-gradient(145deg, #0a0a0a 0%, #1a0a00 40%, #2c1200 70%, #0f0f0f 100%)',
+        primaryColor: '#e63228',
+        secondaryColor: '#1d3d9e',
+        bgGradient: 'linear-gradient(145deg, #060e1e 0%, #0a1a30 40%, #0d2545 70%, #060e1e 100%)',
         decorations: 'carnaval'
     },
     carnaval: {
@@ -565,8 +565,8 @@ function createSunsetDecorations(container) {
 // ===== CONFIGURAÇÕES PADRÃO =====
 const DEFAULT_CONFIG = {
     theme: 'patrao',
-    primaryColor: '#d4a017',
-    secondaryColor: '#c0392b',
+    primaryColor: '#e63228',
+    secondaryColor: '#1d3d9e',
     logo: null, // null = usar assets/casa-do-patrao.jpg
     puzzleImage: null, // null = usar assets/casa-do-patrao.jpg
     registrationEnabled: false, // true = formulário completo, false = só nome
@@ -576,41 +576,22 @@ const DEFAULT_CONFIG = {
         quiz: true
     },
     quizQuestions: [
-        // 🟢 NÍVEL FÁCIL (10 perguntas)
-        { question: "\"Não\" significa \"não\", mesmo que a pessoa esteja sorrindo?", answer: true, level: "easy", awareness: "Sorriso não é consentimento." },
-        { question: "Insistir depois de ouvir \"não\" é errado?", answer: true, level: "easy", awareness: "Insistência é desrespeito." },
-        { question: "Silêncio significa consentimento?", answer: false, level: "easy", awareness: "Consentimento precisa ser claro." },
-        { question: "Uma pessoa pode mudar de ideia depois de dizer \"sim\"?", answer: true, level: "easy", awareness: "Consentimento pode ser retirado." },
-        { question: "Beijo sem permissão é violência?", answer: true, level: "easy", awareness: "Qualquer contato sem consentimento é violência." },
-        { question: "Segurar alguém pelo braço sem autorização é errado?", answer: true, level: "easy", awareness: "Tocar sem permissão é violência." },
-        { question: "Se alguém disser \"para\", a outra pessoa deve parar imediatamente?", answer: true, level: "easy", awareness: "Parar é obrigatório." },
-        { question: "Roupas curtas significam que a pessoa quer contato?", answer: false, level: "easy", awareness: "Roupa não é convite." },
-        { question: "Em situação de perigo imediato, ligar 190 é correto?", answer: true, level: "easy", awareness: "190 aciona a Polícia Militar." },
-        { question: "Pedir ajuda à equipe do evento é um direito da vítima?", answer: true, level: "easy", awareness: "A vítima não está sozinha." },
-
-        // 🟡 NÍVEL MÉDIO (10 perguntas)
-        { question: "Flertar dá direito a tocar sem permissão?", answer: false, level: "medium", awareness: "Flertar não é autorização." },
-        { question: "Se a pessoa estiver bêbada, o consentimento é válido?", answer: false, level: "medium", awareness: "Sem consciência, não há consentimento." },
-        { question: "A Lei Maria da Penha protege apenas mulheres casadas?", answer: false, level: "medium", awareness: "Vale para namoro, ex e outras relações." },
-        { question: "A Lei Maria da Penha só se aplica em agressão física?", answer: false, level: "medium", awareness: "Vale também para violência psicológica, moral e sexual." },
-        { question: "Divulgar foto íntima sem autorização é crime? (Lei Carolina Dieckmann)", answer: true, level: "medium", awareness: "Expor intimidade sem consentimento é crime." },
-        { question: "Comentários de cunho sexual podem ser assédio?", answer: true, level: "medium", awareness: "Palavras também ferem." },
-        { question: "Seguir alguém de forma insistente pode ser assédio?", answer: true, level: "medium", awareness: "Intimidação também é violência." },
-        { question: "A vítima pode procurar ajuda mesmo sem denunciar?", answer: true, level: "medium", awareness: "Apoio independe de denúncia." },
-        { question: "O telefone 180 orienta e encaminha mulheres para a rede de apoio?", answer: true, level: "medium", awareness: "180 é gratuito e funciona 24h." },
-        { question: "Culpar a vítima pela violência é correto?", answer: false, level: "medium", awareness: "A culpa nunca é da vítima." },
-
-        // 🔴 NÍVEL DIFÍCIL (10 perguntas)
-        { question: "Importunação sexual é crime no Brasil?", answer: true, level: "hard", awareness: "Lei nº 13.718/2018." },
-        { question: "Beijo forçado pode ser enquadrado como crime?", answer: true, level: "hard", awareness: "Pode configurar importunação sexual." },
-        { question: "Estar alcoolizado isenta alguém de responsabilidade criminal?", answer: false, level: "hard", awareness: "Álcool não justifica crime." },
-        { question: "A palavra da vítima tem valor legal?", answer: true, level: "hard", awareness: "A Justiça reconhece seu valor." },
-        { question: "O Protocolo \"Não é Não\" é previsto em lei?", answer: true, level: "hard", awareness: "Lei nº 14.786/2023." },
-        { question: "O protocolo determina acolhimento humanizado e sem julgamento?", answer: true, level: "hard", awareness: "A vítima deve ser respeitada." },
-        { question: "A vítima deve ser afastada do agressor e colocada em local seguro?", answer: true, level: "hard", awareness: "Segurança vem primeiro." },
-        { question: "Em caso de violência sexual ou risco imediato, ligar 190 é correto?", answer: true, level: "hard", awareness: "Polícia Militar garante proteção imediata." },
-        { question: "Em necessidade de atendimento médico urgente, o número correto é 192?", answer: true, level: "hard", awareness: "192 aciona o SAMU." },
-        { question: "A vítima pode denunciar mesmo sem testemunhas?", answer: true, level: "hard", awareness: "A denúncia é um direito." }
+        // Casa do Patrão — perguntas geradas via Gemini CLI
+        { question: "O reality 'Casa do Patrão' é uma produção exclusiva da TV Globo.", answer: false, level: "easy", awareness: "É uma parceria inédita entre a TV Record e o Disney+." },
+        { question: "O programa foi criado por Boninho.", answer: true, level: "easy", awareness: "Boninho é o criador do formato do reality." },
+        { question: "A estreia oficial está programada para abril de 2026.", answer: true, level: "easy", awareness: "O programa estreia na Record e no Disney+ em abril de 2026." },
+        { question: "O programa divide os participantes em quatro casas diferentes.", answer: false, level: "easy", awareness: "São apenas 3 casas: Casa do Patrão, Casa do Trampo e Casa da Convivência." },
+        { question: "Uma das casas do confinamento se chama 'Casa do Trampo'.", answer: true, level: "easy", awareness: "A Casa do Trampo é um dos três ambientes principais do programa." },
+        { question: "O elenco terá um grupo misto de anônimos e celebridades.", answer: false, level: "medium", awareness: "O programa será formado exclusivamente por participantes anônimos." },
+        { question: "Os episódios podem ser assistidos tanto na TV aberta quanto no streaming.", answer: true, level: "medium", awareness: "O programa vai na Record (TV aberta) e no Disney+ (streaming)." },
+        { question: "A 'Casa do Patrão' é tanto o nome do programa quanto um dos ambientes do jogo.", answer: true, level: "medium", awareness: "Além do título, é também um dos três ambientes físicos da disputa." },
+        { question: "Rodrigo Carelli é o criador original do formato deste programa.", answer: false, level: "medium", awareness: "O formato foi criado por Boninho, não por Rodrigo Carelli." },
+        { question: "O programa tem estreia prevista para o segundo semestre de 2026.", answer: false, level: "medium", awareness: "A estreia é no primeiro semestre, em abril de 2026." },
+        { question: "A 'Casa do Luxo' é onde ficam os participantes com mais privilégios.", answer: false, level: "hard", awareness: "Não existe 'Casa do Luxo'. Os nomes são Casa do Patrão, Casa do Trampo e Casa da Convivência." },
+        { question: "O programa aposta em participantes anônimos para gerar identificação com o público.", answer: true, level: "hard", awareness: "O reality conta apenas com participantes anônimos." },
+        { question: "O local de interação geral dos participantes chama-se 'Casa da Convivência'.", answer: true, level: "hard", awareness: "A Casa da Convivência completa o trio de ambientes ao lado das outras duas casas." },
+        { question: "A parceria de transmissão do programa é entre a Record e a Netflix.", answer: false, level: "hard", awareness: "A parceria é entre a TV Record e o Disney+, não com a Netflix." },
+        { question: "O confinamento é estruturado em 3 espaços que representam diferentes status no jogo.", answer: true, level: "hard", awareness: "As 3 casas (Patrão, Trampo, Convivência) criam dinâmicas de poder e trabalho." }
     ],
     memoryIcons: [
         { icon: 'fa-house', name: 'Casa' },
@@ -712,7 +693,7 @@ function applyConfig(config) {
     createThemeDecorations(themeName);
 
     // Aplicar logo
-    const logoSrc = config.logo || '/assets/casa-do-patrao.jpg';
+    const logoSrc = config.logo || 'assets/casa-do-patrao.jpg';
     document.querySelectorAll('.splash-logo, .logo-image').forEach(img => {
         img.src = logoSrc;
     });
@@ -721,7 +702,7 @@ function applyConfig(config) {
     applyWatermark(logoSrc);
 
     // Aplicar imagem do puzzle (será usado quando o puzzle for gerado)
-    window.puzzleImageSrc = config.puzzleImage || '/assets/casa-do-patrao.jpg';
+    window.puzzleImageSrc = config.puzzleImage || 'assets/casa-do-patrao.jpg';
 
     // Aplicar jogos habilitados
     const gamesEnabled = config.gamesEnabled || { memory: true, puzzle: true, quiz: true };
@@ -1074,7 +1055,7 @@ function generatePuzzle() {
 
     // Criar peças embaralhadas
     puzzlePieces = shuffleArray([0, 1, 2, 3, 4, 5, 6, 7, 8]);
-    const puzzleImage = gameConfig.puzzleImage || '/assets/casa-do-patrao.jpg';
+    const puzzleImage = gameConfig.puzzleImage || 'assets/casa-do-patrao.jpg';
 
     puzzlePieces.forEach(tile => {
         const piece = createPuzzlePiece(tile, puzzleImage);
@@ -1294,7 +1275,7 @@ function handlePieceTouchEnd(e) {
 
 // ===== HANDLE DROP =====
 function handlePieceDrop(targetSlot, targetSlotIndex) {
-    const puzzleImage = gameConfig.puzzleImage || '/assets/casa-do-patrao.jpg';
+    const puzzleImage = gameConfig.puzzleImage || 'assets/casa-do-patrao.jpg';
     const isTargetFilled = targetSlot.classList.contains('filled');
 
     // Se soltar no mesmo slot de origem, cancelar
@@ -1382,7 +1363,7 @@ function handlePieceDrop(targetSlot, targetSlotIndex) {
 function returnPieceToPool() {
     if (dragSourceSlot === null) return;
 
-    const puzzleImage = gameConfig.puzzleImage || '/assets/casa-do-patrao.jpg';
+    const puzzleImage = gameConfig.puzzleImage || 'assets/casa-do-patrao.jpg';
     const sourceSlot = document.querySelector(`.puzzle-slot[data-slot="${dragSourceSlot}"]`);
 
     // Remover do slot
@@ -1788,14 +1769,14 @@ function initDashboard() {
     if (tempConfig.logo) {
         document.getElementById('logo-preview').src = tempConfig.logo;
     } else {
-        document.getElementById('logo-preview').src = '/assets/casa-do-patrao.jpg';
+        document.getElementById('logo-preview').src = 'assets/casa-do-patrao.jpg';
     }
 
     // Puzzle preview
     if (tempConfig.puzzleImage) {
         document.getElementById('puzzle-preview').src = tempConfig.puzzleImage;
     } else {
-        document.getElementById('puzzle-preview').src = '/assets/casa-do-patrao.jpg';
+        document.getElementById('puzzle-preview').src = 'assets/casa-do-patrao.jpg';
     }
 
     renderQuizQuestions();
@@ -1823,7 +1804,7 @@ function previewLogo(input) {
 
 function resetLogo() {
     tempConfig.logo = null;
-    document.getElementById('logo-preview').src = '/assets/casa-do-patrao.jpg';
+    document.getElementById('logo-preview').src = 'assets/casa-do-patrao.jpg';
     document.getElementById('config-logo').value = '';
 }
 
@@ -1840,7 +1821,7 @@ function previewPuzzle(input) {
 
 function resetPuzzleImage() {
     tempConfig.puzzleImage = null;
-    document.getElementById('puzzle-preview').src = '/assets/casa-do-patrao.jpg';
+    document.getElementById('puzzle-preview').src = 'assets/casa-do-patrao.jpg';
     document.getElementById('config-puzzle').value = '';
 }
 
