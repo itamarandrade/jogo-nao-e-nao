@@ -1,12 +1,12 @@
 /* ===== VARIÁVEIS DE CORES DA MARCA ===== */
 :root {
-    --cor-amarelo: #ffb800;
-    --cor-roxo: #868fc6;
-    --cor-magenta: #851595;
-    --cor-fundo: #1a1a2e;
-    --cor-fundo-claro: #16213e;
+    --cor-amarelo: #d4a017;
+    --cor-roxo: #c0392b;
+    --cor-magenta: #8b0000;
+    --cor-fundo: #0a0a0a;
+    --cor-fundo-claro: #1a0a00;
     --cor-texto: #ffffff;
-    --cor-texto-secundario: #94a3b8;
+    --cor-texto-secundario: #c9a84c;
 }
 
 /* ===== RESET E BASE ===== */
@@ -34,11 +34,11 @@ input, textarea, select {
     align-items: center;
     gap: 0;
     z-index: 9999;
-    background: linear-gradient(135deg, rgba(133, 21, 149, 0.95) 0%, rgba(22, 33, 62, 0.98) 100%);
+    background: linear-gradient(135deg, rgba(40,20,0,0.95) 0%, rgba(10,10,10,0.98) 100%);
     padding: 6px;
     border-radius: 30px;
     border: 2px solid var(--cor-amarelo);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 184, 0, 0.2);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6), 0 0 20px rgba(212,160,23,0.2);
     transition: all 0.3s ease;
     overflow: hidden;
 }
@@ -339,7 +339,10 @@ html, body {
 
 body {
     font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, var(--cor-magenta) 0%, #2d1f3d 50%, var(--cor-fundo) 100%);
+    background:
+        radial-gradient(ellipse at 20% 30%, rgba(212,160,23,0.08) 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 70%, rgba(192,57,43,0.08) 0%, transparent 55%),
+        linear-gradient(145deg, #0a0a0a 0%, #1a0a00 40%, #2c1200 70%, #0f0f0f 100%);
     color: var(--cor-texto);
     display: flex;
     justify-content: center;
@@ -1168,9 +1171,13 @@ body {
 #screen-memory, #screen-puzzle, #screen-quiz {
     padding: 10px;
     justify-content: space-evenly;
-    gap: 10px;
+    gap: clamp(6px, 1.5dvh, 14px);
     overflow: hidden;
     position: relative;
+}
+
+#screen-puzzle {
+    padding: 8px 10px;
 }
 
 /* Marca d'água é adicionada via JavaScript para usar o logo configurado */
@@ -1327,46 +1334,51 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 5px 0;
     flex: 1;
+    width: 100%;
     position: relative;
     z-index: 1;
+    overflow: hidden;
 }
 
 .puzzle-area {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 15px;
+    gap: clamp(8px, 2vh, 18px);
     width: 100%;
-    max-width: 320px;
+    max-width: 420px;
+    padding: 0 10px;
 }
 
 .puzzle-board {
-    width: min(70vw, 45vh, 240px);
-    height: min(70vw, 45vh, 240px);
+    --board-size: min(78vw, 42dvh, 320px);
+    width: var(--board-size);
+    height: var(--board-size);
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
     gap: 3px;
-    background: rgba(0,0,0,0.3);
-    padding: 3px;
-    border-radius: 12px;
+    background: rgba(0,0,0,0.5);
+    padding: 4px;
+    border-radius: 14px;
     border: 3px solid var(--cor-amarelo);
+    box-shadow: 0 0 24px rgba(212,160,23,0.3), inset 0 0 12px rgba(0,0,0,0.4);
+    flex-shrink: 0;
 }
 
 .puzzle-slot {
-    background: rgba(255,255,255,0.05);
-    border: 2px dashed rgba(255,255,255,0.2);
-    border-radius: 6px;
+    background: rgba(255,255,255,0.04);
+    border: 2px dashed rgba(255,255,255,0.18);
+    border-radius: 7px;
     position: relative;
     transition: all 0.2s ease;
 }
 
 .puzzle-slot.drag-over {
-    background: rgba(255, 184, 0, 0.2);
+    background: rgba(212,160,23,0.2);
     border-color: var(--cor-amarelo);
-    box-shadow: 0 0 15px rgba(255, 184, 0, 0.3);
+    box-shadow: 0 0 15px rgba(212,160,23,0.4);
 }
 
 .puzzle-slot.filled {
@@ -1386,30 +1398,32 @@ body {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 6px;
-    padding: 10px;
-    background: rgba(0,0,0,0.3);
-    border-radius: 12px;
+    align-items: center;
+    gap: clamp(5px, 1.5vw, 10px);
+    padding: clamp(8px, 2vw, 14px);
+    background: rgba(0,0,0,0.4);
+    border-radius: 14px;
     border: 2px solid var(--cor-roxo);
-    min-height: 80px;
     width: 100%;
+    min-height: 70px;
     transition: all 0.2s ease;
 }
 
 .puzzle-pieces.drag-over {
-    background: rgba(255, 184, 0, 0.2);
+    background: rgba(212,160,23,0.15);
     border-color: var(--cor-amarelo);
-    box-shadow: 0 0 15px rgba(255, 184, 0, 0.3);
+    box-shadow: 0 0 15px rgba(212,160,23,0.3);
 }
 
 .puzzle-piece {
-    width: min(18vw, 12vh, 70px);
-    height: min(18vw, 12vh, 70px);
+    --piece-size: min(20vw, 11dvh, 72px);
+    width: var(--piece-size);
+    height: var(--piece-size);
     background-size: 300% 300%;
-    border-radius: 6px;
+    border-radius: 7px;
     cursor: grab;
     transition: transform 0.15s ease, box-shadow 0.15s ease;
-    border: 2px solid rgba(255,255,255,0.3);
+    border: 2px solid rgba(255,255,255,0.25);
     touch-action: none;
     user-select: none;
     flex-shrink: 0;
@@ -1417,8 +1431,8 @@ body {
 
 .puzzle-piece:hover {
     border-color: var(--cor-amarelo);
-    box-shadow: 0 0 15px rgba(255, 184, 0, 0.3);
-    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(212,160,23,0.4);
+    transform: scale(1.06);
 }
 
 .puzzle-piece.dragging {
@@ -2444,22 +2458,24 @@ body {
     /* Puzzle - Retrato */
     .puzzle-area {
         flex-direction: column;
-        gap: 20px;
+        gap: clamp(10px, 2dvh, 20px);
     }
 
     .puzzle-board {
-        width: min(75vw, 50vh, 280px);
-        height: min(75vw, 50vh, 280px);
+        --board-size: min(82vw, 44dvh, 310px);
+        width: var(--board-size);
+        height: var(--board-size);
     }
 
     .puzzle-pieces {
-        width: 90%;
-        max-width: 320px;
+        width: 92%;
+        max-width: 340px;
     }
 
     .puzzle-piece {
-        width: min(20vw, 10vh, 65px);
-        height: min(20vw, 10vh, 65px);
+        --piece-size: min(22vw, 10dvh, 68px);
+        width: var(--piece-size);
+        height: var(--piece-size);
     }
 
     /* Quiz - Retrato */
@@ -2751,31 +2767,36 @@ body {
 
     /* Puzzle - Paisagem */
     .puzzle-container {
-        width: auto;
-        flex: none;
+        width: 100%;
+        flex: 1;
     }
 
     .puzzle-area {
         flex-direction: row;
-        gap: 25px;
+        gap: clamp(14px, 3vw, 30px);
         align-items: center;
+        max-width: 700px;
     }
 
     .puzzle-board {
-        width: min(55vh, 45vw, 280px);
-        height: min(55vh, 45vw, 280px);
+        --board-size: min(60dvh, 46vw, 300px);
+        width: var(--board-size);
+        height: var(--board-size);
+        flex-shrink: 0;
     }
 
     .puzzle-pieces {
-        width: 180px;
+        width: clamp(130px, 22vw, 200px);
         flex-direction: column;
-        max-height: 70vh;
+        max-height: 65dvh;
         overflow-y: auto;
+        flex-shrink: 0;
     }
 
     .puzzle-piece {
-        width: min(15vh, 12vw, 55px);
-        height: min(15vh, 12vw, 55px);
+        --piece-size: min(13dvh, 11vw, 58px);
+        width: var(--piece-size);
+        height: var(--piece-size);
     }
 
     .puzzle-hint {

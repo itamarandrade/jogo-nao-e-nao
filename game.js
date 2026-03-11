@@ -390,6 +390,14 @@ function playPlaceSound(volume) {
 
 // ===== TEMAS DISPONÍVEIS =====
 const THEMES = {
+    patrao: {
+        name: 'Casa do Patrão',
+        icon: 'fa-crown',
+        primaryColor: '#d4a017',
+        secondaryColor: '#c0392b',
+        bgGradient: 'linear-gradient(145deg, #0a0a0a 0%, #1a0a00 40%, #2c1200 70%, #0f0f0f 100%)',
+        decorations: 'carnaval'
+    },
     carnaval: {
         name: 'Carnaval',
         icon: 'fa-masks-theater',
@@ -556,9 +564,9 @@ function createSunsetDecorations(container) {
 
 // ===== CONFIGURAÇÕES PADRÃO =====
 const DEFAULT_CONFIG = {
-    theme: 'carnaval',
-    primaryColor: '#ffb800',
-    secondaryColor: '#868fc6',
+    theme: 'patrao',
+    primaryColor: '#d4a017',
+    secondaryColor: '#c0392b',
     logo: null, // null = usar assets/casa-do-patrao.jpg
     puzzleImage: null, // null = usar assets/casa-do-patrao.jpg
     registrationEnabled: false, // true = formulário completo, false = só nome
