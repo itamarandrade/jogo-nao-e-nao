@@ -661,6 +661,11 @@ function loadConfig() {
                 }
             }
 
+            // Se os ícones salvos são os antigos (pré-tema Casa do Patrão), usar os novos
+            if (config.memoryIcons && config.memoryIcons.some(i => i.name === 'Microfone' || i.name === 'Dinheiro')) {
+                merged.memoryIcons = DEFAULT_CONFIG.memoryIcons;
+            }
+
             return merged;
         }
     } catch (e) {
