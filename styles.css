@@ -404,6 +404,8 @@ body {
 .splash-logo {
     width: clamp(350px, 90vw, 850px);
     height: auto;
+    max-height: 45vh;
+    object-fit: contain;
     filter: drop-shadow(0 0 30px rgba(255, 184, 0, 0.5));
     animation: splashLogoPulse 2s ease-in-out infinite;
 }
@@ -569,8 +571,10 @@ body {
 
 .logo-image {
     max-width: 400px;
+    max-height: 30vh;
     width: 70vw;
     height: auto;
+    object-fit: contain;
 }
 
 @keyframes pulse {
