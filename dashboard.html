@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Dashboard - Não é Não</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* Dashboard ocupa 100% da tela */
+        body {
+            display: block;
+        }
+        #screen-dashboard {
+            position: relative;
+            display: flex !important;
+            opacity: 1;
+            height: 100vh;
+        }
+        .dashboard-content {
+            height: 100%;
+        }
+
+        /* Dashboard - Orientação Retrato */
+        @media (orientation: portrait) {
+            .dashboard-main {
+                flex-direction: column;
+            }
+
+            .dashboard-tabs {
+                width: 100%;
+                flex-direction: row;
+                overflow-x: auto;
+                padding: 8px;
+                border-right: none;
+                border-bottom: 2px solid rgba(255,255,255,0.1);
+                gap: 5px;
+            }
+
+            .tab-btn {
+                flex: 0 0 auto;
+                padding: 8px 12px;
+                flex-direction: row;
+                gap: 6px;
+                font-size: 9px;
+            }
+
+            .tab-btn i {
+                font-size: 14px;
+            }
+
+            .dashboard-body {
+                padding: 15px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .stat-card {
+                padding: 12px;
+            }
+
+            .stat-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+            }
+
+            .stat-number {
+                font-size: 22px;
+            }
+
+            .stat-label {
+                font-size: 10px;
+            }
+
+            .players-table-container {
+                max-height: 200px;
+            }
+
+            .players-table {
+                font-size: 12px;
+            }
+
+            .players-table th,
+            .players-table td {
+                padding: 8px 10px;
+            }
+
+            .players-actions {
+                flex-wrap: wrap;
+            }
+
+            .btn-export, .btn-clear-data {
+                padding: 8px 15px;
+                font-size: 12px;
+            }
+
+            .config-section {
+                padding: 12px;
+                margin-bottom: 12px;
+            }
+
+            .themes-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+
+            .theme-card {
+                padding: 12px;
+            }
+
+            .icons-grid {
+                height: calc(100vh - 380px);
+                min-height: 150px;
+            }
+
+            .icon-item {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+
+            .dashboard-footer {
+                padding: 12px 15px;
+            }
+
+            .btn-reset-all,
+            .btn-save-config {
+                padding: 10px;
+                font-size: 12px;
+            }
+        }
+
+        /* Dashboard - Orientação Paisagem */
+        @media (orientation: landscape) {
+            .dashboard-tabs {
+                width: 80px;
+            }
+
+            .tab-btn {
+                padding: 10px 6px;
+                font-size: 9px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .stat-card {
+                flex-direction: column;
+                text-align: center;
+                padding: 12px 8px;
+                gap: 8px;
+            }
+
+            .stat-icon {
+                width: 45px;
+                height: 45px;
+            }
+
+            .players-table-container {
+                max-height: 300px;
+            }
+
+            .themes-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .icons-grid {
+                height: calc(100vh - 230px);
+            }
+
+            .icon-item {
+                width: 55px;
+                height: 55px;
+            }
+        }
+
+        /* Paisagem em telas pequenas */
+        @media (orientation: landscape) and (max-height: 500px) {
+            .dashboard-header {
+                padding: 10px 15px;
+            }
+
+            .dashboard-header h2 {
+                font-size: 16px;
+            }
+
+            .dashboard-tabs {
+                width: 65px;
+                padding: 5px;
+            }
+
+            .tab-btn {
+                padding: 8px 5px;
+                font-size: 8px;
+            }
+
+            .tab-btn i {
+                font-size: 16px;
+            }
+
+            .dashboard-body {
+                padding: 10px 15px;
+            }
+
+            .stats-grid {
+                gap: 8px;
+            }
+
+            .stat-card {
+                padding: 10px 5px;
+            }
+
+            .stat-icon {
+                width: 35px;
+                height: 35px;
+                font-size: 16px;
+            }
+
+            .stat-number {
+                font-size: 20px;
+            }
+
+            .config-section {
+                padding: 10px;
+                margin-bottom: 10px;
+            }
+
+            .config-label {
+                font-size: 12px;
+                margin-bottom: 8px;
+            }
+
+            .icons-grid {
+                height: calc(100vh - 200px);
+            }
+
+            .icon-item {
+                width: 45px;
+                height: 45px;
+                font-size: 18px;
+            }
+
+            .dashboard-footer {
+                padding: 8px 15px;
+            }
+        }
+
+        /* Estilos para níveis do quiz */
+        .quiz-info {
+            font-size: 14px;
+            color: var(--cor-amarelo);
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .quiz-distribution-hint {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 15px;
+            text-align: center;
+            font-style: italic;
+        }
+
+        .question-item .q-level {
+            font-size: 16px;
+            flex-shrink: 0;
+            margin-right: 8px;
+        }
+
+        .level-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .level-toggle span {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .level-btn {
+            padding: 6px 12px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .level-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .level-btn.active {
+            border-color: var(--cor-amarelo);
+            background: rgba(255, 184, 0, 0.2);
+        }
+
+        #new-awareness {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 13px;
+            resize: vertical;
+            min-height: 50px;
+            margin-bottom: 10px;
+            font-family: inherit;
+        }
+
+        #new-awareness::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        #new-awareness:focus {
+            outline: none;
+            border-color: var(--cor-amarelo);
+        }
+    </style>
+</head>
+<body>
+    <!-- TELA DO DASHBOARD -->
+    <div id="screen-dashboard" class="screen active">
+        <div class="dashboard-content">
+            <div class="dashboard-header">
+                <h2><i class="fas fa-cog"></i> Painel de Configurações</h2>
+                <a href="index.html" class="btn-close-dash" title="Voltar ao Jogo"><i class="fas fa-gamepad"></i></a>
+            </div>
+
+            <div class="dashboard-main">
+                <div class="dashboard-tabs">
+                    <button class="tab-btn active" data-tab="tab-stats" onclick="switchDashTab('tab-stats')">
+                        <i class="fas fa-chart-bar"></i> Estatísticas
+                    </button>
+                    <button class="tab-btn" data-tab="tab-players" onclick="switchDashTab('tab-players')">
+                        <i class="fas fa-users"></i> Cadastros
+                    </button>
+                    <button class="tab-btn" data-tab="tab-visual" onclick="switchDashTab('tab-visual')">
+                        <i class="fas fa-palette"></i> Visual
+                    </button>
+                    <button class="tab-btn" data-tab="tab-quiz" onclick="switchDashTab('tab-quiz')">
+                        <i class="fas fa-question-circle"></i> Quiz
+                    </button>
+                    <button class="tab-btn" data-tab="tab-memory" onclick="switchDashTab('tab-memory')">
+                        <i class="fas fa-brain"></i> Memória
+                    </button>
+                    <button class="tab-btn" data-tab="tab-puzzle" onclick="switchDashTab('tab-puzzle')">
+                        <i class="fas fa-puzzle-piece"></i> Puzzle
+                    </button>
+                </div>
+
+                <div class="dashboard-body">
+                    <!-- ABA ESTATÍSTICAS -->
+                    <div id="tab-stats" class="tab-content active">
+                        <div class="stats-grid">
+                            <div class="stat-card stat-total">
+                                <div class="stat-icon"><i class="fas fa-gamepad"></i></div>
+                                <div class="stat-info">
+                                    <span class="stat-number" id="stat-total">0</span>
+                                    <span class="stat-label">Total de Jogadores</span>
+                                </div>
+                            </div>
+                            <div class="stat-card stat-today">
+                                <div class="stat-icon"><i class="fas fa-calendar-day"></i></div>
+                                <div class="stat-info">
+                                    <span class="stat-number" id="stat-today">0</span>
+                                    <span class="stat-label">Jogaram Hoje</span>
+                                </div>
+                            </div>
+                            <div class="stat-card stat-registered">
+                                <div class="stat-icon"><i class="fas fa-user-check"></i></div>
+                                <div class="stat-info">
+                                    <span class="stat-number" id="stat-registered">0</span>
+                                    <span class="stat-label">Com Cadastro Completo</span>
+                                </div>
+                            </div>
+                            <div class="stat-card stat-simple">
+                                <div class="stat-icon"><i class="fas fa-user"></i></div>
+                                <div class="stat-info">
+                                    <span class="stat-number" id="stat-simple">0</span>
+                                    <span class="stat-label">Apenas Nome</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="config-section">
+                            <label class="config-label">
+                                <i class="fas fa-clipboard-list"></i> Formulário de Cadastro
+                            </label>
+                            <div class="game-toggle registration-toggle">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="toggle-registration" onchange="toggleRegistration(this.checked)">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span class="toggle-label">
+                                    <span id="registration-status">Desativado</span>
+                                    <small id="registration-desc">Apenas nome do jogador</small>
+                                </span>
+                            </div>
+                            <p class="config-hint">
+                                <i class="fas fa-info-circle"></i>
+                                Quando ativado, solicita nome, e-mail, telefone e consentimento antes do jogo.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- ABA CADASTROS -->
+                    <div id="tab-players" class="tab-content">
+                        <div class="players-header">
+                            <div class="players-actions">
+                                <button class="btn-export" onclick="exportPlayersCSV()">
+                                    <i class="fas fa-download"></i> Exportar CSV
+                                </button>
+                                <button class="btn-clear-data" onclick="clearPlayersData()">
+                                    <i class="fas fa-trash"></i> Limpar Dados
+                                </button>
+                            </div>
+                        </div>
+                        <div class="players-table-container">
+                            <table class="players-table" id="players-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>E-mail</th>
+                                        <th>Telefone</th>
+                                        <th>Data</th>
+                                        <th>Hora</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="players-tbody">
+                                    <!-- Dados serão inseridos via JS -->
+                                </tbody>
+                            </table>
+                            <div class="no-data-message" id="no-players-message" style="display: none;">
+                                <i class="fas fa-users-slash"></i>
+                                <p>Nenhum jogador registrado ainda.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ABA VISUAL -->
+                    <div id="tab-visual" class="tab-content">
+                        <div class="config-section">
+                            <label class="config-label">
+                                <i class="fas fa-swatchbook"></i> Tema do Jogo
+                            </label>
+                            <div class="themes-grid" id="themes-grid">
+                                <!-- Temas serão adicionados via JS -->
+                            </div>
+                        </div>
+
+                        <div class="config-section">
+                            <label class="config-label">
+                                <i class="fas fa-gamepad"></i> Jogos Ativos
+                            </label>
+                            <div class="games-toggles">
+                                <div class="game-toggle">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="toggle-memory" checked onchange="toggleGame('memory', this.checked)">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <span class="toggle-label"><i class="fas fa-brain"></i> Memória</span>
+                                </div>
+                                <div class="game-toggle">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="toggle-puzzle" checked onchange="toggleGame('puzzle', this.checked)">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <span class="toggle-label"><i class="fas fa-puzzle-piece"></i> Quebra-Cabeça</span>
+                                </div>
+                                <div class="game-toggle">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="toggle-quiz" checked onchange="toggleGame('quiz', this.checked)">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <span class="toggle-label"><i class="fas fa-question-circle"></i> Quiz</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="config-section">
+                            <label class="config-label">
+                                <i class="fas fa-fill-drip"></i> Cor Principal (Amarelo)
+                            </label>
+                            <div class="color-picker-wrapper">
+                                <input type="color" id="config-color" value="#ffb800">
+                                <span id="color-preview">#ffb800</span>
+                            </div>
+                        </div>
+
+                        <div class="config-section">
+                            <label class="config-label">
+                                <i class="fas fa-fill-drip"></i> Cor Secundária (Roxo)
+                            </label>
+                            <div class="color-picker-wrapper">
+                                <input type="color" id="config-color-secondary" value="#868fc6">
+                                <span id="color-secondary-preview">#868fc6</span>
+                            </div>
+                        </div>
+
+                        <div class="config-section">
+                            <label class="config-label">
+                                <i class="fas fa-image"></i> Logo Principal
+                            </label>
+                            <div class="upload-wrapper">
+                                <img id="logo-preview" src="assets/logo-png.png" alt="Logo Preview">
+                                <input type="file" id="config-logo" accept="image/*" onchange="previewLogo(this)">
+                                <button class="btn-upload" onclick="document.getElementById('config-logo').click()">
+                                    <i class="fas fa-upload"></i> Escolher Imagem
+                                </button>
+                                <button class="btn-reset-img" onclick="resetLogo()">
+                                    <i class="fas fa-undo"></i> Usar Padrão
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ABA QUIZ -->
+                    <div id="tab-quiz" class="tab-content">
+                        <div class="config-section">
+                            <label class="config-label">
+                                <i class="fas fa-list"></i> Perguntas do Quiz (V/F)
+                            </label>
+                            <p class="quiz-info" id="quiz-level-count">🟢 Fácil: 0 | 🟡 Médio: 0 | 🔴 Difícil: 0</p>
+                            <p class="quiz-distribution-hint">O quiz exibe 10 perguntas: 2 fáceis, 3 médias e 5 difíceis (randomizadas)</p>
+                            <div id="quiz-questions-list" class="questions-list">
+                                <!-- Perguntas serão adicionadas via JS -->
+                            </div>
+                            <div class="add-question-form">
+                                <textarea id="new-question" placeholder="Digite a pergunta..."></textarea>
+                                <textarea id="new-awareness" placeholder="Mensagem de conscientização (aparece após resposta)..."></textarea>
+                                <div class="level-toggle">
+                                    <span>Nível:</span>
+                                    <button class="level-btn" data-level="easy" onclick="setNewLevel('easy')">🟢 Fácil</button>
+                                    <button class="level-btn active" data-level="medium" onclick="setNewLevel('medium')">🟡 Médio</button>
+                                    <button class="level-btn" data-level="hard" onclick="setNewLevel('hard')">🔴 Difícil</button>
+                                </div>
+                                <div class="answer-toggle">
+                                    <span>Resposta correta:</span>
+                                    <button id="answer-true" class="answer-btn active" onclick="setNewAnswer(true)">Sim</button>
+                                    <button id="answer-false" class="answer-btn" onclick="setNewAnswer(false)">Não</button>
+                                </div>
+                                <button class="btn-add-question" onclick="addQuizQuestion()">
+                                    <i class="fas fa-plus"></i> Adicionar Pergunta
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ABA MEMÓRIA -->
+                    <div id="tab-memory" class="tab-content">
+                        <div class="config-section">
+                            <label class="config-label">
+                                <i class="fas fa-icons"></i> Ícones do Jogo da Memória (selecione 8+)
+                            </label>
+                            <div id="icons-grid" class="icons-grid">
+                                <!-- Ícones serão adicionados via JS -->
+                            </div>
+                            <p class="icons-count">Selecionados: <span id="selected-count">0</span>/8 mínimo</p>
+                        </div>
+                    </div>
+
+                    <!-- ABA PUZZLE -->
+                    <div id="tab-puzzle" class="tab-content">
+                        <div class="config-section">
+                            <label class="config-label">
+                                <i class="fas fa-image"></i> Imagem do Quebra-Cabeça
+                            </label>
+                            <div class="upload-wrapper">
+                                <img id="puzzle-preview" src="assets/logo-png.png" alt="Puzzle Preview">
+                                <input type="file" id="config-puzzle" accept="image/*" onchange="previewPuzzle(this)">
+                                <button class="btn-upload" onclick="document.getElementById('config-puzzle').click()">
+                                    <i class="fas fa-upload"></i> Escolher Imagem
+                                </button>
+                                <button class="btn-reset-img" onclick="resetPuzzleImage()">
+                                    <i class="fas fa-undo"></i> Usar Padrão
+                                </button>
+                            </div>
+                            <p class="puzzle-hint-dash">Dica: Use uma imagem quadrada para melhor resultado.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-footer">
+                <button class="btn-reset-all" onclick="resetAllConfig()">
+                    <i class="fas fa-trash-restore"></i> Restaurar Padrão
+                </button>
+                <button class="btn-save-config" onclick="saveAllConfigAndRedirect()">
+                    <i class="fas fa-save"></i> Salvar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+    <script>
+        // Inicializar dashboard ao carregar
+        document.addEventListener('DOMContentLoaded', () => {
+            applyConfig(gameConfig);
+            initDashboard();
+            initGameToggles();
+            initRegistrationToggle();
+            renderThemes();
+            updateStats();
+            renderPlayersTable();
+        });
+
+        // Atualizar estatísticas
+        function updateStats() {
+            const stats = getPlayersStats();
+            document.getElementById('stat-total').textContent = stats.total;
+            document.getElementById('stat-today').textContent = stats.today;
+            document.getElementById('stat-registered').textContent = stats.withRegistration;
+            document.getElementById('stat-simple').textContent = stats.onlyName;
+        }
+
+        // Renderizar tabela de jogadores
+        function renderPlayersTable() {
+            const players = getPlayersData();
+            const tbody = document.getElementById('players-tbody');
+            const noDataMsg = document.getElementById('no-players-message');
+
+            tbody.innerHTML = '';
+
+            if (players.length === 0) {
+                noDataMsg.style.display = 'flex';
+                return;
+            }
+
+            noDataMsg.style.display = 'none';
+
+            // Ordenar por data/hora mais recente
+            const sortedPlayers = [...players].reverse();
+
+            sortedPlayers.forEach(player => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${player.name || '-'}</td>
+                    <td>${player.email || '-'}</td>
+                    <td>${player.phone || '-'}</td>
+                    <td>${player.date || '-'}</td>
+                    <td>${player.time || '-'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Inicializar toggle de registro
+        function initRegistrationToggle() {
+            const toggle = document.getElementById('toggle-registration');
+            const isEnabled = gameConfig.registrationEnabled === true;
+            toggle.checked = isEnabled;
+            updateRegistrationStatus(isEnabled);
+        }
+
+        // Toggle de formulário de registro
+        function toggleRegistration(enabled) {
+            tempConfig.registrationEnabled = enabled;
+            updateRegistrationStatus(enabled);
+        }
+
+        function updateRegistrationStatus(enabled) {
+            const statusEl = document.getElementById('registration-status');
+            const descEl = document.getElementById('registration-desc');
+
+            if (enabled) {
+                statusEl.textContent = 'Ativado';
+                descEl.textContent = 'Nome, e-mail, telefone e consentimento';
+            } else {
+                statusEl.textContent = 'Desativado';
+                descEl.textContent = 'Apenas nome do jogador';
+            }
+        }
+
+        // Renderizar temas
+        function renderThemes() {
+            const grid = document.getElementById('themes-grid');
+            grid.innerHTML = '';
+
+            Object.keys(THEMES).forEach(themeKey => {
+                const theme = THEMES[themeKey];
+                const card = document.createElement('div');
+                card.className = 'theme-card' + (tempConfig.theme === themeKey ? ' selected' : '');
+                card.style.background = theme.bgGradient;
+                card.onclick = () => selectTheme(themeKey);
+
+                card.innerHTML = `
+                    <span class="theme-icon"><i class="fas ${theme.icon}"></i></span>
+                    <span class="theme-name">${theme.name}</span>
+                    <div class="theme-colors">
+                        <span class="theme-color" style="background: ${theme.primaryColor}"></span>
+                        <span class="theme-color" style="background: ${theme.secondaryColor}"></span>
+                    </div>
+                `;
+
+                grid.appendChild(card);
+            });
+        }
+
+        // Selecionar tema
+        function selectTheme(themeKey) {
+            const theme = THEMES[themeKey];
+            tempConfig.theme = themeKey;
+            tempConfig.primaryColor = theme.primaryColor;
+            tempConfig.secondaryColor = theme.secondaryColor;
+
+            // Atualizar color pickers
+            document.getElementById('config-color').value = theme.primaryColor;
+            document.getElementById('color-preview').textContent = theme.primaryColor;
+            document.getElementById('config-color-secondary').value = theme.secondaryColor;
+            document.getElementById('color-secondary-preview').textContent = theme.secondaryColor;
+
+            // Aplicar tema visualmente
+            document.documentElement.style.setProperty('--cor-amarelo', theme.primaryColor);
+            document.documentElement.style.setProperty('--cor-roxo', theme.secondaryColor);
+            document.body.style.background = theme.bgGradient;
+            document.getElementById('screen-dashboard').style.background = theme.bgGradient;
+
+            // Atualizar seleção visual
+            renderThemes();
+        }
+
+        // Inicializar toggles dos jogos
+        function initGameToggles() {
+            const gamesEnabled = tempConfig.gamesEnabled || { memory: true, puzzle: true, quiz: true };
+
+            document.getElementById('toggle-memory').checked = gamesEnabled.memory;
+            document.getElementById('toggle-puzzle').checked = gamesEnabled.puzzle;
+            document.getElementById('toggle-quiz').checked = gamesEnabled.quiz;
+        }
+
+        // Toggle de jogo
+        function toggleGame(game, enabled) {
+            if (!tempConfig.gamesEnabled) {
+                tempConfig.gamesEnabled = { memory: true, puzzle: true, quiz: true };
+            }
+            tempConfig.gamesEnabled[game] = enabled;
+
+            // Verificar se pelo menos um jogo está ativo
+            const anyEnabled = tempConfig.gamesEnabled.memory || tempConfig.gamesEnabled.puzzle || tempConfig.gamesEnabled.quiz;
+            if (!anyEnabled) {
+                alert('Pelo menos um jogo deve estar ativo!');
+                tempConfig.gamesEnabled[game] = true;
+                document.getElementById('toggle-' + game).checked = true;
+            }
+        }
+
+        // Salvar e redirecionar para o jogo
+        function saveAllConfigAndRedirect() {
+            if (tempConfig.memoryIcons.length < 8) {
+                alert('Selecione pelo menos 8 ícones para o jogo da memória!');
+                return;
+            }
+
+            if (tempConfig.quizQuestions.length < 3) {
+                alert('Adicione pelo menos 3 perguntas para o quiz!');
+                return;
+            }
+
+            gameConfig = { ...tempConfig };
+            saveConfig(gameConfig);
+
+            alert('Configurações salvas com sucesso!');
+        }
+    </script>
+</body>
+</html>
