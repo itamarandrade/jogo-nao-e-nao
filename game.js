@@ -863,6 +863,12 @@ function showVictory() {
     document.getElementById('winner-name').textContent = playerName || 'Jogador';
     showScreen('screen-victory');
     createConfetti();
+    incrementGamesCompleted();
+}
+
+function incrementGamesCompleted() {
+    const count = parseInt(localStorage.getItem('games_completed') || '0');
+    localStorage.setItem('games_completed', (count + 1).toString());
 }
 
 function createConfetti() {
@@ -1599,12 +1605,14 @@ function getPlayersStats() {
     const today = new Date().toLocaleDateString('pt-BR');
     const todayPlayers = players.filter(p => p.date === today);
     const withEmail = players.filter(p => p.email && p.email.trim() !== '');
+    const gamesCompleted = parseInt(localStorage.getItem('games_completed') || '0');
 
     return {
         total: players.length,
         today: todayPlayers.length,
         withRegistration: withEmail.length,
-        onlyName: players.length - withEmail.length
+        onlyName: players.length - withEmail.length,
+        gamesCompleted: gamesCompleted
     };
 }
 

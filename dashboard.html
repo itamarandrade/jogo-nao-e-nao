@@ -393,6 +393,13 @@
                                     <span class="stat-label">Apenas Nome</span>
                                 </div>
                             </div>
+                            <div class="stat-card" style="border-left: 4px solid #10b981;">
+                                <div class="stat-icon"><i class="fas fa-trophy"></i></div>
+                                <div class="stat-info">
+                                    <span class="stat-number" id="stat-games">0</span>
+                                    <span class="stat-label">Jogos Finalizados</span>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="config-section">
@@ -625,6 +632,7 @@
             document.getElementById('stat-today').textContent = stats.today;
             document.getElementById('stat-registered').textContent = stats.withRegistration;
             document.getElementById('stat-simple').textContent = stats.onlyName;
+            document.getElementById('stat-games').textContent = stats.gamesCompleted;
         }
 
         // Renderizar tabela de jogadores
