@@ -587,59 +587,27 @@ const DEFAULT_CONFIG = {
         { question: "A vítima pode denunciar mesmo sem testemunhas?", answer: true, level: "hard", awareness: "A denúncia é um direito." }
     ],
     memoryIcons: [
-        { icon: 'fa-heart', name: 'Coração' },
-        { icon: 'fa-hand', name: 'Pare' },
-        { icon: 'fa-shield-halved', name: 'Proteção' },
-        { icon: 'fa-star', name: 'Estrela' },
-        { icon: 'fa-handshake', name: 'Cuidado' },
-        { icon: 'fa-user-shield', name: 'Segurança' },
-        { icon: 'fa-dove', name: 'Paz' },
-        { icon: 'fa-hand-holding-heart', name: 'Apoio' },
-        { icon: 'fa-people-group', name: 'União' },
-        { icon: 'fa-ribbon', name: 'Consciência' },
-        { icon: 'fa-circle-check', name: 'Respeito' },
-        { icon: 'fa-face-smile', name: 'Alegria' },
-        { icon: 'fa-sun', name: 'Luz' },
-        { icon: 'fa-gem', name: 'Valor' },
-        { icon: 'fa-crown', name: 'Dignidade' },
-        { icon: 'fa-bolt', name: 'Força' }
+        { image: 'assets/cards/nao-e-nao-verde.png', name: 'Não é Não Verde' },
+        { image: 'assets/cards/nao-e-nao-vermelho.png', name: 'Não é Não Vermelho' },
+        { image: 'assets/cards/logo-estado-presente.png', name: 'Estado Presente' },
+        { image: 'assets/cards/logo-sesm.png', name: 'SESM' },
+        { image: 'assets/cards/logo-viva-mais.png', name: 'Viva Mais' },
+        { image: 'assets/cards/disque-180.png', name: 'Disque 180' },
+        { image: 'assets/cards/ligue-190.png', name: 'Ligue 190' },
+        { image: 'assets/cards/mao-pare.png', name: 'Mão Pare' }
     ]
 };
 
-// Lista completa de ícones disponíveis para seleção no Dashboard
+// Lista completa de imagens disponíveis para seleção no Dashboard
 const AVAILABLE_ICONS = [
-    { icon: 'fa-heart', name: 'Coração' },
-    { icon: 'fa-hand', name: 'Pare' },
-    { icon: 'fa-shield-halved', name: 'Proteção' },
-    { icon: 'fa-star', name: 'Estrela' },
-    { icon: 'fa-handshake', name: 'Cuidado' },
-    { icon: 'fa-user-shield', name: 'Segurança' },
-    { icon: 'fa-dove', name: 'Paz' },
-    { icon: 'fa-hand-holding-heart', name: 'Apoio' },
-    { icon: 'fa-people-group', name: 'União' },
-    { icon: 'fa-ribbon', name: 'Consciência' },
-    { icon: 'fa-circle-check', name: 'Respeito' },
-    { icon: 'fa-face-smile', name: 'Alegria' },
-    { icon: 'fa-sun', name: 'Luz' },
-    { icon: 'fa-gem', name: 'Valor' },
-    { icon: 'fa-crown', name: 'Dignidade' },
-    { icon: 'fa-bolt', name: 'Força' },
-    { icon: 'fa-bell', name: 'Sino' },
-    { icon: 'fa-book', name: 'Livro' },
-    { icon: 'fa-camera', name: 'Câmera' },
-    { icon: 'fa-car', name: 'Carro' },
-    { icon: 'fa-cloud', name: 'Nuvem' },
-    { icon: 'fa-coffee', name: 'Café' },
-    { icon: 'fa-flag', name: 'Bandeira' },
-    { icon: 'fa-gift', name: 'Presente' },
-    { icon: 'fa-globe', name: 'Globo' },
-    { icon: 'fa-home', name: 'Casa' },
-    { icon: 'fa-key', name: 'Chave' },
-    { icon: 'fa-leaf', name: 'Folha' },
-    { icon: 'fa-lightbulb', name: 'Lâmpada' },
-    { icon: 'fa-music', name: 'Música' },
-    { icon: 'fa-palette', name: 'Paleta' },
-    { icon: 'fa-plane', name: 'Avião' }
+    { image: 'assets/cards/nao-e-nao-verde.png', name: 'Não é Não Verde' },
+    { image: 'assets/cards/nao-e-nao-vermelho.png', name: 'Não é Não Vermelho' },
+    { image: 'assets/cards/logo-estado-presente.png', name: 'Estado Presente' },
+    { image: 'assets/cards/logo-sesm.png', name: 'SESM' },
+    { image: 'assets/cards/logo-viva-mais.png', name: 'Viva Mais' },
+    { image: 'assets/cards/disque-180.png', name: 'Disque 180' },
+    { image: 'assets/cards/ligue-190.png', name: 'Ligue 190' },
+    { image: 'assets/cards/mao-pare.png', name: 'Mão Pare' }
 ];
 
 // ===== FUNÇÕES DE CONFIGURAÇÃO (localStorage) =====
@@ -947,10 +915,11 @@ function generateMemoryCards() {
         cardElement.dataset.index = index;
         cardElement.dataset.id = card.id;
 
+        const themeLogo = (THEMES[gameConfig.theme] || {}).logo || 'assets/logo-png.png';
         cardElement.innerHTML = `
             <div class="card-inner">
-                <div class="card-face card-front"></div>
-                <div class="card-face card-back"><i class="fas ${card.icon}"></i></div>
+                <div class="card-face card-front"><img src="${themeLogo}" alt="Logo" class="card-front-logo"></div>
+                <div class="card-face card-back"><img src="${card.image}" alt="${card.name}" class="card-image"></div>
             </div>
         `;
 
@@ -1923,12 +1892,12 @@ function renderIconsGrid() {
     const grid = document.getElementById('icons-grid');
     grid.innerHTML = '';
 
-    const selectedIcons = tempConfig.memoryIcons.map(i => i.icon);
+    const selectedNames = tempConfig.memoryIcons.map(i => i.name);
 
     AVAILABLE_ICONS.forEach(iconData => {
         const item = document.createElement('div');
-        item.className = 'icon-item' + (selectedIcons.includes(iconData.icon) ? ' selected' : '');
-        item.innerHTML = `<i class="fas ${iconData.icon}"></i>`;
+        item.className = 'icon-item' + (selectedNames.includes(iconData.name) ? ' selected' : '');
+        item.innerHTML = `<img src="${iconData.image}" alt="${iconData.name}" style="width:40px;height:40px;object-fit:contain;">`;
         item.title = iconData.name;
         item.onclick = () => toggleIcon(iconData, item);
         grid.appendChild(item);
@@ -1938,7 +1907,7 @@ function renderIconsGrid() {
 }
 
 function toggleIcon(iconData, element) {
-    const index = tempConfig.memoryIcons.findIndex(i => i.icon === iconData.icon);
+    const index = tempConfig.memoryIcons.findIndex(i => i.name === iconData.name);
 
     if (index >= 0) {
         tempConfig.memoryIcons.splice(index, 1);

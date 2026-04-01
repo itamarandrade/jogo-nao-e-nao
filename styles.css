@@ -1316,11 +1316,11 @@ body {
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
 
-.card-front::after {
-    content: "?";
-    font-size: clamp(24px, 6vw, 40px);
-    font-weight: 900;
-    color: rgba(255,255,255,0.4);
+.card-front-logo {
+    width: 60%;
+    height: 60%;
+    object-fit: contain;
+    opacity: 0.85;
 }
 
 .card-back {
@@ -1329,6 +1329,15 @@ body {
     border: 3px solid var(--cor-amarelo);
     box-shadow: 0 4px 15px rgba(255, 184, 0, 0.3);
     color: var(--cor-magenta);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-image {
+    width: 70%;
+    height: 70%;
+    object-fit: contain;
 }
 
 .card.matched .card-back {
@@ -3175,8 +3184,9 @@ body {
         border-radius: 14px;
     }
 
-    .card-front::after {
-        font-size: 52px;
+    .card-front-logo {
+        width: 65%;
+        height: 65%;
     }
 
     /* Puzzle */
