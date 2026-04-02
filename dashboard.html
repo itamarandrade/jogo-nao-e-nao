@@ -418,7 +418,27 @@
                             </div>
                             <p class="config-hint">
                                 <i class="fas fa-info-circle"></i>
-                                Quando ativado, solicita nome, e-mail, telefone e consentimento antes do jogo.
+                                Quando ativado, solicita nome, e-mail, CPF, telefone e consentimento antes do jogo.
+                            </p>
+                        </div>
+
+                        <div class="config-section">
+                            <label class="config-label">
+                                <i class="fas fa-fingerprint"></i> Deduplicação por CPF
+                            </label>
+                            <div class="game-toggle registration-toggle">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="toggle-deduplication" onchange="toggleDeduplication(this.checked)">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span class="toggle-label">
+                                    <span id="dedup-status">Desativado</span>
+                                    <small id="dedup-desc">Permite jogar várias vezes</small>
+                                </span>
+                            </div>
+                            <p class="config-hint">
+                                <i class="fas fa-info-circle"></i>
+                                Quando ativado, impede que o mesmo CPF jogue mais de uma vez. Requer formulário de cadastro ativo.
                             </p>
                         </div>
                     </div>
@@ -440,6 +460,7 @@
                                 <thead>
                                     <tr>
                                         <th>Nome</th>
+                                        <th>CPF</th>
                                         <th>E-mail</th>
                                         <th>Telefone</th>
                                         <th>Data</th>
@@ -620,6 +641,7 @@
             initDashboard();
             initGameToggles();
             initRegistrationToggle();
+            initDeduplicationToggle();
             renderThemes();
             updateStats();
             renderPlayersTable();
@@ -657,6 +679,7 @@
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${player.name || '-'}</td>
+                    <td>${player.cpf || '-'}</td>
                     <td>${player.email || '-'}</td>
                     <td>${player.phone || '-'}</td>
                     <td>${player.date || '-'}</td>
@@ -686,10 +709,38 @@
 
             if (enabled) {
                 statusEl.textContent = 'Ativado';
-                descEl.textContent = 'Nome, e-mail, telefone e consentimento';
+                descEl.textContent = 'Nome, CPF, e-mail, telefone e consentimento';
             } else {
                 statusEl.textContent = 'Desativado';
                 descEl.textContent = 'Apenas nome do jogador';
+            }
+        }
+
+        // Inicializar toggle de deduplicação
+        function initDeduplicationToggle() {
+            const toggle = document.getElementById('toggle-deduplication');
+            if (!toggle) return;
+            const isEnabled = gameConfig.deduplicationEnabled === true;
+            toggle.checked = isEnabled;
+            updateDeduplicationStatus(isEnabled);
+        }
+
+        function toggleDeduplication(enabled) {
+            tempConfig.deduplicationEnabled = enabled;
+            updateDeduplicationStatus(enabled);
+        }
+
+        function updateDeduplicationStatus(enabled) {
+            const statusEl = document.getElementById('dedup-status');
+            const descEl = document.getElementById('dedup-desc');
+            if (!statusEl || !descEl) return;
+
+            if (enabled) {
+                statusEl.textContent = 'Ativado';
+                descEl.textContent = 'CPF único por jogador';
+            } else {
+                statusEl.textContent = 'Desativado';
+                descEl.textContent = 'Permite jogar várias vezes';
             }
         }
 

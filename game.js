@@ -434,6 +434,24 @@ const THEMES = {
         bgGradient: 'linear-gradient(135deg, #9a3412 0%, #581c87 50%, #1e1b4b 100%)',
         decorations: 'sunset',
         logo: 'assets/logo-simple.png'
+    },
+    copa2026: {
+        name: 'Copa do Mundo 2026',
+        icon: 'fa-futbol',
+        primaryColor: '#00a651',
+        secondaryColor: '#ffcc00',
+        bgGradient: 'linear-gradient(135deg, #002776 0%, #00a651 50%, #002776 100%)',
+        decorations: 'copa2026',
+        logo: 'assets/logo-copa2026.png'
+    },
+    movcidade: {
+        name: 'Movcidade',
+        icon: 'fa-city',
+        primaryColor: '#0077b6',
+        secondaryColor: '#00b4d8',
+        bgGradient: 'linear-gradient(135deg, #023e8a 0%, #0077b6 50%, #0096c7 100%)',
+        decorations: 'movcidade',
+        logo: 'assets/logo-movcidade.png'
     }
 };
 
@@ -459,6 +477,12 @@ function createThemeDecorations(themeName) {
             break;
         case 'sunset':
             createSunsetDecorations(container);
+            break;
+        case 'copa2026':
+            createCopa2026Decorations(container);
+            break;
+        case 'movcidade':
+            createMovcidadeDecorations(container);
             break;
     }
 }
@@ -536,6 +560,38 @@ function createSunsetDecorations(container) {
     }
 }
 
+function createCopa2026Decorations(container) {
+    const emojis = ['⚽', '🏆', '🇧🇷', '🥅', '🏟️', '🎉', '⭐', '🇺🇸', '🇲🇽', '🇨🇦'];
+    for (let i = 0; i < 15; i++) {
+        const item = document.createElement('div');
+        item.className = 'mascara';
+        item.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        item.style.left = Math.random() * 100 + '%';
+        item.style.top = Math.random() * 100 + '%';
+        item.style.animationDuration = (Math.random() * 4 + 3) + 's';
+        item.style.animationDelay = (Math.random() * 2) + 's';
+        item.style.opacity = '0.4';
+        item.style.fontSize = (Math.random() * 16 + 16) + 'px';
+        container.appendChild(item);
+    }
+}
+
+function createMovcidadeDecorations(container) {
+    const emojis = ['🏙️', '🚌', '🚲', '🌳', '🏛️', '🌆', '🚶', '🛤️'];
+    for (let i = 0; i < 10; i++) {
+        const item = document.createElement('div');
+        item.className = 'mascara';
+        item.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        item.style.left = Math.random() * 100 + '%';
+        item.style.top = Math.random() * 100 + '%';
+        item.style.animationDuration = (Math.random() * 4 + 3) + 's';
+        item.style.animationDelay = (Math.random() * 2) + 's';
+        item.style.opacity = '0.35';
+        item.style.fontSize = (Math.random() * 14 + 14) + 'px';
+        container.appendChild(item);
+    }
+}
+
 // ===== CONFIGURAÇÕES PADRÃO =====
 const DEFAULT_CONFIG = {
     theme: 'guns',
@@ -544,6 +600,7 @@ const DEFAULT_CONFIG = {
     logo: null, // null = usar assets/logo-png.png
     puzzleImage: null, // null = usar assets/logo-png.png
     registrationEnabled: false, // true = formulário completo, false = só nome
+    deduplicationEnabled: false, // true = impede CPF duplicado
     gamesEnabled: {
         memory: true,
         puzzle: true,
@@ -1510,7 +1567,7 @@ document.addEventListener('touchend', (e) => {
     lastTouchEnd = now;
 }, false);
 
-// ===== DADOS DOS JOGADORES (CSV) =====
+// ===== DADOS DOS JOGADORES =====
 const PLAYERS_STORAGE_KEY = 'game_players_data';
 
 function getPlayersData() {
@@ -1537,10 +1594,11 @@ function exportPlayersCSV() {
         return;
     }
 
-    const headers = ['ID', 'Nome', 'Email', 'Telefone', 'Consentimento', 'Data', 'Hora'];
+    const headers = ['ID', 'Nome', 'CPF', 'Email', 'Telefone', 'Consentimento', 'Data', 'Hora'];
     const rows = players.map(p => [
         p.id,
         p.name || '',
+        p.cpf || '',
         p.email || '',
         p.phone || '',
         p.consent ? 'Sim' : 'Não',
@@ -1605,9 +1663,51 @@ function formatPhone(input) {
     input.value = value;
 }
 
+function formatCPF(input) {
+    let value = input.value.replace(/\D/g, '');
+    if (value.length > 11) value = value.slice(0, 11);
+    if (value.length > 9) {
+        value = `${value.slice(0, 3)}.${value.slice(3, 6)}.${value.slice(6, 9)}-${value.slice(9)}`;
+    } else if (value.length > 6) {
+        value = `${value.slice(0, 3)}.${value.slice(3, 6)}.${value.slice(6)}`;
+    } else if (value.length > 3) {
+        value = `${value.slice(0, 3)}.${value.slice(3)}`;
+    }
+    input.value = value;
+}
+
+function validateCPF(cpf) {
+    const clean = cpf.replace(/\D/g, '');
+    if (clean.length !== 11) return false;
+    if (/^(\d)\1{10}$/.test(clean)) return false; // 111.111.111-11 etc
+    let sum = 0;
+    for (let i = 0; i < 9; i++) sum += parseInt(clean[i]) * (10 - i);
+    let digit = 11 - (sum % 11);
+    if (digit >= 10) digit = 0;
+    if (parseInt(clean[9]) !== digit) return false;
+    sum = 0;
+    for (let i = 0; i < 10; i++) sum += parseInt(clean[i]) * (11 - i);
+    digit = 11 - (sum % 11);
+    if (digit >= 10) digit = 0;
+    return parseInt(clean[10]) === digit;
+}
+
+function isDeduplicationEnabled() {
+    return gameConfig.deduplicationEnabled === true;
+}
+
+function checkDuplicateCPF(cpf) {
+    if (!cpf || !isDeduplicationEnabled()) return false;
+    const cleanCpf = cpf.replace(/\D/g, '');
+    if (cleanCpf.length !== 11) return false;
+    const players = getPlayersData();
+    return players.some(p => (p.cpf || '').replace(/\D/g, '') === cleanCpf);
+}
+
 function submitRegistration() {
     const name = document.getElementById('reg-name').value.trim();
     const email = document.getElementById('reg-email').value.trim();
+    const cpf = document.getElementById('reg-cpf').value.trim();
     const phone = document.getElementById('reg-phone').value.trim();
     const consent = document.getElementById('reg-consent').checked;
 
@@ -1626,10 +1726,30 @@ function submitRegistration() {
         return;
     }
 
+    // Validação e deduplicação por CPF
+    if (cpf) {
+        if (!validateCPF(cpf)) {
+            alert('CPF inválido! Por favor, informe um CPF válido.');
+            return;
+        }
+    }
+
+    if (isDeduplicationEnabled()) {
+        if (!cpf || !validateCPF(cpf)) {
+            alert('Por favor, informe um CPF válido! A verificação de CPF está ativada.');
+            return;
+        }
+        if (checkDuplicateCPF(cpf)) {
+            alert('Este CPF já foi cadastrado! Cada pessoa pode jogar apenas uma vez.');
+            return;
+        }
+    }
+
     // Salvar dados
     savePlayerData({
         name: name,
         email: email,
+        cpf: cpf,
         phone: phone,
         consent: consent,
         registered: true
