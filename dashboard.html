@@ -418,7 +418,7 @@
                             </div>
                             <p class="config-hint">
                                 <i class="fas fa-info-circle"></i>
-                                Quando ativado, solicita nome, e-mail, CPF, telefone e consentimento antes do jogo.
+                                Quando ativado, solicita nome, CPF e consentimento antes do jogo.
                             </p>
                         </div>
 
@@ -461,8 +461,6 @@
                                     <tr>
                                         <th>Nome</th>
                                         <th>CPF</th>
-                                        <th>E-mail</th>
-                                        <th>Telefone</th>
                                         <th>Data</th>
                                         <th>Hora</th>
                                     </tr>
@@ -680,8 +678,6 @@
                 tr.innerHTML = `
                     <td>${player.name || '-'}</td>
                     <td>${player.cpf || '-'}</td>
-                    <td>${player.email || '-'}</td>
-                    <td>${player.phone || '-'}</td>
                     <td>${player.date || '-'}</td>
                     <td>${player.time || '-'}</td>
                 `;
@@ -709,7 +705,7 @@
 
             if (enabled) {
                 statusEl.textContent = 'Ativado';
-                descEl.textContent = 'Nome, CPF, e-mail, telefone e consentimento';
+                descEl.textContent = 'Nome, CPF e consentimento';
             } else {
                 statusEl.textContent = 'Desativado';
                 descEl.textContent = 'Apenas nome do jogador';

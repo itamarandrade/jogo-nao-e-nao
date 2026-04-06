@@ -1594,13 +1594,11 @@ function exportPlayersCSV() {
         return;
     }
 
-    const headers = ['ID', 'Nome', 'CPF', 'Email', 'Telefone', 'Consentimento', 'Data', 'Hora'];
+    const headers = ['ID', 'Nome', 'CPF', 'Consentimento', 'Data', 'Hora'];
     const rows = players.map(p => [
         p.id,
         p.name || '',
         p.cpf || '',
-        p.email || '',
-        p.phone || '',
         p.consent ? 'Sim' : 'Não',
         p.date || '',
         p.time || ''
@@ -1631,14 +1629,14 @@ function getPlayersStats() {
     const players = getPlayersData();
     const today = new Date().toLocaleDateString('pt-BR');
     const todayPlayers = players.filter(p => p.date === today);
-    const withEmail = players.filter(p => p.email && p.email.trim() !== '');
+    const withRegistration = players.filter(p => p.registered);
     const gamesCompleted = parseInt(localStorage.getItem('games_completed') || '0');
 
     return {
         total: players.length,
         today: todayPlayers.length,
-        withRegistration: withEmail.length,
-        onlyName: players.length - withEmail.length,
+        withRegistration: withRegistration.length,
+        onlyName: players.length - withRegistration.length,
         gamesCompleted: gamesCompleted
     };
 }
@@ -1646,21 +1644,6 @@ function getPlayersStats() {
 // ===== FORMULÁRIO DE CADASTRO =====
 function isRegistrationEnabled() {
     return gameConfig.registrationEnabled === true;
-}
-
-function formatPhone(input) {
-    let value = input.value.replace(/\D/g, '');
-    if (value.length > 11) value = value.slice(0, 11);
-
-    if (value.length > 6) {
-        value = `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7)}`;
-    } else if (value.length > 2) {
-        value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
-    } else if (value.length > 0) {
-        value = `(${value}`;
-    }
-
-    input.value = value;
 }
 
 function formatCPF(input) {
@@ -1706,18 +1689,11 @@ function checkDuplicateCPF(cpf) {
 
 function submitRegistration() {
     const name = document.getElementById('reg-name').value.trim();
-    const email = document.getElementById('reg-email').value.trim();
     const cpf = document.getElementById('reg-cpf').value.trim();
-    const phone = document.getElementById('reg-phone').value.trim();
     const consent = document.getElementById('reg-consent').checked;
 
     if (!name) {
         alert('Por favor, informe seu nome!');
-        return;
-    }
-
-    if (!email) {
-        alert('Por favor, informe seu e-mail!');
         return;
     }
 
@@ -1748,9 +1724,7 @@ function submitRegistration() {
     // Salvar dados
     savePlayerData({
         name: name,
-        email: email,
         cpf: cpf,
-        phone: phone,
         consent: consent,
         registered: true
     });
@@ -1775,8 +1749,6 @@ function goToGameSelection() {
     if (!isRegistrationEnabled()) {
         savePlayerData({
             name: playerName,
-            email: '',
-            phone: '',
             consent: false,
             registered: false
         });
@@ -1812,13 +1784,6 @@ function handleSplashClick(e) {
     }
 }
 
-// Inicializar máscara de telefone
-function initPhoneMask() {
-    const phoneInput = document.getElementById('reg-phone');
-    if (phoneInput) {
-        phoneInput.addEventListener('input', () => formatPhone(phoneInput));
-    }
-}
 
 function createSplashParticles() {
     // Sem partículas - fundo limpo
@@ -2083,5 +2048,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     showScreen('screen-splash');
     initSplashScreen();
-    initPhoneMask();
 });
