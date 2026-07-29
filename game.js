@@ -458,7 +458,7 @@ const THEMES = {
         icon: 'fa-hand',
         primaryColor: '#f4c81e',
         secondaryColor: '#5e2d8a',
-        bgGradient: "url('assets/naoenao-fundo.png') center center / cover no-repeat",
+        bgGradient: "#5e2d8a url('assets/naoenao-fundo.png') center center / cover no-repeat",
         decorations: 'naoenao',
         logo: 'assets/naoenao-logo.png'
     }
