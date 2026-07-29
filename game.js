@@ -603,9 +603,9 @@ function createMovcidadeDecorations(container) {
 
 // ===== CONFIGURAÇÕES PADRÃO =====
 const DEFAULT_CONFIG = {
-    theme: 'guns',
-    primaryColor: '#ff4400',
-    secondaryColor: '#ffb800',
+    theme: 'naoenao',
+    primaryColor: '#f4c81e',
+    secondaryColor: '#5e2d8a',
     logo: null, // null = usar assets/logo-png.png
     puzzleImage: null, // null = usar assets/logo-png.png
     registrationEnabled: false, // true = formulário completo, false = só nome
