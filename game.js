@@ -655,9 +655,9 @@ const DEFAULT_CONFIG = {
     memoryIcons: [
         { image: 'assets/cards/nao-e-nao-verde.png', name: 'Não é Não Verde' },
         { image: 'assets/cards/nao-e-nao-vermelho.png', name: 'Não é Não Vermelho' },
-        { image: 'assets/cards/logo-estado-presente.png', name: 'Estado Presente' },
-        { image: 'assets/cards/logo-sesm.png', name: 'SESM' },
-        { image: 'assets/cards/logo-viva-mais.png', name: 'Viva Mais' },
+        { image: 'assets/cards/192-samu.png', name: 'SAMU 192' },
+        { image: 'assets/cards/maria-da-penha.png', name: 'Maria da Penha' },
+        { image: 'assets/cards/respeito.png', name: 'Respeito' },
         { image: 'assets/cards/disque-180.png', name: 'Disque 180' },
         { image: 'assets/cards/ligue-190.png', name: 'Ligue 190' },
         { image: 'assets/cards/mao-pare.png', name: 'Mão Pare' }
