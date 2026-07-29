@@ -713,6 +713,12 @@ function applyConfig(config) {
     const themeName = config.theme || 'guns';
     const theme = THEMES[themeName] || THEMES.guns;
 
+    // Classe do tema no body (permite CSS específico por tema, ex.: naoenao)
+    Array.from(document.body.classList)
+        .filter(c => c.startsWith('theme-'))
+        .forEach(c => document.body.classList.remove(c));
+    document.body.classList.add('theme-' + themeName);
+
     // Aplicar cor principal (usa do config ou do tema)
     const primaryColor = config.primaryColor || theme.primaryColor;
     document.documentElement.style.setProperty('--cor-amarelo', primaryColor);

@@ -3294,3 +3294,31 @@ body {
         border-radius: 16px;
     }
 }
+
+/* ===== TEMA "NÃO É NÃO": só o logo do Governo na splash ===== */
+/* Esconde os 3 logos institucionais (Estado Presente / Viva Mais / SESM) e
+   mostra apenas o brasão + texto do Governo do ES que veio no PDF, direto
+   sobre o fundo (o logo já é branco/transparente, sem caixa). */
+.splash-theme-gov {
+    display: none;
+}
+
+body.theme-naoenao .splash-gov-logo,
+body.theme-naoenao .splash-partners {
+    display: none;
+}
+
+body.theme-naoenao .splash-theme-gov {
+    display: flex;
+    justify-content: center;
+    margin-top: 16px;
+    animation: fadeInUp 1s ease-out 0.5s both;
+}
+
+body.theme-naoenao .splash-theme-gov img {
+    width: auto;
+    height: auto;
+    max-width: clamp(230px, 44vw, 380px);
+    max-height: clamp(60px, 13vw, 110px);
+    object-fit: contain;
+}
