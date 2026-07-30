@@ -1311,16 +1311,21 @@ body {
 }
 
 .card-front {
-    background: linear-gradient(135deg, var(--cor-magenta) 0%, #6b1280 100%);
+    /* Verso da carta: arte da campanha (estrelas/nuvens) quando o tema define
+       --carta-verso; senão, o gradiente padrão. */
+    background:
+        var(--carta-verso, none) center center / cover no-repeat,
+        linear-gradient(135deg, var(--cor-magenta) 0%, #6b1280 100%);
     border: 2px solid rgba(255,255,255,0.3);
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    overflow: hidden;
 }
 
 .card-front-logo {
-    width: 60%;
-    height: 60%;
+    width: 62%;
+    height: 62%;
     object-fit: contain;
-    opacity: 0.85;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.35));
 }
 
 .card-back {
@@ -2258,7 +2263,24 @@ body {
     overflow: hidden;
 }
 
+/* Logo da campanha como fundo da comemoração (injetado por applyVictoryBackdrop) */
+.victory-backdrop {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(78vw, 78vh);
+    height: min(78vw, 78vh);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.16;
+    pointer-events: none;
+    z-index: 0;
+}
+
 .victory-content {
+    position: relative;
     text-align: center;
     z-index: 2;
 }

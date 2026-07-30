@@ -460,7 +460,9 @@ const THEMES = {
         secondaryColor: '#5e2d8a',
         bgGradient: "#5e2d8a url('assets/naoenao-fundo.png') center center / cover no-repeat",
         decorations: 'naoenao',
-        logo: 'assets/naoenao-logo.png'
+        logo: 'assets/naoenao-logo.png',
+        // Verso da carta do jogo da memória: arte da campanha (estrelas, nuvens e lua)
+        cardBack: 'assets/naoenao-verso-carta.png'
     }
 };
 
@@ -745,8 +747,18 @@ function applyConfig(config) {
         img.src = logoSrc;
     });
 
+    // Aplicar arte do verso das cartas (tema pode não ter: cai no gradiente padrão)
+    const cardBack = config.cardBack || theme.cardBack || '';
+    document.documentElement.style.setProperty(
+        '--carta-verso',
+        cardBack ? `url('${cardBack}')` : 'none'
+    );
+
     // Aplicar marca d'água nas telas de jogo
     applyWatermark(logoSrc);
+
+    // Logo como fundo da tela de comemoração (vale para memória, quebra-cabeça e quiz)
+    applyVictoryBackdrop(logoSrc);
 
     // Aplicar imagem do puzzle (será usado quando o puzzle for gerado)
     window.puzzleImageSrc = config.puzzleImage || theme.logo || 'assets/logo-png.png';
@@ -793,6 +805,22 @@ function applyWatermark(logoSrc) {
             screen.insertBefore(watermark, screen.firstChild);
         }
     });
+}
+
+// Fundo da tela de vitória: o logo da campanha atrás da comemoração,
+// no mesmo espírito da abertura (splash). Vale para os três jogos,
+// porque todos terminam na mesma #screen-victory.
+function applyVictoryBackdrop(logoSrc) {
+    const screen = document.getElementById('screen-victory');
+    if (!screen) return;
+
+    let backdrop = screen.querySelector('.victory-backdrop');
+    if (!backdrop) {
+        backdrop = document.createElement('div');
+        backdrop.className = 'victory-backdrop';
+        screen.insertBefore(backdrop, screen.firstChild);
+    }
+    backdrop.style.backgroundImage = `url('${logoSrc}')`;
 }
 
 // Variável global para configurações
