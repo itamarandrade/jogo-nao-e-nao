@@ -1015,10 +1015,11 @@ function generateMemoryCards() {
         cardElement.dataset.index = index;
         cardElement.dataset.id = card.id;
 
-        const themeLogo = (THEMES[gameConfig.theme] || {}).logo || 'assets/logo-png.png';
+        // Mesma regra do splash: logo enviado no dashboard tem prioridade sobre o do tema
+        const cardLogo = gameConfig.logo || (THEMES[gameConfig.theme] || {}).logo || 'assets/logo-png.png';
         cardElement.innerHTML = `
             <div class="card-inner">
-                <div class="card-face card-front"><img src="${themeLogo}" alt="Logo" class="card-front-logo"></div>
+                <div class="card-face card-front"><img src="${cardLogo}" alt="Logo" class="card-front-logo"></div>
                 <div class="card-face card-back"><img src="${card.image}" alt="${card.name}" class="card-image"></div>
             </div>
         `;
