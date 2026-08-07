@@ -29,6 +29,7 @@ import csv
 import io
 import json
 import os
+import subprocess
 import sys
 import threading
 from datetime import datetime
@@ -162,6 +163,25 @@ class Handler(SimpleHTTPRequestHandler):
         super().end_headers()
 
     def do_POST(self):
+        # Abre a pasta dos cadastros no gerenciador de arquivos do sistema.
+        # O caminho é fixo (não vem da requisição) e o servidor só escuta em
+        # 127.0.0.1, então não há como pedir para abrir outra coisa.
+        if self.path.startswith('/api/abrir-pasta'):
+            try:
+                garantir_arquivo()
+                if sys.platform == 'darwin':
+                    comando = ['open', PASTA_DADOS]
+                elif os.name == 'nt':
+                    comando = ['explorer', PASTA_DADOS]
+                else:
+                    comando = ['xdg-open', PASTA_DADOS]
+                subprocess.Popen(comando, stdout=subprocess.DEVNULL,
+                                 stderr=subprocess.DEVNULL)
+                return self._responder({'ok': True, 'pasta': PASTA_DADOS})
+            except Exception as e:
+                return self._responder({'ok': False, 'erro': str(e),
+                                        'pasta': PASTA_DADOS}, 500)
+
         if not self.path.startswith('/api/cadastro'):
             return self._responder({'ok': False, 'erro': 'rota desconhecida'}, 404)
         try:
@@ -172,7 +192,7 @@ class Handler(SimpleHTTPRequestHandler):
             gravados = sum(1 for j in jogadores if gravar(j))
             total = len(ler_todos())
             if gravados:
-                print(f'  + {gravados} cadastro(s) — total: {total}')
+                print(f'  + {gravados} cadastro(s) — total: {total}', flush=True)
             return self._responder({'ok': True, 'gravados': gravados,
                                     'total': total, 'arquivo': ARQUIVO})
         except Exception as e:

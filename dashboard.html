@@ -457,6 +457,9 @@
                                 <button class="btn-storage-connect" id="storage-connect" onclick="conectarArquivoCSV()">
                                     <i class="fas fa-link"></i> Conectar arquivo CSV
                                 </button>
+                                <button class="btn-storage-open" id="storage-open" onclick="abrirPastaArquivo()">
+                                    <i class="fas fa-folder-open"></i> Ver o arquivo
+                                </button>
                                 <button class="btn-storage-restore" onclick="document.getElementById('input-restaurar').click()">
                                     <i class="fas fa-rotate-left"></i> Restaurar de um CSV
                                 </button>
@@ -678,8 +681,11 @@
 
             const e = BancoOffline.estado();
             caixa.classList.remove('ok', 'alerta', 'erro');
+            // Conectar arquivo só faz sentido sem servidor; abrir a pasta, só com.
             document.getElementById('storage-connect').style.display =
                 e.modo === 'servidor' ? 'none' : '';
+            document.getElementById('storage-open').style.display =
+                e.modo === 'servidor' ? '' : 'none';
 
             if (e.modo === 'servidor') {
                 caixa.classList.add('ok');
@@ -726,6 +732,22 @@
             }).catch(() => {
                 alert('Caminho do arquivo:\n\n' + el.textContent);
             });
+        }
+
+        // Quem grava é o servidor, então é ele quem sabe abrir a pasta — o
+        // navegador não tem como.
+        async function abrirPastaArquivo() {
+            try {
+                const r = await fetch('/api/abrir-pasta', { method: 'POST' });
+                const d = await r.json();
+                if (!d.ok) {
+                    alert('Não consegui abrir a pasta daqui.\n\nEla fica em:\n' + d.pasta);
+                }
+            } catch (err) {
+                const e = BancoOffline.estado();
+                alert('Não consegui abrir a pasta daqui.\n\nO arquivo fica em:\n' +
+                      (e.caminhoArquivo || '(desconhecido)'));
+            }
         }
 
         async function conectarArquivoCSV() {
