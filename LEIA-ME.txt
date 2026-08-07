@@ -1,0 +1,126 @@
+================================================================
+  JOGO "NÃO É NÃO"
+  Governo do Estado do Espírito Santo — Secretaria das Mulheres
+================================================================
+
+
+COMO ABRIR O JOGO
+-----------------
+
+  Windows ....... dê dois cliques em  abrir-jogo.bat
+  Linux / Mac ... execute            ./abrir-jogo.sh
+
+Uma janela preta (o servidor) vai abrir e o jogo aparece no
+navegador. NÃO FECHE a janela preta enquanto o evento estiver
+acontecendo — é ela que grava os cadastros.
+
+Para encerrar no fim do dia, feche a janela preta.
+
+
+IMPORTANTE: o Python precisa estar instalado
+--------------------------------------------
+Sem o Python o jogo até abre, mas os cadastros NÃO são gravados
+no arquivo. Se aparecer um aviso de erro sobre isso, instale em:
+
+    https://www.python.org/downloads/
+
+No Windows, marque a opção "Add Python to PATH" durante a
+instalação.
+
+
+ONDE FICAM OS CADASTROS
+-----------------------
+Num arquivo de planilha, criado automaticamente:
+
+    dados/jogadores.csv   (dentro desta mesma pasta)
+
+Cada pessoa que se cadastra é gravada NA HORA. Não é preciso
+exportar nada no fim do dia, nem clicar em salvar.
+
+O caminho completo do arquivo também aparece:
+  - na janela preta, quando o jogo abre;
+  - no painel de controle, aba "Cadastros".
+
+Para abrir a pasta rapidamente: painel > aba Cadastros >
+botão "Ver o arquivo".
+
+O arquivo abre no Excel, no LibreOffice e no Google Planilhas.
+  * Se abrir tudo numa coluna só, escolha ponto e vírgula ( ; )
+    como separador na hora de importar.
+
+
+PAINEL DE CONTROLE
+------------------
+  Windows ....... abrir-jogo.bat painel
+  Linux / Mac ... ./abrir-jogo.sh painel
+
+  Ou, com o jogo aberto, clique na engrenagem no canto da tela.
+
+No painel dá para:
+  - ligar/desligar o formulário de cadastro (nome, CPF e
+    consentimento) ou usar o modo simples, que pede só o nome;
+  - impedir que o mesmo CPF jogue duas vezes;
+  - ver quantas pessoas jogaram;
+  - trocar cores, logo e o conteúdo dos três jogos.
+
+  ATENÇÃO: depois de mexer em qualquer configuração, é preciso
+  clicar em SALVAR, no rodapé da tela.
+
+  As configurações ficam guardadas NO NAVEGADOR daquele
+  computador. Se o evento usar mais de um totem, configure cada
+  um separadamente.
+
+
+SE O EVENTO TIVER MAIS DE UM TOTEM
+----------------------------------
+Cada totem grava o seu próprio arquivo. Para juntar tudo no fim:
+
+  1. copie o dados/jogadores.csv de cada totem;
+  2. no painel de um deles, clique em "Restaurar de um CSV" e
+     escolha o arquivo do outro.
+
+Os cadastros são unidos sem duplicar.
+
+Obs.: a verificação de CPF repetido funciona dentro de cada
+totem. Entre totens diferentes, só depois de juntar os arquivos.
+
+
+SE ALGO DER ERRADO
+------------------
+O painel mostra uma faixa colorida na aba "Cadastros":
+
+  VERDE ....... está tudo certo, gravando no arquivo.
+  AMARELA ..... os cadastros estão só no navegador, sem cópia
+                no disco. Feche e abra de novo pelo atalho.
+  VERMELHA .... o jogo foi aberto sem o servidor (por exemplo,
+                clicando direto no index.html). Feche e abra
+                pelo abrir-jogo.bat / abrir-jogo.sh.
+
+Se a janela preta for fechada por engano no meio do evento: os
+cadastros feitos até ali já estão no arquivo, e os que forem
+feitos depois ficam guardados no navegador. Ao abrir o jogo de
+novo pelo atalho, eles são gravados no arquivo automaticamente.
+
+
+PROTEÇÃO DOS DADOS (LGPD)
+-------------------------
+Quando o formulário completo está ligado, o jogo coleta NOME e
+CPF, com autorização da pessoa marcada na tela.
+
+O arquivo dados/jogadores.csv contém esses dados em texto
+comum. Ele fica apenas no computador do totem — não é enviado
+para nenhum servidor ou serviço na internet.
+
+Recomendações:
+  - copie o arquivo para um local seguro ao fim do evento;
+  - apague os dados do totem depois de copiar (painel > aba
+    Cadastros > "Limpar Dados", e apague o dados/jogadores.csv);
+  - defina quem terá acesso ao arquivo e por quanto tempo ele
+    será guardado.
+
+Se o objetivo for apenas contar quantas pessoas participaram,
+considere usar o MODO SIMPLES (só o nome, sem CPF): coleta-se
+menos dado pessoal e a finalidade continua atendida.
+
+
+================================================================
