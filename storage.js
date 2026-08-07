@@ -534,8 +534,45 @@ window.addEventListener('DOMContentLoaded', async () => {
     if (nome) {
       console.log('[storage] arquivo CSV reconectado:', nome);
       BancoOffline.gravarArquivo();
+    } else {
+      armarReconexaoNoPrimeiroToque();
     }
   }
 
   if (typeof window.renderStorageStatus === 'function') window.renderStorageStatus();
 });
+
+/**
+ * Recupera a permissão do arquivo no primeiro toque da tela.
+ *
+ * ## O problema que isto resolve
+ * O navegador só devolve a permissão de gravar num arquivo se houver um gesto
+ * do usuário — e não há gesto nenhum quando a página carrega. Então, se o
+ * Chrome for reiniciado no meio do evento, a gravação ficaria parada até
+ * alguém abrir o painel e clicar em reconectar. Ninguém perceberia.
+ *
+ * Como a tela inicial já pede um toque para começar, esse toque serve de gesto.
+ * O operador (ou o primeiro jogador) responde uma vez à pergunta do navegador e
+ * a gravação volta sozinha.
+ *
+ * Só arma quando JÁ EXISTE um arquivo escolhido antes: numa máquina que nunca
+ * foi configurada, isso não dispara nada.
+ */
+function armarReconexaoNoPrimeiroToque() {
+  const tentar = async () => {
+    document.removeEventListener('pointerdown', tentar, true);
+    document.removeEventListener('keydown', tentar, true);
+    try {
+      const nome = await BancoOffline.reconectarArquivo(true);
+      if (nome) {
+        console.log('[storage] permissão do arquivo recuperada:', nome);
+        await BancoOffline.gravarArquivo();
+        if (typeof window.renderStorageStatus === 'function') window.renderStorageStatus();
+      }
+    } catch (e) {
+      console.warn('[storage] não consegui recuperar a permissão do arquivo:', e);
+    }
+  };
+  document.addEventListener('pointerdown', tentar, true);
+  document.addEventListener('keydown', tentar, true);
+}

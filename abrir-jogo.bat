@@ -1,42 +1,46 @@
 @echo off
 REM ============================================================
-REM  JOGO NAO E NAO - atalho para Windows
+REM  JOGO NAO E NAO
 REM
 REM  De dois cliques neste arquivo para abrir o jogo.
-REM  Ele sobe o servidor local (que grava os cadastros no
-REM  arquivo) e abre o navegador.
+REM  NAO precisa instalar nada.
 REM
 REM  Uso:  abrir-jogo.bat          -> abre o jogo
 REM        abrir-jogo.bat painel   -> abre o painel de controle
-REM
-REM  Para encerrar: feche esta janela preta.
 REM ============================================================
 
 setlocal
 cd /d "%~dp0"
 
-set PORTA=8123
 set ALVO=index.html
 if /i "%~1"=="painel" set ALVO=dashboard.html
 
-REM O Python precisa estar instalado. Sem ele o jogo ate abre,
-REM mas NAO grava os cadastros no arquivo.
-where python >nul 2>nul
-if errorlevel 1 (
+REM Precisa ser Chrome ou Edge: sao os que gravam direto no
+REM arquivo do disco. No Firefox o jogo funciona, mas os
+REM cadastros so sao salvos por download de tempos em tempos.
+set NAV=
+if exist "%ProgramFiles%\Google\Chrome\Application\chrome.exe" set NAV=%ProgramFiles%\Google\Chrome\Application\chrome.exe
+if not defined NAV if exist "%ProgramFiles(x86)%\Google\Chrome\Application\chrome.exe" set NAV=%ProgramFiles(x86)%\Google\Chrome\Application\chrome.exe
+if not defined NAV if exist "%LocalAppData%\Google\Chrome\Application\chrome.exe" set NAV=%LocalAppData%\Google\Chrome\Application\chrome.exe
+if not defined NAV if exist "%ProgramFiles(x86)%\Microsoft\Edge\Application\msedge.exe" set NAV=%ProgramFiles(x86)%\Microsoft\Edge\Application\msedge.exe
+if not defined NAV if exist "%ProgramFiles%\Microsoft\Edge\Application\msedge.exe" set NAV=%ProgramFiles%\Microsoft\Edge\Application\msedge.exe
+
+if not defined NAV (
   echo.
   echo  ============================================================
-  echo   ERRO: o Python nao esta instalado nesta maquina.
+  echo   Nao encontrei o Chrome nem o Edge nesta maquina.
   echo.
-  echo   Sem ele os cadastros NAO sao gravados no arquivo.
-  echo   Instale em: https://www.python.org/downloads/
-  echo   Marque a opcao "Add Python to PATH" durante a instalacao.
+  echo   O jogo vai abrir no navegador padrao, mas para gravar os
+  echo   cadastros direto no arquivo e preciso Chrome ou Edge.
   echo  ============================================================
   echo.
   pause
-  exit /b 1
+  start "" "%CD%\%ALVO%"
+  exit /b 0
 )
 
-start "" "http://localhost:%PORTA%/%ALVO%"
-python servidor.py %PORTA%
-
-pause
+REM --kiosk deixa em tela cheia, sem barra de endereco (bom para
+REM totem). Tire o --kiosk se quiser a janela normal.
+REM Sair do modo kiosk: Alt+F4.
+start "" "%NAV%" --kiosk "file:///%CD:\=/%/%ALVO%"
+exit /b 0

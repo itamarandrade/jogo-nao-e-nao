@@ -3,50 +3,67 @@
   Governo do Estado do Espírito Santo — Secretaria das Mulheres
 ================================================================
 
+NÃO PRECISA INSTALAR NADA.
+Só é preciso ter o Google Chrome (ou o Microsoft Edge).
 
-COMO ABRIR O JOGO
------------------
+
+COMO ABRIR
+----------
 
   Windows ....... dê dois cliques em  abrir-jogo.bat
   Linux / Mac ... execute            ./abrir-jogo.sh
 
-Uma janela preta (o servidor) vai abrir e o jogo aparece no
-navegador. NÃO FECHE a janela preta enquanto o evento estiver
-acontecendo — é ela que grava os cadastros.
-
-Para encerrar no fim do dia, feche a janela preta.
+O jogo abre em tela cheia. Para sair da tela cheia: Alt + F4.
 
 
-IMPORTANTE: o Python precisa estar instalado
---------------------------------------------
-Sem o Python o jogo até abre, mas os cadastros NÃO são gravados
-no arquivo. Se aparecer um aviso de erro sobre isso, instale em:
+ANTES DO EVENTO — FAÇA ISTO UMA VEZ
+-----------------------------------
+É o passo que garante que os cadastros fiquem salvos.
 
-    https://www.python.org/downloads/
+  1. Abra o painel:
+       Windows ....... abrir-jogo.bat painel
+       Linux / Mac ... ./abrir-jogo.sh painel
 
-No Windows, marque a opção "Add Python to PATH" durante a
-instalação.
+  2. Vá na aba "Cadastros".
+
+  3. Clique em "Conectar arquivo CSV".
+
+  4. Escolha onde salvar o arquivo.
+     Sugestão: um pen drive, ou uma pasta fácil de achar.
+
+  5. Confirme que a faixa no topo ficou VERDE.
+
+Pronto. A partir daí, cada pessoa que se cadastrar é gravada
+NA HORA nesse arquivo. Não precisa exportar nada no fim do dia.
 
 
-ONDE FICAM OS CADASTROS
------------------------
-Num arquivo de planilha, criado automaticamente:
+PARA QUE SERVE ESSE PASSO
+-------------------------
+Sem ele, os cadastros ficam guardados apenas dentro do
+navegador — e somem se alguém limpar os dados de navegação ou
+se o computador for formatado.
 
-    dados/jogadores.csv   (dentro desta mesma pasta)
+Com o arquivo conectado, existe uma cópia de verdade no disco,
+que sobrevive a tudo isso.
 
-Cada pessoa que se cadastra é gravada NA HORA. Não é preciso
-exportar nada no fim do dia, nem clicar em salvar.
 
-O caminho completo do arquivo também aparece:
-  - na janela preta, quando o jogo abre;
-  - no painel de controle, aba "Cadastros".
+SE A FAIXA DO PAINEL MUDAR DE COR
+---------------------------------
+  VERDE ....... tudo certo, gravando no arquivo.
 
-Para abrir a pasta rapidamente: painel > aba Cadastros >
-botão "Ver o arquivo".
+  AMARELA ..... os cadastros estão só no navegador.
+                Clique em "Conectar arquivo CSV".
 
-O arquivo abre no Excel, no LibreOffice e no Google Planilhas.
-  * Se abrir tudo numa coluna só, escolha ponto e vírgula ( ; )
-    como separador na hora de importar.
+  VERMELHA .... o navegador não grava direto no arquivo
+                (provavelmente Firefox). Use Chrome ou Edge.
+                Enquanto isso, o jogo baixa um arquivo CSV
+                completo a cada 5 cadastros — guarde o mais
+                recente da pasta de Downloads.
+
+Se o Chrome for fechado e aberto de novo durante o evento, o
+navegador pode perguntar de novo se pode gravar no arquivo.
+Basta tocar na tela inicial do jogo e responder "Sim" — a
+gravação volta sozinha.
 
 
 PAINEL DE CONTROLE
@@ -63,19 +80,30 @@ No painel dá para:
   - ver quantas pessoas jogaram;
   - trocar cores, logo e o conteúdo dos três jogos.
 
-  ATENÇÃO: depois de mexer em qualquer configuração, é preciso
-  clicar em SALVAR, no rodapé da tela.
+  ATENÇÃO: depois de mexer em qualquer configuração, clique em
+  SALVAR, no rodapé da tela.
 
-  As configurações ficam guardadas NO NAVEGADOR daquele
-  computador. Se o evento usar mais de um totem, configure cada
-  um separadamente.
+  As configurações ficam guardadas NAQUELE computador. Se o
+  evento usar mais de um totem, configure cada um.
+
+
+O ARQUIVO DOS CADASTROS
+-----------------------
+É uma planilha que abre no Excel, no LibreOffice e no Google
+Planilhas.
+
+  * Se abrir tudo numa coluna só, escolha ponto e vírgula ( ; )
+    como separador na hora de importar.
+
+Colunas: ID, Nome, CPF, Consentimento, Cadastro completo,
+Data, Hora, Timestamp.
 
 
 SE O EVENTO TIVER MAIS DE UM TOTEM
 ----------------------------------
-Cada totem grava o seu próprio arquivo. Para juntar tudo no fim:
+Cada totem grava o seu próprio arquivo. Para juntar tudo:
 
-  1. copie o dados/jogadores.csv de cada totem;
+  1. copie o arquivo CSV de cada totem;
   2. no painel de um deles, clique em "Restaurar de um CSV" e
      escolha o arquivo do outro.
 
@@ -85,21 +113,20 @@ Obs.: a verificação de CPF repetido funciona dentro de cada
 totem. Entre totens diferentes, só depois de juntar os arquivos.
 
 
-SE ALGO DER ERRADO
-------------------
-O painel mostra uma faixa colorida na aba "Cadastros":
+MODO AUTOMÁTICO (OPCIONAL, PARA QUEM TEM PYTHON)
+------------------------------------------------
+Existe um modo em que o arquivo é criado sozinho, sem o passo
+de escolher onde salvar. Ele exige o Python instalado.
 
-  VERDE ....... está tudo certo, gravando no arquivo.
-  AMARELA ..... os cadastros estão só no navegador, sem cópia
-                no disco. Feche e abra de novo pelo atalho.
-  VERMELHA .... o jogo foi aberto sem o servidor (por exemplo,
-                clicando direto no index.html). Feche e abra
-                pelo abrir-jogo.bat / abrir-jogo.sh.
+  python3 servidor.py 8123
 
-Se a janela preta for fechada por engano no meio do evento: os
-cadastros feitos até ali já estão no arquivo, e os que forem
-feitos depois ficam guardados no navegador. Ao abrir o jogo de
-novo pelo atalho, eles são gravados no arquivo automaticamente.
+Depois abra  http://localhost:8123/index.html
+
+Nesse modo o arquivo fica em  dados/jogadores.csv  e o painel
+ganha um botão "Ver o arquivo", que abre a pasta.
+
+Isto é uma comodidade, não uma necessidade: o modo normal
+(dois cliques no atalho) grava igualmente bem.
 
 
 PROTEÇÃO DOS DADOS (LGPD)
@@ -107,14 +134,14 @@ PROTEÇÃO DOS DADOS (LGPD)
 Quando o formulário completo está ligado, o jogo coleta NOME e
 CPF, com autorização da pessoa marcada na tela.
 
-O arquivo dados/jogadores.csv contém esses dados em texto
-comum. Ele fica apenas no computador do totem — não é enviado
-para nenhum servidor ou serviço na internet.
+O arquivo CSV contém esses dados em texto comum. Ele fica
+apenas no computador do totem (ou no pen drive escolhido) — não
+é enviado para nenhum servidor ou serviço na internet.
 
 Recomendações:
   - copie o arquivo para um local seguro ao fim do evento;
   - apague os dados do totem depois de copiar (painel > aba
-    Cadastros > "Limpar Dados", e apague o dados/jogadores.csv);
+    Cadastros > "Limpar Dados", e apague o arquivo CSV);
   - defina quem terá acesso ao arquivo e por quanto tempo ele
     será guardado.
 
