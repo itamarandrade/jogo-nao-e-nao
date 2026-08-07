@@ -372,16 +372,23 @@ const BancoOffline = (() => {
   }
 
   /**
-   * Sem acesso ao disco, baixa o CSV completo a cada N cadastros.
+   * Sem acesso ao disco, baixa o CSV completo.
    *
-   * Cada arquivo é uma cópia inteira, então basta guardar o mais recente — não
-   * é preciso juntar nada depois.
+   * Baixa **no primeiro cadastro** e depois a cada N. O primeiro é o que
+   * importa: sem ele, um evento com menos de N pessoas terminaria sem arquivo
+   * nenhum, e nos primeiros minutos de qualquer evento não haveria cópia — que
+   * é justamente quando um problema ainda dá tempo de ser corrigido.
+   *
+   * Cada arquivo é uma cópia INTEIRA, então basta guardar o mais recente; o
+   * número de registros vai no nome para não haver dúvida sobre qual é.
    */
   function planoB(total) {
-    if (total > 0 && total % CADASTROS_POR_DOWNLOAD === 0) {
-      const agora = new Date().toISOString().replace(/[:.]/g, '-').split('T');
-      baixarCSV(`jogadores_${agora[0]}_${agora[1].slice(0, 8)}_${total}-registros.csv`);
-    }
+    const primeiro = total === 1;
+    const naCadencia = total > 0 && total % CADASTROS_POR_DOWNLOAD === 0;
+    if (!primeiro && !naCadencia) return;
+
+    const agora = new Date().toISOString().replace(/[:.]/g, '-').split('T');
+    baixarCSV(`jogadores_${agora[0]}_${agora[1].slice(0, 8)}_${total}-registros.csv`);
   }
 
   // ---------------------------------------------------------------------
