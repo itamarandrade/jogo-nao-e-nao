@@ -1892,8 +1892,87 @@ function goToGameSelection() {
 }
 
 // ===== SPLASH SCREEN =====
+// ===== ATALHO DO OPERADOR PARA O PAINEL =====
+
+/** Toques necessários no canto. */
+const TOQUES_PARA_PAINEL = 5;
+
+/**
+ * Intervalo máximo ENTRE dois toques.
+ *
+ * Conta de um toque para o outro, não do primeiro até o último: medir a janela
+ * total obrigaria o operador a ser rápido, e quem toca com calma perderia a
+ * contagem sem entender por quê. Assim ele pode ir no ritmo dele, desde que não
+ * pare no meio — e uma sequência acidental, espaçada, não abre o painel.
+ */
+const INTERVALO_ENTRE_TOQUES_MS = 2000;
+
+/**
+ * Cria uma área invisível no canto superior esquerdo que, tocada 5 vezes
+ * seguidas, abre o painel de controle.
+ *
+ * ## Por que precisa existir
+ * A engrenagem do painel fica na tela de escolha do jogo — ou seja, só depois
+ * de se cadastrar. Com a verificação de CPF ligada, o operador que já jogou é
+ * barrado no cadastro e **nunca mais consegue chegar ao painel**. Em tela cheia
+ * (kiosk), sem barra de endereço, ficaria sem saída.
+ *
+ * ## Por que um canto, e não um CPF mestre
+ * Um CPF fixo que qualquer pessoa possa digitar é adivinhável, e o painel tem
+ * o botão "Limpar Dados" — alguém do público poderia apagar o evento inteiro.
+ * O canto não aparece na tela, não é anunciado e não deixa rastro na lista de
+ * jogadores.
+ *
+ * Funciona em QUALQUER tela: cadastro, jogo, resultado.
+ */
+function criarAtalhoDoPainel() {
+    if (document.getElementById('atalho-painel')) return;
+    // No próprio painel o atalho não faz sentido (o game.js é carregado lá
+    // também) e ainda cobriria a primeira aba do menu lateral.
+    if (!document.getElementById('screen-splash')) return;
+
+    const area = document.createElement('div');
+    area.id = 'atalho-painel';
+    area.setAttribute('aria-hidden', 'true');
+    area.style.cssText = [
+        'position:fixed', 'top:0', 'left:0',
+        'width:70px', 'height:70px',
+        'z-index:99999',
+        'background:transparent',
+        'cursor:default',
+    ].join(';');
+
+    let toques = 0;
+    let ultimoToque = 0;
+
+    const contar = (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+
+        const agora = Date.now();
+        // Recomeça se demorou demais DESDE O TOQUE ANTERIOR.
+        if (agora - ultimoToque > INTERVALO_ENTRE_TOQUES_MS) toques = 0;
+        ultimoToque = agora;
+        toques += 1;
+
+        // Um retorno discreto para o operador saber que está contando, sem
+        // chamar atenção de quem estiver por perto.
+        area.style.background = `rgba(255,255,255,${0.03 * toques})`;
+        setTimeout(() => { area.style.background = 'transparent'; }, 250);
+
+        if (toques >= TOQUES_PARA_PAINEL) {
+            toques = 0;
+            window.location.href = 'dashboard.html';
+        }
+    };
+
+    area.addEventListener('pointerdown', contar, true);
+    document.body.appendChild(area);
+}
+
 function initSplashScreen() {
     createSplashParticles();
+    criarAtalhoDoPainel();
 
     // Adiciona evento de clique na splash screen
     const splashScreen = document.getElementById('screen-splash');

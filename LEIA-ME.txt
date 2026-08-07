@@ -71,7 +71,22 @@ PAINEL DE CONTROLE
   Windows ....... abrir-jogo.bat painel
   Linux / Mac ... ./abrir-jogo.sh painel
 
-  Ou, com o jogo aberto, clique na engrenagem no canto da tela.
+
+  >>> DURANTE O EVENTO, com o jogo em tela cheia:
+  >>>
+  >>>   TOQUE 5 VEZES SEGUIDAS NO CANTO SUPERIOR ESQUERDO
+  >>>
+  >>> Funciona em qualquer tela do jogo. Os toques precisam ser
+  >>> seguidos (sem parar mais de 2 segundos entre um e outro);
+  >>> se parar, a contagem recomeça.
+
+  A área é invisível e não é anunciada na tela — é só para quem
+  está operando. ATENÇÃO: quem chegar ao painel pode apagar os
+  cadastros ("Limpar Dados"), então não mostre o atalho ao
+  público.
+
+  Há também uma engrenagem na tela de escolha do jogo, mas ela
+  só aparece depois de se cadastrar — por isso o atalho do canto.
 
 No painel dá para:
   - ligar/desligar o formulário de cadastro (nome, CPF e
