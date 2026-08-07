@@ -1621,14 +1621,29 @@ function getPlayersData() {
 
 function savePlayerData(playerData) {
     const players = getPlayersData();
-    players.push({
+
+    // Date.now() repete se dois cadastros caírem no mesmo milissegundo, e o id
+    // é a chave usada na deduplicação da restauração — o sufixo garante que
+    // dois registros nunca se confundam.
+    const registro = {
         ...playerData,
-        id: Date.now(),
+        id: `${Date.now()}${Math.random().toString(36).slice(2, 6)}`,
         timestamp: new Date().toISOString(),
         date: new Date().toLocaleDateString('pt-BR'),
         time: new Date().toLocaleTimeString('pt-BR')
-    });
+    };
+
+    players.push(registro);
     localStorage.setItem(PLAYERS_STORAGE_KEY, JSON.stringify(players));
+
+    // Cópia no IndexedDB e no arquivo CSV do disco (ver storage.js). É
+    // assíncrono e nunca lança: se a cópia falhar, o cadastro já está salvo
+    // aqui e a pessoa não pode ser impedida de jogar por causa disso.
+    if (typeof BancoOffline !== 'undefined') {
+        BancoOffline.persistir(registro);
+    }
+
+    return registro;
 }
 
 function exportPlayersCSV() {
@@ -1638,17 +1653,28 @@ function exportPlayersCSV() {
         return;
     }
 
-    const headers = ['ID', 'Nome', 'CPF', 'Consentimento', 'Data', 'Hora'];
-    const rows = players.map(p => [
-        p.id,
-        p.name || '',
-        p.cpf || '',
-        p.consent ? 'Sim' : 'Não',
-        p.date || '',
-        p.time || ''
-    ]);
+    // Usa o mesmo formato do arquivo gravado automaticamente (storage.js): um
+    // formato só no projeto, então o que se exporta à mão pode ser restaurado
+    // depois, e vice-versa.
+    if (typeof BancoOffline !== 'undefined') {
+        BancoOffline.baixarCSV();
+        return;
+    }
 
-    const csvContent = [headers.join(';'), ...rows.map(r => r.join(';'))].join('\n');
+    // Retaguarda, caso o storage.js não tenha sido carregado.
+    const escapar = (v) => {
+        const t = String(v ?? '');
+        return /[;"\n\r]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t;
+    };
+    const headers = ['ID', 'Nome', 'CPF', 'Consentimento', 'Cadastro completo', 'Data', 'Hora', 'Timestamp'];
+    const rows = players.map(p => [
+        p.id, p.name, p.cpf,
+        p.consent ? 'Sim' : 'Não',
+        p.registered ? 'Sim' : 'Não',
+        p.date, p.time, p.timestamp
+    ].map(escapar));
+
+    const csvContent = [headers.join(';'), ...rows.map(r => r.join(';'))].join('\r\n');
     const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);

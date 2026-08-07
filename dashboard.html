@@ -445,6 +445,26 @@
 
                     <!-- ABA CADASTROS -->
                     <div id="tab-players" class="tab-content">
+
+                        <!-- Estado do backup em disco. Fica no topo de propósito:
+                             é a primeira coisa que o operador precisa conferir
+                             antes de o evento começar. -->
+                        <div class="storage-box" id="storage-box">
+                            <div class="storage-status" id="storage-status">
+                                <i class="fas fa-circle-notch fa-spin"></i> Verificando...
+                            </div>
+                            <div class="storage-actions">
+                                <button class="btn-storage-connect" onclick="conectarArquivoCSV()">
+                                    <i class="fas fa-link"></i> Conectar arquivo CSV
+                                </button>
+                                <button class="btn-storage-restore" onclick="document.getElementById('input-restaurar').click()">
+                                    <i class="fas fa-rotate-left"></i> Restaurar de um CSV
+                                </button>
+                                <input type="file" id="input-restaurar" accept=".csv" style="display:none"
+                                       onchange="restaurarDeCSV(this)">
+                            </div>
+                        </div>
+
                         <div class="players-header">
                             <div class="players-actions">
                                 <button class="btn-export" onclick="exportPlayersCSV()">
@@ -632,6 +652,7 @@
     </div>
 
     <script src="game.js"></script>
+    <script src="storage.js"></script>
     <script>
         // Inicializar dashboard ao carregar
         document.addEventListener('DOMContentLoaded', () => {
@@ -643,7 +664,77 @@
             renderThemes();
             updateStats();
             renderPlayersTable();
+            renderStorageStatus();
         });
+
+        // ===== BACKUP EM DISCO =====
+        // O storage.js chama renderStorageStatus() sozinho a cada gravação, para
+        // o painel refletir na hora se a cópia parou de funcionar.
+
+        function renderStorageStatus() {
+            const caixa = document.getElementById('storage-box');
+            const texto = document.getElementById('storage-status');
+            if (!caixa || !texto || typeof BancoOffline === 'undefined') return;
+
+            const e = BancoOffline.estado();
+            caixa.classList.remove('ok', 'alerta', 'erro');
+
+            if (e.conectado) {
+                caixa.classList.add('ok');
+                texto.innerHTML =
+                    '<i class="fas fa-circle-check"></i> <strong>Gravando em disco:</strong> ' +
+                    e.nomeArquivo + ' — cada cadastro é salvo no arquivo na hora.';
+            } else if (e.suportaArquivo) {
+                caixa.classList.add('alerta');
+                texto.innerHTML =
+                    '<i class="fas fa-triangle-exclamation"></i> <strong>Sem cópia em disco.</strong> ' +
+                    'Os cadastros estão só no navegador e somem se os dados forem limpos. ' +
+                    'Clique em "Conectar arquivo CSV".';
+            } else {
+                caixa.classList.add('erro');
+                texto.innerHTML =
+                    '<i class="fas fa-circle-exclamation"></i> <strong>Este navegador não grava em disco</strong> (' +
+                    e.origem + '). Um CSV completo é baixado a cada 5 cadastros — guarde o arquivo mais recente. ' +
+                    'Para gravar direto no arquivo, abra o jogo pelo <code>abrir-jogo.sh</code> no Chrome.';
+            }
+        }
+        window.renderStorageStatus = renderStorageStatus;
+
+        async function conectarArquivoCSV() {
+            try {
+                // Tenta primeiro reaproveitar o arquivo já escolhido antes: evita
+                // fazer o operador procurar o arquivo de novo a cada abertura.
+                const jaEscolhido = await BancoOffline.reconectarArquivo(true);
+                const nome = jaEscolhido || await BancoOffline.conectarArquivo();
+                renderStorageStatus();
+                alert('Pronto! Os cadastros estão sendo gravados em: ' + nome);
+            } catch (err) {
+                // Fechar o seletor de arquivos não é erro — não vale um alerta.
+                if (err && err.name === 'AbortError') return;
+                alert('Não foi possível conectar o arquivo.\n\n' + (err.message || err));
+            }
+        }
+
+        async function restaurarDeCSV(input) {
+            const file = input.files && input.files[0];
+            input.value = '';
+            if (!file) return;
+            try {
+                const r = await BancoOffline.restaurarDeArquivo(file);
+                renderPlayersTable();
+                updateStats();
+                renderStorageStatus();
+                alert(
+                    'Arquivo lido: ' + r.lidos + ' registro(s).\n' +
+                    'Adicionados: ' + r.novos + '.\n\n' +
+                    (r.novos === 0
+                        ? 'Nada foi duplicado — todos já estavam na lista.'
+                        : 'Os que já existiam foram mantidos, sem duplicar.')
+                );
+            } catch (err) {
+                alert('Não foi possível ler o arquivo.\n\n' + (err.message || err));
+            }
+        }
 
         // Atualizar estatísticas
         function updateStats() {
