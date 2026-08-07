@@ -93,23 +93,13 @@ const BancoOffline = (() => {
   async function sincronizarDoServidor() {
     if (!servidor) return { novos: 0 };
     try {
-      const r = await fetch('/api/jogadores', { cache: 'no-store' });
-      const dados = await r.json();
+      const resposta = await fetch('/api/jogadores', { cache: 'no-store' });
+      const dados = await resposta.json();
       if (!dados.ok) return { novos: 0 };
 
-      const atuais = getPlayersData();
-      const conhecidos = new Set(atuais.map((p) => String(p.id)));
-      const novos = dados.jogadores.filter((p) => !conhecidos.has(String(p.id)));
-      if (novos.length === 0) return { novos: 0 };
-
-      const juntos = [...atuais, ...novos].sort(
-        (a, b) => new Date(a.timestamp || 0) - new Date(b.timestamp || 0)
-      );
-      localStorage.setItem(PLAYERS_STORAGE_KEY, JSON.stringify(juntos));
-      for (const p of novos) await espelharJogador(p);
-
-      console.log(`[storage] ${novos.length} cadastro(s) recuperados do arquivo`);
-      return { novos: novos.length };
+      const juncao = await juntarCadastros(dados.jogadores);
+      if (juncao.novos) console.log(`[storage] ${juncao.novos} cadastro(s) recuperados do arquivo`);
+      return juncao;
     } catch (e) {
       console.error('[storage] falha ao sincronizar com o servidor:', e);
       return { novos: 0 };
@@ -182,6 +172,34 @@ const BancoOffline = (() => {
     } catch (e) {
       console.error('[storage] falha ao espelhar no IndexedDB:', e);
     }
+  }
+
+  /**
+   * Junta cadastros vindos de fora (arquivo, servidor, espelho) com os que já
+   * estão no navegador.
+   *
+   * Une pelo `id`: o que já existe é mantido, o que falta entra. Rodar duas
+   * vezes com a mesma origem não duplica nada.
+   *
+   * ⚠️ Esta função existe porque a mesma junção estava escrita em QUATRO
+   * lugares. Divergir uma delas significaria, na prática, perder cadastro ou
+   * duplicar — e ninguém perceberia até o dia do evento.
+   */
+  async function juntarCadastros(candidatos) {
+    if (!Array.isArray(candidatos) || candidatos.length === 0) return { novos: 0 };
+
+    const atuais = getPlayersData();
+    const conhecidos = new Set(atuais.map((p) => String(p.id)));
+    const novos = candidatos.filter((p) => p && !conhecidos.has(String(p.id)));
+    if (novos.length === 0) return { novos: 0 };
+
+    const juntos = [...atuais, ...novos].sort(
+      (a, b) => new Date(a.timestamp || 0) - new Date(b.timestamp || 0)
+    );
+    localStorage.setItem(PLAYERS_STORAGE_KEY, JSON.stringify(juntos));
+    for (const p of novos) await espelharJogador(p);
+
+    return { novos: novos.length };
   }
 
   /** Todos os jogadores do espelho — usado na recuperação. */
@@ -296,8 +314,12 @@ const BancoOffline = (() => {
     arquivoCSV = handle;
     await transacao(STORE_CONFIG, 'readwrite', (s) => s.put(handle, CHAVE_ARQUIVO));
 
-    // Grava o que já existe, para o arquivo não nascer vazio ignorando os
-    // cadastros feitos antes de conectar.
+    // LER ANTES DE GRAVAR: quem escolhe um arquivo que já existe — o de ontem,
+    // ou o de outro totem — teria os cadastros dele apagados pela gravação, que
+    // reescreve tudo a partir do navegador.
+    await sincronizarDoArquivo();
+
+    // E então grava, para o arquivo também receber o que só existia aqui.
     await gravarArquivo();
     return handle.name;
   }
@@ -327,6 +349,37 @@ const BancoOffline = (() => {
     } catch (e) {
       console.error('[storage] falha ao reconectar o arquivo:', e);
       return null;
+    }
+  }
+
+  /**
+   * Lê o arquivo do disco e traz para o navegador o que faltar.
+   *
+   * ## Por que isto é obrigatório antes de gravar
+   * A gravação reescreve o arquivo INTEIRO a partir do que está no navegador.
+   * Se o navegador estiver vazio — limpeza de dados, outro perfil, máquina
+   * nova — gravar primeiro **apagaria todos os cadastros do arquivo**.
+   *
+   * Havia exatamente esse caminho: ao abrir a página, o código reconectava ao
+   * arquivo e já chamava a gravação. Um evento inteiro podia ser perdido no
+   * momento em que alguém abrisse o jogo com o navegador limpo.
+   *
+   * Além do dado em si, isso quebrava a verificação de CPF repetido: ela
+   * compara com o que está no navegador, e o navegador vazio não barra
+   * ninguém.
+   */
+  async function sincronizarDoArquivo() {
+    if (!arquivoCSV) return { novos: 0 };
+    try {
+      const file = await arquivoCSV.getFile();
+      if (!file || file.size === 0) return { novos: 0 };
+
+      const r = await juntarCadastros(lerCSV(await file.text()));
+      if (r.novos) console.log(`[storage] ${r.novos} cadastro(s) recuperados do arquivo`);
+      return r;
+    } catch (e) {
+      console.error('[storage] falha ao ler o arquivo:', e);
+      return { novos: 0, erro: true };
     }
   }
 
@@ -438,38 +491,21 @@ const BancoOffline = (() => {
    * com o mesmo arquivo não duplica nada.
    */
   async function restaurarDeArquivo(file) {
-    const texto = await file.text();
-    const doArquivo = lerCSV(texto);
-    const atuais = getPlayersData();
-    const conhecidos = new Set(atuais.map((p) => String(p.id)));
+    const doArquivo = lerCSV(await file.text());
+    const { novos } = await juntarCadastros(doArquivo);
 
-    const novos = doArquivo.filter((p) => !conhecidos.has(String(p.id)));
-    if (novos.length === 0) return { lidos: doArquivo.length, novos: 0 };
+    // Devolve ao arquivo conectado o que acabou de entrar, para os dois lados
+    // ficarem iguais.
+    if (novos > 0 && arquivoCSV) await gravarArquivo();
 
-    const juntos = [...atuais, ...novos].sort(
-      (a, b) => new Date(a.timestamp || 0) - new Date(b.timestamp || 0)
-    );
-    localStorage.setItem(PLAYERS_STORAGE_KEY, JSON.stringify(juntos));
-    for (const p of novos) await espelharJogador(p);
-    if (arquivoCSV) await gravarArquivo();
-
-    return { lidos: doArquivo.length, novos: novos.length };
+    return { lidos: doArquivo.length, novos };
   }
 
   /** Recupera do espelho do IndexedDB, quando não há CSV à mão. */
   async function restaurarDoEspelho() {
     const espelho = await jogadoresDoEspelho();
-    const atuais = getPlayersData();
-    const conhecidos = new Set(atuais.map((p) => String(p.id)));
-    const novos = espelho.filter((p) => !conhecidos.has(String(p.id)));
-
-    if (novos.length > 0) {
-      const juntos = [...atuais, ...novos].sort(
-        (a, b) => new Date(a.timestamp || 0) - new Date(b.timestamp || 0)
-      );
-      localStorage.setItem(PLAYERS_STORAGE_KEY, JSON.stringify(juntos));
-    }
-    return { espelho: espelho.length, novos: novos.length };
+    const { novos } = await juntarCadastros(espelho);
+    return { espelho: espelho.length, novos };
   }
 
   function estado() {
@@ -502,6 +538,7 @@ const BancoOffline = (() => {
     detectarServidor,
     sincronizarDoServidor,
     empurrarParaServidor,
+    sincronizarDoArquivo,
     conectarArquivo,
     reconectarArquivo,
     gravarArquivo,
@@ -540,7 +577,14 @@ window.addEventListener('DOMContentLoaded', async () => {
     const nome = await BancoOffline.reconectarArquivo(false);
     if (nome) {
       console.log('[storage] arquivo CSV reconectado:', nome);
-      BancoOffline.gravarArquivo();
+      // LER ANTES DE GRAVAR. Sempre. A gravação reescreve o arquivo inteiro a
+      // partir do navegador; se o navegador estiver vazio, gravar primeiro
+      // apagaria o evento todo.
+      await BancoOffline.sincronizarDoArquivo();
+      await BancoOffline.gravarArquivo();
+      if (typeof window.renderPlayersTable === 'function') {
+        try { window.renderPlayersTable(); window.updateStats(); } catch (e) { /* no jogo não existe */ }
+      }
     } else {
       armarReconexaoNoPrimeiroToque();
     }
@@ -573,6 +617,7 @@ function armarReconexaoNoPrimeiroToque() {
       const nome = await BancoOffline.reconectarArquivo(true);
       if (nome) {
         console.log('[storage] permissão do arquivo recuperada:', nome);
+        await BancoOffline.sincronizarDoArquivo(); // ler antes de gravar
         await BancoOffline.gravarArquivo();
         if (typeof window.renderStorageStatus === 'function') window.renderStorageStatus();
       }
