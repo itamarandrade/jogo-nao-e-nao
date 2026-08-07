@@ -1836,16 +1836,22 @@ function submitRegistration() {
         }
     }
 
-    // Com a verificação de CPF ligada, o CPF passa a ser obrigatório — é ele
-    // que identifica a pessoa entre uma partida e outra.
+    // A verificação de CPF decide se a pessoa PODE jogar de novo:
     //
-    // Quem já jogou NÃO é barrado: o `savePlayerData` reconhece o CPF e
-    // atualiza o cadastro existente, somando mais uma partida. A lista final
-    // continua com uma linha por pessoa, e ninguém é impedido de jogar de novo
-    // — o que, num evento aberto ao público, seria hostil.
-    if (isDeduplicationEnabled() && (!cpf || !validateCPF(cpf))) {
-        alert('Por favor, informe um CPF válido! A verificação de CPF está ativada.');
-        return;
+    //   LIGADA   → CPF obrigatório e quem já jogou é barrado aqui.
+    //   DESLIGADA→ pode jogar à vontade. Se informar CPF, o `savePlayerData`
+    //              reconhece a pessoa e ATUALIZA o cadastro dela em vez de
+    //              criar outra linha — a lista final continua com uma linha
+    //              por pessoa.
+    if (isDeduplicationEnabled()) {
+        if (!cpf || !validateCPF(cpf)) {
+            alert('Por favor, informe um CPF válido! A verificação de CPF está ativada.');
+            return;
+        }
+        if (checkDuplicateCPF(cpf)) {
+            alert('Este CPF já foi cadastrado! Cada pessoa pode jogar apenas uma vez.');
+            return;
+        }
     }
 
     // Salvar dados

@@ -424,7 +424,7 @@
 
                         <div class="config-section">
                             <label class="config-label">
-                                <i class="fas fa-fingerprint"></i> Uma linha por pessoa (CPF)
+                                <i class="fas fa-fingerprint"></i> Deduplicação por CPF
                             </label>
                             <div class="game-toggle registration-toggle">
                                 <label class="toggle-switch">
@@ -433,12 +433,12 @@
                                 </label>
                                 <span class="toggle-label">
                                     <span id="dedup-status">Desativado</span>
-                                    <small id="dedup-desc">Cada partida vira uma linha nova</small>
+                                    <small id="dedup-desc">Joga várias vezes, sem duplicar a linha</small>
                                 </span>
                             </div>
                             <p class="config-hint">
                                 <i class="fas fa-info-circle"></i>
-                                Quando ativado, o CPF passa a ser obrigatório e identifica a pessoa. Quem jogar de novo NÃO é impedido: o cadastro dela é atualizado e a contagem de partidas aumenta, em vez de virar outra linha. Requer formulário de cadastro ativo.
+                                ATIVADO: o CPF passa a ser obrigatório e cada pessoa joga uma vez só — quem tentar de novo é avisado e barrado. DESATIVADO: a pessoa joga quantas vezes quiser e, se informar o CPF, o cadastro dela é atualizado (a contagem de partidas aumenta) em vez de virar outra linha. Requer formulário de cadastro ativo.
                             </p>
                         </div>
                     </div>
@@ -874,10 +874,10 @@
 
             if (enabled) {
                 statusEl.textContent = 'Ativado';
-                descEl.textContent = 'Uma linha por pessoa; joga quantas vezes quiser';
+                descEl.textContent = 'Cada pessoa joga uma vez só';
             } else {
                 statusEl.textContent = 'Desativado';
-                descEl.textContent = 'Cada partida vira uma linha nova';
+                descEl.textContent = 'Joga várias vezes, sem duplicar a linha';
             }
         }
 
