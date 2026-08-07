@@ -424,7 +424,7 @@
 
                         <div class="config-section">
                             <label class="config-label">
-                                <i class="fas fa-fingerprint"></i> Deduplicação por CPF
+                                <i class="fas fa-fingerprint"></i> Uma linha por pessoa (CPF)
                             </label>
                             <div class="game-toggle registration-toggle">
                                 <label class="toggle-switch">
@@ -433,12 +433,12 @@
                                 </label>
                                 <span class="toggle-label">
                                     <span id="dedup-status">Desativado</span>
-                                    <small id="dedup-desc">Permite jogar várias vezes</small>
+                                    <small id="dedup-desc">Cada partida vira uma linha nova</small>
                                 </span>
                             </div>
                             <p class="config-hint">
                                 <i class="fas fa-info-circle"></i>
-                                Quando ativado, impede que o mesmo CPF jogue mais de uma vez. Requer formulário de cadastro ativo.
+                                Quando ativado, o CPF passa a ser obrigatório e identifica a pessoa. Quem jogar de novo NÃO é impedido: o cadastro dela é atualizado e a contagem de partidas aumenta, em vez de virar outra linha. Requer formulário de cadastro ativo.
                             </p>
                         </div>
                     </div>
@@ -874,10 +874,10 @@
 
             if (enabled) {
                 statusEl.textContent = 'Ativado';
-                descEl.textContent = 'CPF único por jogador';
+                descEl.textContent = 'Uma linha por pessoa; joga quantas vezes quiser';
             } else {
                 statusEl.textContent = 'Desativado';
-                descEl.textContent = 'Permite jogar várias vezes';
+                descEl.textContent = 'Cada partida vira uma linha nova';
             }
         }
 

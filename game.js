@@ -1619,18 +1619,70 @@ function getPlayersData() {
     return data ? JSON.parse(data) : [];
 }
 
+/** Só os dígitos — a comparação de CPF não pode depender da máscara. */
+function cpfLimpo(valor) {
+    return String(valor || '').replace(/\D/g, '');
+}
+
+/**
+ * Guarda um cadastro.
+ *
+ * ## Uma pessoa, uma linha
+ * O CPF é a identidade do cadastro. Se a mesma pessoa jogar de novo, o registro
+ * dela é ATUALIZADO — não nasce outro. Assim a lista final tem uma linha por
+ * pessoa, que é o que serve para contato depois, e não uma linha por partida.
+ *
+ * O que é preservado: o `id`, a data e a hora do PRIMEIRO cadastro. O que é
+ * atualizado: nome e consentimento (a pessoa pode ter corrigido), mais a
+ * contagem de partidas e a última vez que jogou.
+ *
+ * Sem CPF (modo simples, só nome) não há como saber que é a mesma pessoa —
+ * cada partida vira uma linha, como antes.
+ */
 function savePlayerData(playerData) {
     const players = getPlayersData();
+    const cpf = cpfLimpo(playerData.cpf);
+    const agora = new Date();
 
+    const carimbo = {
+        timestamp: agora.toISOString(),
+        date: agora.toLocaleDateString('pt-BR'),
+        time: agora.toLocaleTimeString('pt-BR')
+    };
+
+    // ---- Mesma pessoa: atualiza ----
+    if (cpf.length === 11) {
+        const i = players.findIndex(p => cpfLimpo(p.cpf) === cpf);
+        if (i >= 0) {
+            const atualizado = {
+                ...players[i],
+                name: playerData.name || players[i].name,
+                cpf: playerData.cpf || players[i].cpf,
+                consent: playerData.consent === true || players[i].consent === true,
+                registered: playerData.registered === true || players[i].registered === true,
+                vezes: (Number(players[i].vezes) || 1) + 1,
+                ultimaVez: carimbo.timestamp
+            };
+            players[i] = atualizado;
+            localStorage.setItem(PLAYERS_STORAGE_KEY, JSON.stringify(players));
+
+            if (typeof BancoOffline !== 'undefined') {
+                BancoOffline.persistir(atualizado);
+            }
+            return atualizado;
+        }
+    }
+
+    // ---- Pessoa nova ----
     // Date.now() repete se dois cadastros caírem no mesmo milissegundo, e o id
-    // é a chave usada na deduplicação da restauração — o sufixo garante que
-    // dois registros nunca se confundam.
+    // é a chave usada na junção das cópias — o sufixo garante que dois
+    // registros nunca se confundam.
     const registro = {
         ...playerData,
         id: `${Date.now()}${Math.random().toString(36).slice(2, 6)}`,
-        timestamp: new Date().toISOString(),
-        date: new Date().toLocaleDateString('pt-BR'),
-        time: new Date().toLocaleTimeString('pt-BR')
+        ...carimbo,
+        vezes: 1,
+        ultimaVez: carimbo.timestamp
     };
 
     players.push(registro);
@@ -1666,12 +1718,16 @@ function exportPlayersCSV() {
         const t = String(v ?? '');
         return /[;"\n\r]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t;
     };
-    const headers = ['ID', 'Nome', 'CPF', 'Consentimento', 'Cadastro completo', 'Data', 'Hora', 'Timestamp'];
+    const headers = ['ID', 'Nome', 'CPF', 'Consentimento', 'Cadastro completo',
+                     'Data', 'Hora', 'Vezes que jogou', 'Última vez', 'Timestamp'];
     const rows = players.map(p => [
         p.id, p.name, p.cpf,
         p.consent ? 'Sim' : 'Não',
         p.registered ? 'Sim' : 'Não',
-        p.date, p.time, p.timestamp
+        p.date, p.time,
+        Number(p.vezes) || 1,
+        p.ultimaVez || p.timestamp || '',
+        p.timestamp
     ].map(escapar));
 
     const csvContent = [headers.join(';'), ...rows.map(r => r.join(';'))].join('\r\n');
@@ -1780,15 +1836,16 @@ function submitRegistration() {
         }
     }
 
-    if (isDeduplicationEnabled()) {
-        if (!cpf || !validateCPF(cpf)) {
-            alert('Por favor, informe um CPF válido! A verificação de CPF está ativada.');
-            return;
-        }
-        if (checkDuplicateCPF(cpf)) {
-            alert('Este CPF já foi cadastrado! Cada pessoa pode jogar apenas uma vez.');
-            return;
-        }
+    // Com a verificação de CPF ligada, o CPF passa a ser obrigatório — é ele
+    // que identifica a pessoa entre uma partida e outra.
+    //
+    // Quem já jogou NÃO é barrado: o `savePlayerData` reconhece o CPF e
+    // atualiza o cadastro existente, somando mais uma partida. A lista final
+    // continua com uma linha por pessoa, e ninguém é impedido de jogar de novo
+    // — o que, num evento aberto ao público, seria hostil.
+    if (isDeduplicationEnabled() && (!cpf || !validateCPF(cpf))) {
+        alert('Por favor, informe um CPF válido! A verificação de CPF está ativada.');
+        return;
     }
 
     // Salvar dados

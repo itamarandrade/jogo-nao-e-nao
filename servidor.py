@@ -40,7 +40,7 @@ PASTA_DADOS = os.path.join(PASTA, 'dados')
 ARQUIVO = os.path.join(PASTA_DADOS, 'jogadores.csv')
 
 COLUNAS = ['ID', 'Nome', 'CPF', 'Consentimento', 'Cadastro completo',
-           'Data', 'Hora', 'Timestamp']
+           'Data', 'Hora', 'Vezes que jogou', 'Última vez', 'Timestamp']
 
 # Duas requisições podem chegar juntas; sem o cadeado, duas linhas se
 # embaralhariam no meio do arquivo.
@@ -70,9 +70,30 @@ def ids_gravados():
         return set()
 
 
+def montar_linha(jogador):
+    return [
+        str(jogador.get('id', '')),
+        jogador.get('name', '') or '',
+        jogador.get('cpf', '') or '',
+        'Sim' if jogador.get('consent') else 'Não',
+        'Sim' if jogador.get('registered') else 'Não',
+        jogador.get('date', '') or '',
+        jogador.get('time', '') or '',
+        jogador.get('vezes', 1) or 1,
+        jogador.get('ultimaVez', '') or jogador.get('timestamp', '') or '',
+        jogador.get('timestamp', '') or '',
+    ]
+
+
 def gravar(jogador):
     """
-    Acrescenta um cadastro. Devolve True se gravou, False se já existia.
+    Grava um cadastro. Devolve True se mudou alguma coisa no arquivo.
+
+    Novo → acrescenta no fim (rápido, com fsync).
+    Já existe → **reescreve a linha**. Sem isso, quando a mesma pessoa joga de
+    novo e o cadastro dela é atualizado (contagem de partidas, nome corrigido),
+    a atualização nunca chegaria ao arquivo — ele ficaria com a versão velha
+    para sempre.
 
     O fsync é o ponto todo: sem ele o dado fica num buffer do sistema e uma
     queda de energia leva embora os últimos cadastros.
@@ -80,19 +101,34 @@ def gravar(jogador):
     with TRAVA:
         garantir_arquivo()
         ident = str(jogador.get('id', ''))
-        if not ident or ident in ids_gravados():
+        if not ident:
             return False
 
-        linha = [
-            ident,
-            jogador.get('name', '') or '',
-            jogador.get('cpf', '') or '',
-            'Sim' if jogador.get('consent') else 'Não',
-            'Sim' if jogador.get('registered') else 'Não',
-            jogador.get('date', '') or '',
-            jogador.get('time', '') or '',
-            jogador.get('timestamp', '') or '',
-        ]
+        linha = montar_linha(jogador)
+
+        if ident in ids_gravados():
+            # Reescreve o arquivo inteiro com esta linha substituída. É seguro
+            # com o tamanho de um evento e evita arquivo meio-escrito.
+            with open(ARQUIVO, 'r', newline='', encoding='utf-8-sig') as f:
+                todas = list(csv.reader(f, delimiter=';'))
+
+            mudou = False
+            for i, l in enumerate(todas):
+                if i > 0 and l and l[0] == ident:
+                    nova = [str(x) for x in linha]
+                    if l != nova:
+                        todas[i] = nova
+                        mudou = True
+                    break
+            if not mudou:
+                return False
+
+            with open(ARQUIVO, 'w', newline='', encoding='utf-8-sig') as f:
+                csv.writer(f, delimiter=';').writerows(todas)
+                f.flush()
+                os.fsync(f.fileno())
+            return True
+
         with open(ARQUIVO, 'a', newline='', encoding='utf-8-sig') as f:
             csv.writer(f, delimiter=';').writerow(linha)
             f.flush()
@@ -111,11 +147,17 @@ def ler_todos():
             for l in leitor:
                 if not l or not l[0]:
                     continue
-                l = l + [''] * (8 - len(l))
+                # Formato antigo (8 colunas) não tinha 'Vezes'/'Última vez' e
+                # trazia o timestamp na coluna 7.
+                formato_novo = len(l) >= 10
+                l = l + [''] * (10 - len(l))
                 jogadores.append({
                     'id': l[0], 'name': l[1], 'cpf': l[2],
                     'consent': l[3] == 'Sim', 'registered': l[4] == 'Sim',
-                    'date': l[5], 'time': l[6], 'timestamp': l[7],
+                    'date': l[5], 'time': l[6],
+                    'vezes': (int(l[7]) if formato_novo and str(l[7]).isdigit() else 1),
+                    'ultimaVez': l[8] if formato_novo else l[7],
+                    'timestamp': l[9] if formato_novo else l[7],
                 })
             return jogadores
 

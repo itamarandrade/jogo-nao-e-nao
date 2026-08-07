@@ -216,7 +216,10 @@ const BancoOffline = (() => {
   // CSV
   // ---------------------------------------------------------------------
 
-  const COLUNAS = ['ID', 'Nome', 'CPF', 'Consentimento', 'Cadastro completo', 'Data', 'Hora', 'Timestamp'];
+  // 'Data'/'Hora' são do PRIMEIRO cadastro; 'Vezes' e 'Última vez' contam as
+  // partidas seguintes da mesma pessoa (identificada pelo CPF).
+  const COLUNAS = ['ID', 'Nome', 'CPF', 'Consentimento', 'Cadastro completo',
+                   'Data', 'Hora', 'Vezes que jogou', 'Última vez', 'Timestamp'];
 
   /**
    * Escapa um campo para CSV.
@@ -237,7 +240,10 @@ const BancoOffline = (() => {
       p.id, p.name, p.cpf,
       p.consent ? 'Sim' : 'Não',
       p.registered ? 'Sim' : 'Não',
-      p.date, p.time, p.timestamp,
+      p.date, p.time,
+      Number(p.vezes) || 1,
+      p.ultimaVez || p.timestamp || '',
+      p.timestamp,
     ].map(campo).join(';');
   }
 
@@ -268,19 +274,27 @@ const BancoOffline = (() => {
 
     return linhas.slice(1)
       .filter((l) => l.length >= 7 && l[0])
-      .map((l) => ({
-        // O id fica como TEXTO. Converter para número quebraria os ids novos
-        // (que têm sufixo aleatório) e, com todos virando Date.now(), a
-        // deduplicação da restauração deixaria de funcionar.
-        id: String(l[0]),
-        name: l[1] || '',
-        cpf: l[2] || '',
-        consent: l[3] === 'Sim',
-        registered: l[4] === 'Sim',
-        date: l[5] || '',
-        time: l[6] || '',
-        timestamp: l[7] || '',
-      }));
+      .map((l) => {
+        // Formato antigo (8 colunas) não tinha 'Vezes'/'Última vez': o
+        // timestamp ficava na coluna 7. Detectar pelo tamanho mantém legíveis
+        // os arquivos gerados antes desta mudança.
+        const formatoNovo = l.length >= 10;
+        return {
+          // O id fica como TEXTO. Converter para número quebraria os ids novos
+          // (que têm sufixo aleatório) e, com todos virando Date.now(), a
+          // junção das cópias deixaria de funcionar.
+          id: String(l[0]),
+          name: l[1] || '',
+          cpf: l[2] || '',
+          consent: l[3] === 'Sim',
+          registered: l[4] === 'Sim',
+          date: l[5] || '',
+          time: l[6] || '',
+          vezes: formatoNovo ? (Number(l[7]) || 1) : 1,
+          ultimaVez: formatoNovo ? (l[8] || '') : (l[7] || ''),
+          timestamp: formatoNovo ? (l[9] || '') : (l[7] || ''),
+        };
+      });
   }
 
   // ---------------------------------------------------------------------
