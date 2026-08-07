@@ -46,6 +46,103 @@ const BancoOffline = (() => {
   let bd = null;
   let arquivoCSV = null;      // FileSystemFileHandle, quando conectado
   let gravandoAgora = null;   // evita duas gravações simultâneas no mesmo arquivo
+  let servidor = null;        // {arquivo, pasta, total} quando o servidor.py está no ar
+
+  // ---------------------------------------------------------------------
+  // Servidor local (servidor.py) — o caminho preferido
+  // ---------------------------------------------------------------------
+
+  /**
+   * Descobre se o servidor.py está atendendo.
+   *
+   * Sendo ele quem grava, o arquivo nasce sozinho num caminho fixo, sem
+   * ninguém escolher nada numa janela — que é o que o navegador exigiria.
+   */
+  async function detectarServidor() {
+    try {
+      const r = await fetch('/api/status', { cache: 'no-store' });
+      if (!r.ok) return null;
+      const dados = await r.json();
+      servidor = dados && dados.ok ? dados : null;
+      return servidor;
+    } catch (e) {
+      servidor = null; // servido por outra coisa (python -m http.server, file://)
+      return null;
+    }
+  }
+
+  /** Manda um cadastro para o servidor gravar. */
+  async function enviarAoServidor(jogador) {
+    const r = await fetch('/api/cadastro', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(jogador),
+    });
+    const dados = await r.json();
+    if (!dados.ok) throw new Error(dados.erro || 'falha ao gravar');
+    if (servidor) servidor.total = dados.total;
+    return dados;
+  }
+
+  /**
+   * Puxa do servidor o que o navegador não tem.
+   *
+   * É o caminho de volta depois de uma limpeza de navegador: o arquivo no disco
+   * continua lá, então a lista se reconstrói sozinha ao abrir a página.
+   */
+  async function sincronizarDoServidor() {
+    if (!servidor) return { novos: 0 };
+    try {
+      const r = await fetch('/api/jogadores', { cache: 'no-store' });
+      const dados = await r.json();
+      if (!dados.ok) return { novos: 0 };
+
+      const atuais = getPlayersData();
+      const conhecidos = new Set(atuais.map((p) => String(p.id)));
+      const novos = dados.jogadores.filter((p) => !conhecidos.has(String(p.id)));
+      if (novos.length === 0) return { novos: 0 };
+
+      const juntos = [...atuais, ...novos].sort(
+        (a, b) => new Date(a.timestamp || 0) - new Date(b.timestamp || 0)
+      );
+      localStorage.setItem(PLAYERS_STORAGE_KEY, JSON.stringify(juntos));
+      for (const p of novos) await espelharJogador(p);
+
+      console.log(`[storage] ${novos.length} cadastro(s) recuperados do arquivo`);
+      return { novos: novos.length };
+    } catch (e) {
+      console.error('[storage] falha ao sincronizar com o servidor:', e);
+      return { novos: 0 };
+    }
+  }
+
+  /**
+   * Empurra para o servidor o que só existe no navegador.
+   *
+   * Cobre o caso de o servidor ter sido reiniciado (ou o arquivo apagado) com
+   * cadastros já feitos: o arquivo volta a ficar completo.
+   */
+  async function empurrarParaServidor() {
+    if (!servidor) return { enviados: 0 };
+    try {
+      const locais = getPlayersData();
+      if (locais.length === 0) return { enviados: 0 };
+      const r = await fetch('/api/cadastro', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(locais),
+      });
+      const dados = await r.json();
+      if (dados.ok && dados.gravados > 0) {
+        console.log(`[storage] ${dados.gravados} cadastro(s) enviados ao arquivo`);
+      }
+      if (dados.ok) servidor.total = dados.total;
+      return { enviados: dados.gravados || 0 };
+    } catch (e) {
+      console.error('[storage] falha ao enviar ao servidor:', e);
+      return { enviados: 0 };
+    }
+  }
 
   // ---------------------------------------------------------------------
   // IndexedDB
@@ -298,7 +395,24 @@ const BancoOffline = (() => {
   async function persistir(jogador) {
     try {
       await espelharJogador(jogador);
-      if (arquivoCSV) {
+
+      // Ordem de preferência: servidor (arquivo automático) → arquivo escolhido
+      // à mão → download periódico.
+      if (servidor) {
+        try {
+          await enviarAoServidor(jogador);
+        } catch (e) {
+          // O servidor caiu no meio do evento. Não dá para seguir em silêncio:
+          // a partir daqui os cadastros só existem no navegador.
+          console.error('[storage] o servidor não gravou:', e);
+          servidor = null;
+          alert(
+            'ATENÇÃO: o servidor parou de gravar no arquivo.\n\n' +
+            'Os cadastros continuam salvos no navegador, mas sem cópia no disco.\n' +
+            'Avise o responsável e NÃO feche esta janela.'
+          );
+        }
+      } else if (arquivoCSV) {
         await gravarArquivo();
       } else {
         planoB(getPlayersData().length);
@@ -353,6 +467,14 @@ const BancoOffline = (() => {
 
   function estado() {
     return {
+      // 'servidor'  → o servidor.py grava sozinho, caminho fixo (o melhor caso)
+      // 'arquivo'   → arquivo escolhido à mão pelo navegador
+      // 'download'  → sem gravação direta; baixa CSV a cada N cadastros
+      modo: servidor ? 'servidor' : (arquivoCSV ? 'arquivo' : 'download'),
+      servidor: servidor,
+      caminhoArquivo: servidor ? servidor.arquivo : null,
+      pastaArquivo: servidor ? servidor.pasta : null,
+      totalNoArquivo: servidor ? servidor.total : null,
       suportaArquivo: suportaArquivo(),
       conectado: !!arquivoCSV,
       nomeArquivo: arquivoCSV ? arquivoCSV.name : null,
@@ -370,6 +492,9 @@ const BancoOffline = (() => {
 
   return {
     persistir,
+    detectarServidor,
+    sincronizarDoServidor,
+    empurrarParaServidor,
     conectarArquivo,
     reconectarArquivo,
     gravarArquivo,
@@ -383,15 +508,34 @@ const BancoOffline = (() => {
   };
 })();
 
-// Tenta reconectar assim que a página abre. Sem pedir permissão: aqui não há
-// gesto do usuário, e o navegador recusaria. Se voltar `null`, o painel mostra
-// o botão de reconectar.
-window.addEventListener('DOMContentLoaded', () => {
-  BancoOffline.reconectarArquivo(false).then((nome) => {
+/**
+ * Arranque.
+ *
+ * 1. Procura o servidor.py. Se estiver no ar, ele grava sozinho e não há mais
+ *    nada a configurar — nem janela de escolher arquivo.
+ * 2. Reconcilia os dois lados: puxa do arquivo o que o navegador não tem (volta
+ *    de uma limpeza de navegador) e envia ao arquivo o que só existe aqui
+ *    (cobre servidor reiniciado ou arquivo apagado).
+ * 3. Sem servidor, tenta reaproveitar um arquivo escolhido antes. Sem pedir
+ *    permissão: não há gesto do usuário no carregamento e o navegador recusaria.
+ */
+window.addEventListener('DOMContentLoaded', async () => {
+  const srv = await BancoOffline.detectarServidor();
+
+  if (srv) {
+    console.log('[storage] gravando em:', srv.arquivo);
+    await BancoOffline.sincronizarDoServidor();
+    await BancoOffline.empurrarParaServidor();
+    if (typeof window.renderPlayersTable === 'function') {
+      try { window.renderPlayersTable(); window.updateStats(); } catch (e) { /* no jogo não existe */ }
+    }
+  } else {
+    const nome = await BancoOffline.reconectarArquivo(false);
     if (nome) {
       console.log('[storage] arquivo CSV reconectado:', nome);
       BancoOffline.gravarArquivo();
     }
-    if (typeof window.renderStorageStatus === 'function') window.renderStorageStatus();
-  });
+  }
+
+  if (typeof window.renderStorageStatus === 'function') window.renderStorageStatus();
 });

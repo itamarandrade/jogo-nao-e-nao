@@ -454,7 +454,7 @@
                                 <i class="fas fa-circle-notch fa-spin"></i> Verificando...
                             </div>
                             <div class="storage-actions">
-                                <button class="btn-storage-connect" onclick="conectarArquivoCSV()">
+                                <button class="btn-storage-connect" id="storage-connect" onclick="conectarArquivoCSV()">
                                     <i class="fas fa-link"></i> Conectar arquivo CSV
                                 </button>
                                 <button class="btn-storage-restore" onclick="document.getElementById('input-restaurar').click()">
@@ -678,8 +678,20 @@
 
             const e = BancoOffline.estado();
             caixa.classList.remove('ok', 'alerta', 'erro');
+            document.getElementById('storage-connect').style.display =
+                e.modo === 'servidor' ? 'none' : '';
 
-            if (e.conectado) {
+            if (e.modo === 'servidor') {
+                caixa.classList.add('ok');
+                texto.innerHTML =
+                    '<i class="fas fa-circle-check"></i> <strong>Gravando automaticamente no arquivo:</strong>' +
+                    '<div class="storage-path" onclick="copiarCaminho()" title="Clique para copiar o caminho">' +
+                    '<i class="fas fa-file-csv"></i> <code id="caminho-arquivo">' + e.caminhoArquivo + '</code>' +
+                    '<span class="storage-copy"><i class="fas fa-copy"></i> copiar</span></div>' +
+                    '<div class="storage-sub">' + e.totalNoArquivo +
+                    ' cadastro(s) no arquivo. Cada novo cadastro é gravado na hora — ' +
+                    'não é preciso exportar nada no fim.</div>';
+            } else if (e.conectado) {
                 caixa.classList.add('ok');
                 texto.innerHTML =
                     '<i class="fas fa-circle-check"></i> <strong>Gravando em disco:</strong> ' +
@@ -699,6 +711,22 @@
             }
         }
         window.renderStorageStatus = renderStorageStatus;
+
+        // O operador precisa levar esse caminho para achar o arquivo depois —
+        // copiar é mais confiável que anotar à mão.
+        function copiarCaminho() {
+            const el = document.getElementById('caminho-arquivo');
+            if (!el) return;
+            navigator.clipboard.writeText(el.textContent).then(() => {
+                const marca = document.querySelector('.storage-copy');
+                if (!marca) return;
+                const antes = marca.innerHTML;
+                marca.innerHTML = '<i class="fas fa-check"></i> copiado!';
+                setTimeout(() => { marca.innerHTML = antes; }, 1800);
+            }).catch(() => {
+                alert('Caminho do arquivo:\n\n' + el.textContent);
+            });
+        }
 
         async function conectarArquivoCSV() {
             try {

@@ -27,37 +27,32 @@ fi
 
 # Se a porta já estiver ocupada, provavelmente é uma cópia deste script rodando
 # — reaproveita em vez de subir outra e confundir qual está servindo o quê.
-if curl -s -o /dev/null --max-time 2 "http://localhost:${PORTA}/${ALVO}" 2>/dev/null; then
-  echo "Já havia um servidor na porta ${PORTA}; reaproveitando."
+URL="http://localhost:${PORTA}/${ALVO}"
+
+if curl -s -o /dev/null --max-time 2 "http://localhost:${PORTA}/api/status" 2>/dev/null; then
+  echo "  Já havia um servidor na porta ${PORTA}; reaproveitando."
+  echo "  Jogo: $URL"
+  SEGUNDO_PLANO=1
 else
-  echo "Subindo o servidor local na porta ${PORTA}..."
-  ( cd "$PASTA" && python3 -m http.server "$PORTA" --bind 127.0.0.1 >/dev/null 2>&1 ) &
-  SERVIDOR=$!
-  trap 'kill $SERVIDOR 2>/dev/null || true' EXIT INT TERM
-  sleep 1
+  SEGUNDO_PLANO=0
 fi
 
-URL="http://localhost:${PORTA}/${ALVO}"
-echo
-echo "  Jogo no ar:  $URL"
-echo
-echo "  IMPORTANTE — antes de começar o evento:"
-echo "    1. Abra o painel:  ./abrir-jogo.sh painel"
-echo "    2. Vá na aba Cadastros"
-echo "    3. Clique em 'Conectar arquivo CSV' e escolha onde salvar"
-echo "       (de preferência num pen drive ou numa pasta do evento)"
-echo "    4. Confirme que a faixa ficou VERDE"
-echo
-echo "  Para encerrar: Ctrl+C"
-echo
+# Abre o navegador em paralelo: o servidor abaixo segura o terminal.
+(
+  sleep 2
+  for NAV in google-chrome chromium microsoft-edge chromium-browser firefox; do
+    if command -v "$NAV" >/dev/null 2>&1; then
+      "$NAV" "$URL" >/dev/null 2>&1 &
+      break
+    fi
+  done
+) &
 
-# --allow-file-access-from-files não é necessário aqui; o ponto é justamente
-# servir por http para o navegador considerar contexto seguro.
-for NAV in google-chrome chromium microsoft-edge chromium-browser; do
-  if command -v "$NAV" >/dev/null 2>&1; then
-    "$NAV" "$URL" >/dev/null 2>&1 &
-    break
-  fi
-done
+if [ "$SEGUNDO_PLANO" = "1" ]; then
+  echo "  Encerre o outro terminal para parar o servidor."
+  wait
+  exit 0
+fi
 
-wait
+# O servidor.py imprime o caminho do arquivo e fica no comando do terminal.
+exec python3 "$PASTA/servidor.py" "$PORTA"

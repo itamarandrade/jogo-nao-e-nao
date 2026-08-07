@@ -3395,3 +3395,35 @@ body.theme-naoenao .splash-theme-gov img {
     .storage-actions { flex-direction: column; }
     .storage-actions button { width: 100%; }
 }
+
+/* Caminho do arquivo — o operador precisa achar isso rápido. */
+.storage-path {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 10px 0 6px;
+    padding: 9px 12px;
+    background: rgba(0, 0, 0, 0.30);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.storage-path:hover { background: rgba(0, 0, 0, 0.42); }
+.storage-path code {
+    font-size: 0.9rem;
+    color: #7ee8a2;
+    word-break: break-all;
+    background: none;
+    padding: 0;
+}
+.storage-copy {
+    margin-left: auto;
+    font-size: 0.78rem;
+    opacity: 0.75;
+    white-space: nowrap;
+}
+.storage-sub {
+    font-size: 0.85rem;
+    opacity: 0.85;
+}
